@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Dashboard - Lend A Hand India</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/powerbi-client@2.23.1/dist/powerbi.min.js"></script>
+    <style>
+        :root {
+            --primary-cyan: #9ECAD6;
+            --primary-slate: #748DAE;
+            --primary-rose: #F5CBCB;
+            --primary-blush: #FFEAEA;
+            --text-dark: #3A4F5C;
+            --text-medium: #5A6F7C;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(145deg, var(--primary-blush) 0%, #FFF 30%, var(--primary-blush) 100%);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        /* Header */
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary-slate) 0%, var(--primary-cyan) 100%);
+            color: white;
+            padding: 20px 40px;
+            box-shadow: 0 4px 24px rgba(116, 141, 174, .25);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .back-btn {
+            background: rgba(255, 255, 255, .2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all .3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(255, 255, 255, .3);
+        }
+        
+        .back-btn:hover {
+            background: rgba(255, 255, 255, .3);
+            transform: translateX(-3px);
+        }
+        
+        .school-name {
+            font-size: 24px;
+            font-weight: 500;
+        }
+        
+        .logout-btn {
+            background: rgba(255, 255, 255, .2);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, .3);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all .3s;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, .3);
+        }
+        
+        /* Dashboard Container */
+        .dashboard-container {
+            flex: 1;
+            padding: 20px 40px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .dashboard-frame-wrapper {
+            flex: 1;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 12px 40px rgba(116, 141, 174, .2);
+            overflow: hidden;
+            border: 1px solid rgba(158, 202, 214, .2);
+        }
+        
+        #reportContainer {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .no-dashboard {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-medium);
+            gap: 20px;
+        }
+        
+        .no-dashboard-icon {
+            font-size: 64px;
+            opacity: 0.3;
+        }
+        
+        .no-dashboard-text {
+            font-size: 18px;
+            text-align: center;
+        }
+        
+        .no-dashboard-btn {
+            background: linear-gradient(135deg, var(--primary-slate) 0%, var(--primary-cyan) 100%);
+            color: white;
+            padding: 12px 28px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+        
+        /* Loading */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            font-size: 18px;
+            color: var(--text-medium);
+        }
+        
+        /* Mobile */
+        @media (max-width: 768px) {
+            .dashboard-header {
+                padding: 16px 20px;
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .school-name {
+                font-size: 18px;
+            }
+            
+            .dashboard-container {
+                padding: 12px;
+            }
+            
+            .back-btn, .logout-btn {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-header">
+        <div class="header-left">
+            <a href="teacher-space.html" class="back-btn">← Back to Forms</a>
+            <h1 class="school-name" id="schoolName">School Dashboard</h1>
+        </div>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+
+    <div class="dashboard-container">
+        <div class="dashboard-frame-wrapper" id="dashboardWrapper">
+            <div class="loading" id="loadingMessage">Loading dashboard...</div>
+            <div id="reportContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        // Check if logged in
+        if (sessionStorage.getItem('loggedIn') !== 'true') {
+            window.location.href = 'login.html';
+        }
+
+        // Get username (UDISE code) from session
+        const username = sessionStorage.getItem('username');
+        const schoolName = sessionStorage.getItem('schoolName');
+        const userName = sessionStorage.getItem('userName');
+        
+        const schoolNameElement = document.getElementById('schoolName');
+        const dashboardWrapper = document.getElementById('dashboardWrapper');
+        const loadingMessage = document.getElementById('loadingMessage');
+
+        // Set school name in header
+        if (schoolName) {
+            schoolNameElement.textContent = schoolName + ' - Dashboard';
+        } else if (userName) {
+            schoolNameElement.textContent = userName + "'s Dashboard";
+        }
+
+        // Check if username (UDISE) exists
+        if (!username || username === 'null' || username === '') {
+            dashboardWrapper.innerHTML = `
+                <div class="no-dashboard">
+                    <div class="no-dashboard-icon">📊</div>
+                    <div class="no-dashboard-text">
+                        <p><strong>No school configured</strong></p>
+                        <p>Please contact your administrator.</p>
+                    </div>
+                    <a href="teacher-space.html" class="no-dashboard-btn">← Back to Forms</a>
+                </div>
+            `;
+        } else {
+            // Load Power BI report filtered by username (UDISE code)
+            loadPowerBIReport(username);
+        }
+
+        function loadPowerBIReport(udiseCode) {
+            // Power BI report configuration
+            const embedUrl = 'https://app.powerbi.com/reportEmbed?reportId=f9581052-4c94-432f-8441-e359eb1ca6df&autoAuth=true&ctid=26944585-45ed-469b-ad5f-447470a006b8';
+            
+            const config = {
+                type: 'report',
+                embedUrl: embedUrl,
+                tokenType: models.TokenType.Aad,
+                permissions: models.Permissions.Read,
+                settings: {
+                    panes: {
+                        filters: {
+                            expanded: false,
+                            visible: false
+                        },
+                        pageNavigation: {
+                            visible: true
+                        }
+                    },
+                    background: models.BackgroundType.Transparent
+                },
+                filters: [
+                    {
+                        $schema: "http://powerbi.com/product/schema#basic",
+                        target: {
+                            table: "NCF-VE_Chapter_Completion_Re",
+                            column: "Udise"
+                        },
+                        operator: "In",
+                        values: [udiseCode],
+                        filterType: models.FilterType.BasicFilter,
+                        requireSingleSelection: true
+                    }
+                ]
+            };
+
+            // Get reference to container
+            const reportContainer = document.getElementById('reportContainer');
+            
+            // Get a reference to the PowerBI service
+            const powerbi = new pbi.service.Service(pbi.factories.hpmFactory, pbi.factories.wpmpFactory, pbi.factories.routerFactory);
+            
+            // Embed the report
+            const report = powerbi.embed(reportContainer, config);
+            
+            // Report loaded event
+            report.on('loaded', function() {
+                console.log('Report loaded successfully');
+                loadingMessage.style.display = 'none';
+            });
+            
+            // Report rendered event
+            report.on('rendered', function() {
+                console.log('Report rendered successfully');
+            });
+            
+            // Handle errors
+            report.on('error', function(event) {
+                console.error('Error loading report:', event.detail);
+                loadingMessage.textContent = 'Error loading dashboard. Please try again.';
+            });
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                sessionStorage.clear();
+                window.location.href = 'login.html';
+            }
+        }
+    </script>
+</body>
+</html>
