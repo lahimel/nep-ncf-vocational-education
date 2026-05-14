@@ -368,6 +368,8 @@
                     sessionStorage.setItem('username', username);
                     sessionStorage.setItem('userRole', user.role);
                     sessionStorage.setItem('userName', user.name);
+                    sessionStorage.setItem('powerbiUrl', user.powerbi_url || '');
+                    sessionStorage.setItem('schoolName', user.school_name || '');
                     
                     if (user.role === 'teacher') {
                         window.location.href = 'teacher-space.html';
