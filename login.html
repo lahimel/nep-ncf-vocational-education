@@ -6,6 +6,7 @@
     <title>Login - Lend A Hand India</title>
     <link rel="icon" type="image/png" href="logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --primary-cyan: #9ECAD6;
@@ -13,10 +14,9 @@
             --primary-rose: #F5CBCB;
             --primary-blush: #FFEAEA;
             --text-dark: #3A4F5C;
-            --text-medium: #5A6F7C;
         }
         
-        *, *::before, *::after {
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -24,366 +24,374 @@
         
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(145deg, var(--primary-blush) 0%, #FFF 30%, var(--primary-cyan) 100%);
+            background: linear-gradient(145deg, var(--primary-blush) 0%, #FFF 30%, var(--primary-blush) 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        /* Organic blob decorations */
-        .blob {
-            position: absolute;
-            border-radius: 50%;
-            pointer-events: none;
-            filter: blur(80px);
-        }
-        
-        .blob-1 {
-            width: 450px;
-            height: 450px;
-            background: radial-gradient(circle, rgba(245, 203, 203, .4) 0%, transparent 70%);
-            top: -150px;
-            right: -150px;
-            animation: float1 18s ease-in-out infinite;
-        }
-        
-        .blob-2 {
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(116, 141, 174, .3) 0%, transparent 70%);
-            bottom: -120px;
-            left: -120px;
-            animation: float2 15s ease-in-out infinite;
-        }
-        
-        @keyframes float1 {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(40px, 40px) scale(1.1); }
-        }
-        
-        @keyframes float2 {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(-30px, -30px) scale(1.05); }
         }
         
         .login-container {
-            background: rgba(255, 255, 255, .98);
+            background: white;
             border-radius: 32px;
-            box-shadow: 0 32px 80px rgba(116, 141, 174, .25);
-            max-width: 480px;
+            box-shadow: 0 20px 60px rgba(116, 141, 174, .25);
             width: 100%;
-            padding: 40px 50px;
-            animation: slideUp 0.6s ease;
-            position: relative;
-            z-index: 1;
-            border: 1px solid rgba(158, 202, 214, .3);
+            max-width: 480px;
             overflow: hidden;
+            border: 1px solid rgba(158, 202, 214, .2);
         }
         
-        .login-container::before {
-            content: '';
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(255, 234, 234, .3) 0%, transparent 70%);
-            bottom: -100px;
-            right: -100px;
-            pointer-events: none;
-        }
-        
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(40px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .logo-container {
+        .login-header {
+            background: linear-gradient(135deg, var(--primary-slate) 0%, var(--primary-cyan) 100%);
+            padding: 48px 40px;
             text-align: center;
-            margin-bottom: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            z-index: 1;
+            color: white;
         }
         
         .logo {
-            width: 120px;
-            height: 120px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            width: 90px;
+            height: auto;
             margin-bottom: 16px;
         }
         
-        .logo img {
-            width: 100%;
-            height: auto;
-        }
-        
-        h1 {
+        .login-header h1 {
             font-size: 28px;
-            color: var(--text-dark);
-            margin-bottom: 12px;
-            text-align: center;
             font-weight: 600;
-            position: relative;
-            z-index: 1;
+            margin-bottom: 8px;
         }
         
-        .subtitle {
-            text-align: center;
-            color: var(--text-medium);
-            margin-bottom: 30px;
+        .login-header p {
             font-size: 15px;
-            font-weight: 400;
-            position: relative;
-            z-index: 1;
+            opacity: 0.95;
+        }
+        
+        .login-body {
+            padding: 40px;
         }
         
         .form-group {
-            margin-bottom: 20px;
-            position: relative;
-            z-index: 1;
+            margin-bottom: 24px;
         }
         
         label {
             display: block;
-            margin-bottom: 10px;
-            color: var(--text-dark);
+            margin-bottom: 8px;
             font-weight: 500;
+            color: var(--text-dark);
             font-size: 14px;
         }
         
-        input[type="text"],
-        input[type="password"] {
+        input {
             width: 100%;
-            padding: 16px 18px;
-            border: 2px solid rgba(158, 202, 214, .4);
-            border-radius: 16px;
+            padding: 14px 16px;
+            border: 2px solid #E8EEF2;
+            border-radius: 12px;
             font-size: 15px;
-            transition: all 0.3s ease;
             font-family: 'Poppins', sans-serif;
-            background: rgba(255, 255, 255, .9);
-            color: var(--text-dark);
+            transition: all .3s;
         }
         
         input:focus {
             outline: none;
-            border-color: var(--primary-slate);
-            background: white;
-            box-shadow: 0 0 0 4px rgba(116, 141, 174, .1);
+            border-color: var(--primary-cyan);
+            box-shadow: 0 0 0 4px rgba(158, 202, 214, .15);
         }
         
-        .btn-login {
+        .btn {
             width: 100%;
-            padding: 16px;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            transition: all .3s;
+        }
+        
+        .btn-primary {
             background: linear-gradient(135deg, var(--primary-slate) 0%, var(--primary-cyan) 100%);
             color: white;
-            border: none;
-            border-radius: 16px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 12px;
-            font-family: 'Poppins', sans-serif;
-            position: relative;
-            z-index: 1;
-            box-shadow: 0 8px 24px rgba(116, 141, 174, .25);
         }
         
-        .btn-login:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 32px rgba(116, 141, 174, .35);
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(116, 141, 174, .3);
         }
         
-        .btn-login:active {
-            transform: translateY(-1px);
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
         }
         
         .error-message {
-            background: linear-gradient(135deg, #FFE4E4 0%, #FFD0D0 100%);
+            background: #FEE;
             color: #C33;
-            padding: 14px 18px;
-            border-radius: 16px;
-            margin-bottom: 24px;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
             font-size: 14px;
             display: none;
-            border-left: 4px solid #C33;
-            position: relative;
-            z-index: 1;
         }
         
         .error-message.show {
             display: block;
-            animation: slideDown 0.3s ease;
         }
         
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .back-home {
+        .home-link {
             text-align: center;
-            margin-top: 24px;
-            position: relative;
-            z-index: 1;
+            margin-top: 20px;
         }
         
-        .back-home a {
-            color: var(--text-medium);
+        .home-link a {
+            color: var(--primary-slate);
             text-decoration: none;
             font-size: 14px;
-            transition: color 0.3s;
         }
         
-        .back-home a:hover {
-            color: var(--primary-slate);
+        .home-link a:hover {
+            text-decoration: underline;
         }
         
-        @media (max-width: 600px) {
-            .login-container {
-                padding: 35px 30px;
+        .change-password-form {
+            display: none;
+        }
+        
+        .change-password-form.show {
+            display: block;
+        }
+        
+        .password-hint {
+            font-size: 13px;
+            color: #666;
+            margin-top: 6px;
+        }
+        
+        @media (max-width: 768px) {
+            .login-header {
+                padding: 32px 24px;
             }
             
-            h1 {
-                font-size: 26px;
+            .login-body {
+                padding: 28px 24px;
             }
             
             .logo {
-                width: 95px;
-                height: 95px;
+                width: 70px;
+            }
+            
+            .login-header h1 {
+                font-size: 24px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-    
     <div class="login-container">
-        <div class="logo-container">
-            <div class="logo">
-                <img src="logo.png" alt="Logo">
-            </div>
+        <div class="login-header">
+            <img src="logo.png" alt="Logo" class="logo">
+            <h1>NEP Vocational Education</h1>
+            <p>Lend A Hand India</p>
         </div>
-        
-        <h1>Welcome Back</h1>
-        <p class="subtitle">Login to access your dashboard</p>
-        
-        <div id="errorMessage" class="error-message"></div>
-        
-        <form id="loginForm">
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" required autocomplete="username">
+
+        <div class="login-body">
+            <!-- Login Form -->
+            <form id="loginForm" class="login-form">
+                <div class="error-message" id="errorMessage"></div>
+                
+                <div class="form-group">
+                    <label for="username">Username (UDISE Code)</label>
+                    <input type="text" id="username" name="username" required autocomplete="username" />
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required autocomplete="current-password" />
+                </div>
+                
+                <button type="submit" class="btn btn-primary" id="loginBtn">
+                    Login
+                </button>
+            </form>
+
+            <!-- Change Password Form (shown on first login) -->
+            <form id="changePasswordForm" class="change-password-form">
+                <div class="error-message" id="changePasswordError"></div>
+                
+                <div style="background: #FFF4E6; padding: 16px; border-radius: 8px; margin-bottom: 24px; border-left: 4px solid #FF9800;">
+                    <strong>First Login:</strong> You must change your password to continue.
+                </div>
+                
+                <div class="form-group">
+                    <label for="currentPassword">Current Password</label>
+                    <input type="password" id="currentPassword" required />
+                </div>
+                
+                <div class="form-group">
+                    <label for="newPassword">New Password</label>
+                    <input type="password" id="newPassword" required minlength="8" />
+                    <p class="password-hint">Minimum 8 characters</p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm New Password</label>
+                    <input type="password" id="confirmPassword" required minlength="8" />
+                </div>
+                
+                <button type="submit" class="btn btn-primary" id="changePasswordBtn">
+                    Change Password & Continue
+                </button>
+            </form>
+
+            <div class="home-link">
+                <a href="index.html">← Back to Home</a>
             </div>
-            
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required autocomplete="current-password">
-            </div>
-            
-            <button type="submit" class="btn-login">Login →</button>
-        </form>
-        
-        <div class="back-home">
-            <a href="index.html">← Back to Home</a>
         </div>
     </div>
 
     <script>
-        // Web App URL for authentication
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw1OrIX0j4E__anedReFAbjVrABpSDfKSSYj7xAgcYGaJVL-AdEpbderriLODCNgdw8Ng/exec';
+        // =============================================
+        // SUPABASE CONFIGURATION
+        // =============================================
+        const SUPABASE_URL = 'https://soesdipnikhtnuuemstm.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNvZXNkaXBuaWtodG51dWVtc3RtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNTM4NDMsImV4cCI6MjA5NDkyOTg0M30._o831V46iMi9y7d_FRZ_ZfZ8nDOuFflLJLiUdpZKzko';
         
-        let users = {};
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
-        // Fallback users in case web app is unavailable
-        const fallbackUsers = {
-            teacher1: { password: 'pass123', role: 'teacher', name: 'Teacher 1' },
-            teacher2: { password: 'pass456', role: 'teacher', name: 'Teacher 2' },
-            officer1: { password: 'off123', role: 'field_officer', name: 'Field Officer 1' }
-        };
-        
+        // DOM elements
         const loginForm = document.getElementById('loginForm');
+        const changePasswordForm = document.getElementById('changePasswordForm');
         const errorMessage = document.getElementById('errorMessage');
+        const changePasswordError = document.getElementById('changePasswordError');
+        const loginBtn = document.getElementById('loginBtn');
+        const changePasswordBtn = document.getElementById('changePasswordBtn');
         
-        // Load users from Google Apps Script Web App
-        async function loadUsersFromWebApp() {
-            try {
-                const response = await fetch(WEB_APP_URL);
-                const data = await response.json();
-                
-                if (data && data.users) {
-                    users = data.users;
-                    console.log('Loaded users from web app');
-                    return true;
-                }
-                return false;
-            } catch (error) {
-                console.error('Error loading from web app:', error);
-                return false;
-            }
-        }
+        let currentUser = null;
         
-        async function initialize() {
-            const loaded = await loadUsersFromWebApp();
-            if (!loaded) {
-                users = fallbackUsers;
-                console.log('Using fallback user database');
-            }
-        }
-        
-        initialize();
-        
-        loginForm.addEventListener('submit', function(e) {
+        // =============================================
+        // LOGIN HANDLER
+        // =============================================
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
             
-            if (users[username]) {
-                const user = users[username];
+            if (!username || !password) {
+                showError('Please enter both username and password');
+                return;
+            }
+            
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Logging in...';
+            
+            try {
+                // Call Supabase function to authenticate
+                const { data, error } = await supabase.rpc('authenticate_user', {
+                    p_username: username,
+                    p_password: password
+                });
                 
-                if (user.password === password) {
+                if (error) throw error;
+                
+                if (data && data.length > 0) {
+                    const user = data[0];
+                    currentUser = user;
+                    
+                    // Log successful login
+                    await supabase.rpc('log_login', {
+                        p_user_id: user.user_id,
+                        p_username: username,
+                        p_success: true
+                    });
+                    
+                    // Store user info in session
                     sessionStorage.setItem('loggedIn', 'true');
-                    sessionStorage.setItem('username', username);
+                    sessionStorage.setItem('userId', user.user_id);
+                    sessionStorage.setItem('username', user.username);
                     sessionStorage.setItem('userRole', user.role);
-                    sessionStorage.setItem('userName', user.name);
-                    sessionStorage.setItem('powerbiUrl', user.powerbi_url || '');
+                    sessionStorage.setItem('userName', user.full_name);
+                    sessionStorage.setItem('udiseCode', user.udise_code || '');
                     sessionStorage.setItem('schoolName', user.school_name || '');
                     
-                    if (user.role === 'teacher') {
-                        window.location.href = 'teacher-space.html';
+                    // Check if password change required
+                    if (user.must_change_password) {
+                        showChangePasswordForm();
                     } else {
-                        window.location.href = 'field-officer-space.html';
+                        redirectToDashboard(user.role);
                     }
                 } else {
-                    showError('Invalid password. Please try again.');
+                    showError('Invalid username or password');
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = 'Login';
                 }
-            } else {
-                showError('Username not found. Please check your username and try again.');
+            } catch (error) {
+                console.error('Login error:', error);
+                showError('Login failed. Please try again.');
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Login';
             }
         });
         
+        // =============================================
+        // CHANGE PASSWORD HANDLER
+        // =============================================
+        changePasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // Validation
+            if (newPassword.length < 8) {
+                showChangePasswordError('Password must be at least 8 characters');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                showChangePasswordError('New passwords do not match');
+                return;
+            }
+            
+            if (currentPassword === newPassword) {
+                showChangePasswordError('New password must be different from current password');
+                return;
+            }
+            
+            changePasswordBtn.disabled = true;
+            changePasswordBtn.textContent = 'Changing Password...';
+            
+            try {
+                const { data, error } = await supabase.rpc('change_password', {
+                    p_user_id: currentUser.user_id,
+                    p_old_password: currentPassword,
+                    p_new_password: newPassword
+                });
+                
+                if (error) throw error;
+                
+                if (data === true) {
+                    alert('Password changed successfully!');
+                    redirectToDashboard(currentUser.role);
+                } else {
+                    showChangePasswordError('Current password is incorrect');
+                    changePasswordBtn.disabled = false;
+                    changePasswordBtn.textContent = 'Change Password & Continue';
+                }
+            } catch (error) {
+                console.error('Change password error:', error);
+                showChangePasswordError('Failed to change password. Please try again.');
+                changePasswordBtn.disabled = false;
+                changePasswordBtn.textContent = 'Change Password & Continue';
+            }
+        });
+        
+        // =============================================
+        // HELPER FUNCTIONS
+        // =============================================
         function showError(message) {
             errorMessage.textContent = message;
             errorMessage.classList.add('show');
@@ -392,13 +400,36 @@
             }, 5000);
         }
         
+        function showChangePasswordError(message) {
+            changePasswordError.textContent = message;
+            changePasswordError.classList.add('show');
+            setTimeout(() => {
+                changePasswordError.classList.remove('show');
+            }, 5000);
+        }
+        
+        function showChangePasswordForm() {
+            loginForm.style.display = 'none';
+            changePasswordForm.classList.add('show');
+            document.getElementById('currentPassword').value = document.getElementById('password').value;
+        }
+        
+        function redirectToDashboard(role) {
+            if (role === 'admin') {
+                window.location.href = 'admin-panel.html';
+            } else if (role === 'teacher') {
+                window.location.href = 'teacher-space.html';
+            } else if (role === 'field_officer') {
+                window.location.href = 'field-officer-space.html';
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
+        
+        // Check if already logged in
         if (sessionStorage.getItem('loggedIn') === 'true') {
             const role = sessionStorage.getItem('userRole');
-            if (role === 'teacher') {
-                window.location.href = 'teacher-space.html';
-            } else {
-                window.location.href = 'field-officer-space.html';
-            }
+            redirectToDashboard(role);
         }
     </script>
 </body>
