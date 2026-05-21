@@ -465,7 +465,8 @@
         const SUPABASE_URL = 'https://soesdipnikhtnuuemstm.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNvZXNkaXBuaWtodG51dWVtc3RtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNTM4NDMsImV4cCI6MjA5NDkyOTg0M30._o831V46iMi9y7d_FRZ_ZfZ8nDOuFflLJLiUdpZKzko';
         
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const { createClient } = window.supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
         // Check authentication
         if (sessionStorage.getItem('loggedIn') !== 'true' || sessionStorage.getItem('userRole') !== 'admin') {
@@ -482,7 +483,7 @@
         // =============================================
         async function loadUsers() {
             try {
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('users')
                     .select('*')
                     .order('created_at', { ascending: false });
@@ -593,7 +594,7 @@
             const password = document.getElementById('newPassword').value;
             
             try {
-                const { data, error } = await supabase.rpc('create_user_admin', {
+                const { data, error } = await supabaseClient.rpc('create_user_admin', {
                     p_username: username,
                     p_email: email || null,
                     p_password: password,
@@ -624,7 +625,7 @@
             }
             
             try {
-                const { error } = await supabase
+                const { error } = await supabaseClient
                     .from('users')
                     .update({ is_active: newStatus })
                     .eq('id', userId);
@@ -653,7 +654,7 @@
             }
             
             try {
-                const { error } = await supabase.rpc('reset_user_password', {
+                const { error } = await supabaseClient.rpc('reset_user_password', {
                     p_user_id: userId,
                     p_new_password: newPassword
                 });
