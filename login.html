@@ -258,7 +258,8 @@
         const SUPABASE_URL = 'https://soesdipnikhtnuuemstm.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNvZXNkaXBuaWtodG51dWVtc3RtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNTM4NDMsImV4cCI6MjA5NDkyOTg0M30._o831V46iMi9y7d_FRZ_ZfZ8nDOuFflLJLiUdpZKzko';
         
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const { createClient } = window.supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
         // DOM elements
         const loginForm = document.getElementById('loginForm');
@@ -289,7 +290,7 @@
             
             try {
                 // Call Supabase function to authenticate
-                const { data, error } = await supabase.rpc('authenticate_user', {
+                const { data, error } = await supabaseClient.rpc('authenticate_user', {
                     p_username: username,
                     p_password: password
                 });
@@ -301,7 +302,7 @@
                     currentUser = user;
                     
                     // Log successful login
-                    await supabase.rpc('log_login', {
+                    await supabaseClient.rpc('log_login', {
                         p_user_id: user.user_id,
                         p_username: username,
                         p_success: true
@@ -365,7 +366,7 @@
             changePasswordBtn.textContent = 'Changing Password...';
             
             try {
-                const { data, error } = await supabase.rpc('change_password', {
+                const { data, error } = await supabaseClient.rpc('change_password', {
                     p_user_id: currentUser.user_id,
                     p_old_password: currentPassword,
                     p_new_password: newPassword
