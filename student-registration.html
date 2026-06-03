@@ -3,849 +3,1007 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Registration - Lend A Hand India</title>
+    <title>Student Registration</title>
     <link rel="icon" type="image/png" href="logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
-            --cyan: #9ECAD6;
+            --cyan:  #9ECAD6;
             --slate: #748DAE;
-            --rose: #F5CBCB;
             --blush: #FFEAEA;
-            --dark: #3A4F5C;
-            --mid: #5A6F7C;
+            --dark:  #3A4F5C;
+            --mid:   #5A6F7C;
+            --border:#E0E0E0;
+            --header-bg: #F8F9FA;
+            --row-hover: #F0F7FF;
+            --selected: #E8F0FE;
+            --green: #34A853;
+            --blue:  #1A73E8;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(145deg, var(--blush) 0%, #fff 40%, var(--blush) 100%);
-            min-height: 100vh;
+            background: #F5F5F5;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
-        /* HEADER */
-        .header {
-            background: linear-gradient(135deg, var(--slate), var(--cyan));
-            color: white;
-            padding: 20px 40px;
+        /* ── TOP BAR (like Google Sheets top) ── */
+        .topbar {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            padding: 0 16px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 4px 24px rgba(116,141,174,.25);
-        }
-
-        .header-left { display: flex; align-items: center; gap: 16px; }
-
-        .back-btn {
-            background: rgba(255,255,255,.2);
-            color: white;
-            padding: 8px 18px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-size: 13px;
-            border: 1px solid rgba(255,255,255,.3);
-            transition: all .2s;
-        }
-        .back-btn:hover { background: rgba(255,255,255,.3); }
-
-        .header h1 { font-size: 22px; font-weight: 600; }
-        .header p { font-size: 13px; opacity: .85; }
-
-        .logout-btn {
-            background: rgba(255,255,255,.2);
-            color: white;
-            padding: 8px 20px;
-            border-radius: 50px;
-            border: 1px solid rgba(255,255,255,.3);
-            font-size: 13px;
-            cursor: pointer;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        /* MAIN */
-        .main { padding: 32px 40px; max-width: 1400px; margin: 0 auto; }
-
-        /* STATS */
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 16px;
-            margin-bottom: 28px;
-        }
-
-        .stat {
-            background: white;
-            border-radius: 14px;
-            padding: 18px 22px;
-            box-shadow: 0 4px 16px rgba(116,141,174,.1);
-        }
-
-        .stat-value { font-size: 32px; font-weight: 700; color: var(--slate); }
-        .stat-label { font-size: 12px; color: var(--mid); margin-top: 2px; }
-
-        /* TABS */
-        .tabs {
-            display: flex;
-            gap: 4px;
-            margin-bottom: 20px;
-        }
-
-        .tab {
-            padding: 10px 24px;
-            border-radius: 8px 8px 0 0;
-            border: none;
-            font-family: 'Poppins', sans-serif;
-            font-size: 14px;
-            cursor: pointer;
-            background: rgba(116,141,174,.1);
-            color: var(--mid);
-            font-weight: 500;
-            transition: all .2s;
-        }
-
-        .tab.active {
-            background: white;
-            color: var(--slate);
-            box-shadow: 0 -2px 8px rgba(116,141,174,.1);
-        }
-
-        /* PANEL */
-        .panel {
-            background: white;
-            border-radius: 0 16px 16px 16px;
-            box-shadow: 0 4px 20px rgba(116,141,174,.12);
-            padding: 28px;
-            margin-bottom: 24px;
-        }
-
-        .panel-title {
-            font-size: 17px;
-            font-weight: 600;
-            color: var(--dark);
-            margin-bottom: 6px;
-        }
-
-        .panel-subtitle {
-            font-size: 13px;
-            color: var(--mid);
-            margin-bottom: 20px;
-        }
-
-        /* PASTE AREA */
-        .paste-steps {
-            background: #F8FAFB;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .paste-steps h3 {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--dark);
-            margin-bottom: 12px;
-        }
-
-        .steps {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 12px;
-        }
-
-        .step {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-        }
-
-        .step-num {
-            background: var(--slate);
-            color: white;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: 600;
+            height: 56px;
             flex-shrink: 0;
         }
 
-        .step-text { font-size: 13px; color: var(--dark); line-height: 1.5; }
-
-        .grade-select-row {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-        }
-
-        .grade-select-row label {
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--dark);
-        }
-
-        select, input[type="text"] {
-            padding: 9px 12px;
-            border: 2px solid #E8EEF2;
-            border-radius: 8px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 13px;
-            color: var(--dark);
-        }
-
-        select:focus, input[type="text"]:focus {
-            outline: none;
-            border-color: var(--cyan);
-        }
-
-        .paste-area {
-            width: 100%;
-            min-height: 180px;
-            padding: 14px;
-            border: 2px dashed var(--cyan);
-            border-radius: 12px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 13px;
-            color: var(--dark);
-            resize: vertical;
-            background: #FAFEFF;
-        }
-
-        .paste-area:focus { outline: none; border-color: var(--slate); }
-        .paste-area::placeholder { color: #AAB; }
-
-        .paste-hint {
-            font-size: 12px;
-            color: var(--mid);
-            margin-top: 8px;
-        }
-
-        /* BUTTONS */
-        .btn-row {
-            display: flex;
-            gap: 12px;
-            margin-top: 16px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 10px 24px;
-            border: none;
-            border-radius: 8px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all .2s;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--slate), var(--cyan));
-            color: white;
-        }
-
-        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(116,141,174,.3); }
-        .btn-primary:disabled { opacity: .6; cursor: not-allowed; transform: none; }
-
-        .btn-secondary {
-            background: #F0F4F8;
-            color: var(--slate);
-        }
-
-        .btn-danger {
-            background: #FFEBEE;
-            color: #C62828;
-        }
-
-        /* PREVIEW TABLE */
-        .preview-section { margin-top: 20px; }
-        .preview-title { font-size: 14px; font-weight: 600; color: var(--dark); margin-bottom: 10px; }
-
-        .msg {
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 13px;
-            margin-bottom: 16px;
-            display: none;
-        }
-
-        .msg.show { display: block; }
-        .msg-success { background: #E8F5E9; color: #2E7D32; }
-        .msg-error   { background: #FFEBEE; color: #C62828; }
-        .msg-info    { background: #E3F2FD; color: #1565C0; }
-
-        /* STUDENT TABLE */
-        .filter-row {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .search-box {
-            padding: 9px 14px;
-            border: 2px solid #E8EEF2;
-            border-radius: 8px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 13px;
-            min-width: 240px;
-        }
-
-        .search-box:focus { outline: none; border-color: var(--cyan); }
-
-        .table-scroll { overflow-x: auto; }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-
-        th {
-            background: var(--slate);
-            color: white;
-            padding: 11px 14px;
-            text-align: left;
-            font-weight: 500;
-            white-space: nowrap;
-        }
-
-        td { padding: 10px 14px; border-bottom: 1px solid #F0F4F8; color: var(--dark); }
-        tr:hover td { background: #F8FAFB; }
-
-        .badge {
-            display: inline-block;
-            padding: 2px 10px;
-            border-radius: 10px;
-            font-size: 11px;
-            font-weight: 500;
-        }
-
-        .badge-male   { background: #E3F2FD; color: #1565C0; }
-        .badge-female { background: #FCE4EC; color: #880E4F; }
-
-        .del-btn {
+        .back-btn {
             background: none;
             border: none;
-            color: #C62828;
             cursor: pointer;
-            font-size: 16px;
-            padding: 2px 6px;
-        }
-
-        .del-btn:hover { background: #FFEBEE; border-radius: 4px; }
-
-        .empty-state {
-            text-align: center;
-            padding: 48px;
             color: var(--mid);
+            font-size: 20px;
+            padding: 6px;
+            border-radius: 50%;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            transition: background .15s;
+        }
+        .back-btn:hover { background: #F0F0F0; }
+
+        .sheet-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--slate), var(--cyan));
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
         }
 
-        .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+        .doc-info { flex: 1; min-width: 0; }
+        .doc-title { font-size: 17px; font-weight: 600; color: #202124; }
+        .doc-sub   { font-size: 11px; color: #5F6368; }
 
-        /* EXPORT */
-        .export-btn {
-            background: #E8F5E9;
-            color: #2E7D32;
+        .topbar-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+
+        .tb-btn {
+            padding: 7px 16px;
+            border-radius: 4px;
             border: none;
-            padding: 8px 18px;
-            border-radius: 8px;
             font-family: 'Poppins', sans-serif;
             font-size: 13px;
             cursor: pointer;
             font-weight: 500;
+            transition: all .15s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        @media (max-width: 768px) {
-            .header { padding: 16px 20px; flex-direction: column; gap: 10px; }
-            .main { padding: 16px; }
-            .stats { grid-template-columns: repeat(2, 1fr); }
+        .tb-btn-save {
+            background: var(--blue);
+            color: white;
         }
+        .tb-btn-save:hover { background: #1558B0; }
+        .tb-btn-save:disabled { background: #AAB; cursor: not-allowed; }
+
+        .tb-btn-outline {
+            background: white;
+            color: var(--dark);
+            border: 1px solid var(--border);
+        }
+        .tb-btn-outline:hover { background: #F0F0F0; }
+
+        .logout-link {
+            font-size: 13px;
+            color: #C62828;
+            cursor: pointer;
+            padding: 7px 12px;
+            border-radius: 4px;
+        }
+        .logout-link:hover { background: #FFEBEE; }
+
+        /* ── MENU BAR (like Google Sheets menus) ── */
+        .menubar {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            padding: 0 60px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            height: 36px;
+            flex-shrink: 0;
+        }
+
+        .menu-item {
+            padding: 4px 12px;
+            font-size: 13px;
+            color: #3C4043;
+            cursor: pointer;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+        .menu-item:hover { background: #F0F0F0; }
+
+        /* ── SHEET TABS (bottom Google Sheets style) ── */
+        .sheet-bottom {
+            background: #F8F9FA;
+            border-top: 1px solid var(--border);
+            padding: 0 8px;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            height: 40px;
+            flex-shrink: 0;
+            order: 3;
+        }
+
+        .add-sheet-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            color: #5F6368;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .add-sheet-btn:hover { background: #E8EAED; }
+
+        .sheet-tab {
+            padding: 0 20px;
+            height: 32px;
+            border: 1px solid transparent;
+            border-bottom: none;
+            border-radius: 4px 4px 0 0;
+            background: none;
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            cursor: pointer;
+            color: #3C4043;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all .15s;
+            position: relative;
+            bottom: -1px;
+        }
+
+        .sheet-tab:hover { background: #E8EAED; }
+
+        .sheet-tab.active {
+            background: white;
+            border-color: var(--border);
+            color: var(--blue);
+            font-weight: 600;
+            border-bottom-color: white;
+        }
+
+        .tab-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        /* ── FORMULA BAR ── */
+        .formula-bar {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            padding: 0 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            height: 34px;
+            flex-shrink: 0;
+        }
+
+        .cell-ref {
+            width: 80px;
+            border: 1px solid var(--border);
+            border-radius: 2px;
+            padding: 2px 6px;
+            font-size: 12px;
+            font-family: 'Poppins', sans-serif;
+            color: var(--dark);
+            text-align: center;
+        }
+
+        .formula-divider {
+            width: 1px;
+            height: 20px;
+            background: var(--border);
+        }
+
+        .formula-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 13px;
+            font-family: 'Poppins', sans-serif;
+            color: var(--dark);
+        }
+
+        /* ── SPREADSHEET AREA ── */
+        .sheet-area {
+            flex: 1;
+            overflow: auto;
+            background: white;
+            order: 2;
+        }
+
+        /* ── THE GRID ── */
+        .grid-wrapper {
+            min-width: max-content;
+        }
+
+        table.grid {
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        /* Row number column */
+        .grid th.row-num, .grid td.row-num {
+            width: 46px;
+            min-width: 46px;
+            background: #F8F9FA;
+            border-right: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            text-align: center;
+            font-size: 12px;
+            color: #5F6368;
+            font-weight: 400;
+            padding: 0;
+            user-select: none;
+            position: sticky;
+            left: 0;
+            z-index: 2;
+        }
+
+        /* Column headers */
+        .grid thead th {
+            background: #F8F9FA;
+            border-right: 1px solid var(--border);
+            border-bottom: 2px solid #BDBDBD;
+            font-size: 12px;
+            font-weight: 600;
+            color: #3C4043;
+            padding: 6px 8px;
+            text-align: left;
+            white-space: nowrap;
+            user-select: none;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .grid thead th.required-col::after {
+            content: ' *';
+            color: #C62828;
+        }
+
+        /* Data cells */
+        .grid td {
+            border-right: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            padding: 0;
+            height: 26px;
+            vertical-align: middle;
+        }
+
+        .grid td.selected {
+            background: var(--selected);
+            outline: 2px solid var(--blue);
+            outline-offset: -2px;
+        }
+
+        .grid td input, .grid td select {
+            width: 100%;
+            height: 100%;
+            border: none;
+            outline: none;
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            padding: 0 6px;
+            background: transparent;
+            color: #202124;
+        }
+
+        .grid td select { cursor: pointer; background: white; }
+
+        .grid td:hover { background: var(--row-hover); }
+        .grid td input:focus, .grid td select:focus {
+            background: white;
+            outline: 2px solid var(--blue);
+            outline-offset: -2px;
+        }
+
+        /* Alternating row color */
+        .grid tbody tr:nth-child(even) td:not(.row-num) {
+            background: #FAFAFA;
+        }
+        .grid tbody tr:nth-child(even) td input {
+            background: transparent;
+        }
+        .grid tbody tr:nth-child(even) td:hover { background: var(--row-hover); }
+
+        /* Column widths */
+        .col-srno   { width: 60px;  min-width: 60px; }
+        .col-fname  { width: 140px; min-width: 120px; }
+        .col-mname  { width: 130px; min-width: 100px; }
+        .col-lname  { width: 140px; min-width: 120px; }
+        .col-full   { width: 220px; min-width: 180px; }
+        .col-gender { width: 90px;  min-width: 80px; }
+        .col-mother { width: 130px; min-width: 100px; }
+        .col-father { width: 130px; min-width: 100px; }
+        .col-dob    { width: 130px; min-width: 110px; }
+
+        /* Status bar */
+        .status-bar {
+            background: #F8F9FA;
+            border-top: 1px solid var(--border);
+            padding: 3px 12px;
+            font-size: 12px;
+            color: #5F6368;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-shrink: 0;
+            order: 4;
+        }
+
+        .status-saved   { color: var(--green); font-weight: 500; }
+        .status-unsaved { color: #E65100; font-weight: 500; }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: #323232;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 13px;
+            opacity: 0;
+            transition: all .3s;
+            z-index: 100;
+            pointer-events: none;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .toast.success { background: var(--green); }
+        .toast.error   { background: #D32F2F; }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(255,255,255,.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            display: none;
+        }
+        .loading-overlay.show { display: flex; }
+        .spinner {
+            width: 32px; height: 32px;
+            border: 3px solid #EEE;
+            border-top-color: var(--blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <div class="header-left">
-        <a href="teacher-space.html" class="back-btn">← Back</a>
-        <div>
-            <h1 id="schoolTitle">Student Registration</h1>
-            <p id="udiseLabel"></p>
-        </div>
-    </div>
-    <button class="logout-btn" onclick="logout()">Logout</button>
+<!-- LOADING -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
 </div>
 
-<div class="main">
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
 
-    <!-- Stats -->
-    <div class="stats">
-        <div class="stat">
-            <div class="stat-value" id="totalStudents">—</div>
-            <div class="stat-label">Total Students</div>
-        </div>
-        <div class="stat">
-            <div class="stat-value" id="grade6Count">—</div>
-            <div class="stat-label">Grade 6</div>
-        </div>
-        <div class="stat">
-            <div class="stat-value" id="grade7Count">—</div>
-            <div class="stat-label">Grade 7</div>
-        </div>
-        <div class="stat">
-            <div class="stat-value" id="grade8Count">—</div>
-            <div class="stat-label">Grade 8</div>
-        </div>
+<!-- TOP BAR -->
+<div class="topbar">
+    <a href="teacher-space.html" class="back-btn" title="Back">←</a>
+    <div class="sheet-icon">👨‍🎓</div>
+    <div class="doc-info">
+        <div class="doc-title" id="docTitle">Student Registration</div>
+        <div class="doc-sub" id="docSub">Loading...</div>
     </div>
-
-    <!-- Tabs -->
-    <div class="tabs">
-        <button class="tab active" onclick="showTab('paste')">📋 Paste from Excel</button>
-        <button class="tab" onclick="showTab('view')">👥 View Students</button>
+    <div class="topbar-actions">
+        <button class="tb-btn tb-btn-outline" onclick="addRow()">+ Add Row</button>
+        <button class="tb-btn tb-btn-outline" onclick="deleteSelectedRow()">🗑 Delete Row</button>
+        <button class="tb-btn tb-btn-save" id="saveBtn" onclick="saveSheet()">💾 Save</button>
+        <span class="logout-link" onclick="logout()">Logout</span>
     </div>
+</div>
 
-    <!-- PASTE TAB -->
-    <div id="pasteTab" class="panel">
-        <div class="panel-title">Import Students from Excel</div>
-        <div class="panel-subtitle">Copy your student rows from Excel and paste below — it's fast and easy!</div>
+<!-- MENU BAR -->
+<div class="menubar">
+    <span class="menu-item" onclick="addRow()">Insert Row</span>
+    <span class="menu-item" onclick="clearSheet()">Clear Sheet</span>
+    <span class="menu-item" onclick="exportCSV()">Export CSV</span>
+    <span class="menu-item" onclick="pasteHelp()">Paste from Excel</span>
+</div>
 
-        <!-- How to steps -->
-        <div class="paste-steps">
-            <h3>📌 How to paste from Excel:</h3>
-            <div class="steps">
-                <div class="step">
-                    <div class="step-num">1</div>
-                    <div class="step-text">Open your student Excel file (Grade_6, Grade_7 etc. sheet)</div>
-                </div>
-                <div class="step">
-                    <div class="step-num">2</div>
-                    <div class="step-text">Select the data rows below the header (from Sr No to Grade column)</div>
-                </div>
-                <div class="step">
-                    <div class="step-num">3</div>
-                    <div class="step-text">Press <strong>Ctrl+C</strong> to copy</div>
-                </div>
-                <div class="step">
-                    <div class="step-num">4</div>
-                    <div class="step-text">Select the Grade below, click in the text area, press <strong>Ctrl+V</strong> to paste</div>
-                </div>
-                <div class="step">
-                    <div class="step-num">5</div>
-                    <div class="step-text">Click <strong>"Preview & Import"</strong> to save!</div>
-                </div>
-            </div>
-        </div>
+<!-- FORMULA BAR -->
+<div class="formula-bar">
+    <input class="cell-ref" id="cellRef" value="A1" readonly>
+    <div class="formula-divider"></div>
+    <input class="formula-input" id="formulaBar" placeholder="Click a cell to edit..." readonly>
+</div>
 
-        <!-- Grade selector -->
-        <div class="grade-select-row">
-            <label>Grade being pasted:</label>
-            <select id="gradeSelect">
-                <option value="6">Grade 6</option>
-                <option value="7">Grade 7</option>
-                <option value="8">Grade 8</option>
-            </select>
-        </div>
-
-        <!-- Messages -->
-        <div class="msg msg-success" id="pasteSuccess"></div>
-        <div class="msg msg-error"   id="pasteError"></div>
-        <div class="msg msg-info"    id="pasteInfo"></div>
-
-        <!-- Paste area -->
-        <textarea
-            class="paste-area"
-            id="pasteArea"
-            placeholder="Paste your Excel data here (Ctrl+V)...
-
-Example of what will be pasted:
-1    AARADHYA    JITENDRA    SHIRALKAR    AARADHYA JITENDRA SHIRALKAR    Female    PRANALI    JITENDRA    03/01/2014    6
-2    AASTHA      RAJESH      JADHAV       AASTHA RAJESH JADHAV           Female    USHA       RAJESH      15/11/2013    6
-..."></textarea>
-
-        <div class="paste-hint">
-            ✅ Columns expected: Sr No | First Name | Middle Name | Last Name | Full Name | Gender | Mother Name | Father Name | Date of Birth | Grade
-        </div>
-
-        <div class="btn-row">
-            <button class="btn btn-primary" onclick="previewPaste()">👀 Preview & Import</button>
-            <button class="btn btn-secondary" onclick="clearPaste()">🗑 Clear</button>
-        </div>
-
-        <!-- Preview section -->
-        <div class="preview-section" id="previewSection" style="display:none;">
-            <div class="preview-title" id="previewTitle"></div>
-            <div class="table-scroll">
-                <div id="previewTable"></div>
-            </div>
-            <div class="btn-row">
-                <button class="btn btn-primary" id="confirmImportBtn" onclick="confirmImport()">✅ Confirm Import</button>
-                <button class="btn btn-secondary" onclick="cancelPreview()">Cancel</button>
-            </div>
-        </div>
+<!-- SPREADSHEET -->
+<div class="sheet-area" id="sheetArea">
+    <div class="grid-wrapper">
+        <table class="grid" id="mainGrid">
+            <thead>
+                <tr>
+                    <th class="row-num">⠿</th>
+                    <th class="col-srno">Sr No</th>
+                    <th class="col-fname required-col">First Name</th>
+                    <th class="col-mname">Middle Name</th>
+                    <th class="col-lname required-col">Last Name</th>
+                    <th class="col-full">Full Name</th>
+                    <th class="col-gender">Gender</th>
+                    <th class="col-mother">Mother Name</th>
+                    <th class="col-father">Father Name</th>
+                    <th class="col-dob">Date of Birth</th>
+                </tr>
+            </thead>
+            <tbody id="gridBody"></tbody>
+        </table>
     </div>
+</div>
 
-    <!-- VIEW TAB -->
-    <div id="viewTab" class="panel" style="display:none;">
-        <div class="filter-row">
-            <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search by name..." oninput="filterTable()">
-            <select id="gradeFilter" onchange="filterTable()">
-                <option value="">All Grades</option>
-                <option value="6">Grade 6</option>
-                <option value="7">Grade 7</option>
-                <option value="8">Grade 8</option>
-            </select>
-            <select id="genderFilter" onchange="filterTable()">
-                <option value="">All Genders</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-            </select>
-            <button class="export-btn" onclick="exportCSV()">⬇ Export CSV</button>
-        </div>
+<!-- SHEET TABS -->
+<div class="sheet-bottom">
+    <button class="add-sheet-btn" title="Add grade" disabled>+</button>
+    <button class="sheet-tab active" id="tab6" onclick="switchGrade(6)">
+        <span class="tab-dot" style="background:#4285F4"></span> Grade 6
+    </button>
+    <button class="sheet-tab" id="tab7" onclick="switchGrade(7)">
+        <span class="tab-dot" style="background:#34A853"></span> Grade 7
+    </button>
+    <button class="sheet-tab" id="tab8" onclick="switchGrade(8)">
+        <span class="tab-dot" style="background:#FBBC04"></span> Grade 8
+    </button>
+</div>
 
-        <div class="msg msg-success" id="viewSuccess"></div>
-        <div class="msg msg-error"   id="viewError"></div>
-
-        <div class="table-scroll">
-            <div id="studentTableContainer">
-                <div class="empty-state">
-                    <div class="icon">👥</div>
-                    <p>Loading students...</p>
-                </div>
-            </div>
-        </div>
-    </div>
+<!-- STATUS BAR -->
+<div class="status-bar">
+    <span id="statusText">Ready</span>
+    <span id="rowCountText"></span>
+    <span id="saveStatus"></span>
 </div>
 
 <script>
-    // =============================================
-    // SUPABASE CONFIG
-    // =============================================
-    const SUPABASE_URL     = 'https://soesdipnikhtnuuemstm.supabase.co';
+    // ─────────────────────────────
+    // SUPABASE
+    // ─────────────────────────────
+    const SUPABASE_URL      = 'https://soesdipnikhtnuuemstm.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNvZXNkaXBuaWtodG51dWVtc3RtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNTM4NDMsImV4cCI6MjA5NDkyOTg0M30._o831V46iMi9y7d_FRZ_ZfZ8nDOuFflLJLiUdpZKzko';
-
     const { createClient } = window.supabase;
-    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // =============================================
-    // AUTH CHECK
-    // =============================================
-    if (sessionStorage.getItem('loggedIn') !== 'true') {
-        window.location.href = 'login.html';
-    }
+    // ─────────────────────────────
+    // AUTH
+    // ─────────────────────────────
+    if (sessionStorage.getItem('loggedIn') !== 'true') window.location.href = 'login.html';
+    const USERNAME    = sessionStorage.getItem('username')   || '';
+    const SCHOOL_NAME = sessionStorage.getItem('schoolName') || '';
 
-    const username   = sessionStorage.getItem('username')   || '';
-    const schoolName = sessionStorage.getItem('schoolName') || '';
-    const userName   = sessionStorage.getItem('userName')   || '';
+    document.getElementById('docTitle').textContent = SCHOOL_NAME || 'Student Registration';
+    document.getElementById('docSub').textContent   = 'UDISE: ' + USERNAME + ' · Students (Grade 6-8)';
 
-    document.getElementById('schoolTitle').textContent = schoolName || 'Student Registration';
-    document.getElementById('udiseLabel').textContent  = username ? 'UDISE: ' + username : '';
+    // ─────────────────────────────
+    // STATE
+    // ─────────────────────────────
+    let currentGrade  = 6;
+    let gradeData     = { 6: [], 7: [], 8: [] };  // rows per grade
+    let selectedRow   = null;
+    let unsaved       = false;
 
-    let allStudents  = [];
-    let parsedRows   = [];
+    const COLS = ['sr_no','first_name','middle_name','last_name','full_name','gender','mother_name','father_name','date_of_birth'];
+    const DEFAULT_ROWS = 30;
 
-    // Load students on start
-    loadStudents();
-
-    // =============================================
-    // TABS
-    // =============================================
-    function showTab(tab) {
-        document.getElementById('pasteTab').style.display = tab === 'paste' ? 'block' : 'none';
-        document.getElementById('viewTab').style.display  = tab === 'view'  ? 'block' : 'none';
-        document.querySelectorAll('.tab').forEach((t, i) => {
-            t.classList.toggle('active', (i === 0 && tab === 'paste') || (i === 1 && tab === 'view'));
-        });
-        if (tab === 'view') loadStudents();
-    }
-
-    // =============================================
-    // LOAD STUDENTS FROM SUPABASE
-    // =============================================
-    async function loadStudents() {
+    // ─────────────────────────────
+    // INIT
+    // ─────────────────────────────
+    (async function init() {
+        showLoading(true);
         try {
-            const { data, error } = await supabaseClient
+            const { data, error } = await sb
                 .from('students')
                 .select('*')
-                .eq('udise_code', username)
-                .order('grade')
-                .order('sr_no');
+                .eq('udise_code', USERNAME)
+                .order('grade').order('sr_no');
 
             if (error) throw error;
 
-            allStudents = data || [];
-            updateStats(allStudents);
-            renderStudentTable(allStudents);
+            // Distribute into grade buckets
+            [6, 7, 8].forEach(g => {
+                gradeData[g] = (data || [])
+                    .filter(r => String(r.grade) === String(g))
+                    .map(r => ({
+                        id:            r.id,
+                        sr_no:         r.sr_no || '',
+                        first_name:    r.first_name || '',
+                        middle_name:   r.middle_name || '',
+                        last_name:     r.last_name || '',
+                        full_name:     r.full_name || '',
+                        gender:        r.gender || '',
+                        mother_name:   r.mother_name || '',
+                        father_name:   r.father_name || '',
+                        date_of_birth: r.date_of_birth || ''
+                    }));
+            });
 
-        } catch (err) {
-            console.error(err);
-            document.getElementById('studentTableContainer').innerHTML = `
-                <div class="empty-state">
-                    <div class="icon">⚠️</div>
-                    <p>Could not load students. Make sure the SQL table was created in Supabase.</p>
-                </div>`;
+            renderGrid(currentGrade);
+        } catch (e) {
+            toast('Could not load data: ' + e.message, 'error');
+        } finally {
+            showLoading(false);
+        }
+    })();
+
+    // ─────────────────────────────
+    // RENDER GRID
+    // ─────────────────────────────
+    function renderGrid(grade) {
+        const rows = gradeData[grade];
+        // Pad to at least DEFAULT_ROWS
+        const total = Math.max(rows.length + 5, DEFAULT_ROWS);
+        const body  = document.getElementById('gridBody');
+        body.innerHTML = '';
+
+        for (let i = 0; i < total; i++) {
+            const r = rows[i] || {};
+            body.appendChild(makeRow(i, r));
+        }
+
+        updateStatus();
+        setSaveStatus(false);
+    }
+
+    // ─────────────────────────────
+    // MAKE A GRID ROW
+    // ─────────────────────────────
+    function makeRow(idx, data) {
+        const tr = document.createElement('tr');
+        tr.dataset.idx = idx;
+
+        // Row number
+        const num = document.createElement('td');
+        num.className = 'row-num';
+        num.textContent = idx + 1;
+        num.onclick = () => selectRow(idx);
+        tr.appendChild(num);
+
+        // Sr No
+        tr.appendChild(makeCell(idx, 'sr_no', data.sr_no || (idx + 1), 'number'));
+
+        // First Name
+        tr.appendChild(makeCell(idx, 'first_name', data.first_name || '', 'text'));
+
+        // Middle Name
+        tr.appendChild(makeCell(idx, 'middle_name', data.middle_name || '', 'text'));
+
+        // Last Name
+        tr.appendChild(makeCell(idx, 'last_name', data.last_name || '', 'text'));
+
+        // Full Name (auto-filled)
+        tr.appendChild(makeCell(idx, 'full_name', data.full_name || '', 'text'));
+
+        // Gender (dropdown)
+        tr.appendChild(makeGenderCell(idx, data.gender || ''));
+
+        // Mother Name
+        tr.appendChild(makeCell(idx, 'mother_name', data.mother_name || '', 'text'));
+
+        // Father Name
+        tr.appendChild(makeCell(idx, 'father_name', data.father_name || '', 'text'));
+
+        // Date of Birth
+        tr.appendChild(makeCell(idx, 'date_of_birth', data.date_of_birth || '', 'text', 'DD/MM/YYYY'));
+
+        return tr;
+    }
+
+    function makeCell(idx, field, value, type, placeholder) {
+        const td  = document.createElement('td');
+        const inp = document.createElement('input');
+        inp.type        = 'text';
+        inp.value       = value;
+        inp.placeholder = placeholder || '';
+        inp.dataset.field = field;
+        inp.dataset.idx   = idx;
+
+        inp.onfocus = () => {
+            selectRow(idx);
+            document.getElementById('cellRef').value    = colLetter(field) + (idx + 1);
+            document.getElementById('formulaBar').value = inp.value;
+        };
+
+        inp.oninput = () => {
+            setCell(idx, field, inp.value);
+            document.getElementById('formulaBar').value = inp.value;
+            // Auto-fill Full Name
+            if (['first_name','middle_name','last_name'].includes(field)) {
+                autoFillFullName(idx);
+            }
+            markUnsaved();
+        };
+
+        // Support paste from Excel (Tab-separated)
+        inp.onpaste = (e) => {
+            const text = (e.clipboardData || window.clipboardData).getData('text');
+            if (text.includes('\t') || text.includes('\n')) {
+                e.preventDefault();
+                handleGridPaste(idx, field, text);
+            }
+        };
+
+        inp.onkeydown = (e) => handleKeyNav(e, idx, field);
+
+        td.appendChild(inp);
+        return td;
+    }
+
+    function makeGenderCell(idx, value) {
+        const td  = document.createElement('td');
+        const sel = document.createElement('select');
+        sel.dataset.field = 'gender';
+        sel.dataset.idx   = idx;
+
+        ['','Male','Female','Other'].forEach(opt => {
+            const o = document.createElement('option');
+            o.value = opt; o.textContent = opt || '— select —';
+            if (opt === value) o.selected = true;
+            sel.appendChild(o);
+        });
+
+        sel.onchange = () => { setCell(idx, 'gender', sel.value); markUnsaved(); };
+        sel.onfocus  = () => selectRow(idx);
+        td.appendChild(sel);
+        return td;
+    }
+
+    // ─────────────────────────────
+    // AUTO-FILL FULL NAME
+    // ─────────────────────────────
+    function autoFillFullName(idx) {
+        const row = gradeData[currentGrade][idx];
+        if (!row) return;
+        const full = [row.first_name, row.middle_name, row.last_name].filter(Boolean).join(' ').toUpperCase();
+        setCell(idx, 'full_name', full);
+        // Update the DOM input
+        const inp = document.querySelector(`input[data-idx="${idx}"][data-field="full_name"]`);
+        if (inp) inp.value = full;
+    }
+
+    // ─────────────────────────────
+    // SET CELL VALUE IN STATE
+    // ─────────────────────────────
+    function setCell(idx, field, value) {
+        if (!gradeData[currentGrade][idx]) {
+            gradeData[currentGrade][idx] = {};
+        }
+        gradeData[currentGrade][idx][field] = value;
+    }
+
+    // ─────────────────────────────
+    // PASTE FROM EXCEL (multi-cell)
+    // ─────────────────────────────
+    function handleGridPaste(startRow, startField, text) {
+        const lines     = text.trim().split('\n');
+        const fieldOrder = COLS;
+        const startCol   = fieldOrder.indexOf(startField);
+
+        lines.forEach((line, rowOffset) => {
+            const cells = line.split('\t');
+            cells.forEach((val, colOffset) => {
+                const colIdx = startCol + colOffset;
+                const rowIdx = startRow + rowOffset;
+                if (colIdx >= fieldOrder.length) return;
+                const field = fieldOrder[colIdx];
+                setCell(rowIdx, field, val.trim());
+
+                // Update DOM
+                const inp = document.querySelector(`input[data-idx="${rowIdx}"][data-field="${field}"]`);
+                if (inp) inp.value = val.trim();
+                const sel = document.querySelector(`select[data-idx="${rowIdx}"][data-field="${field}"]`);
+                if (sel) sel.value = val.trim();
+
+                // Auto-fill full name if name columns pasted
+                if (['first_name','middle_name','last_name'].includes(field)) {
+                    autoFillFullName(rowIdx);
+                }
+            });
+        });
+
+        // Add more rows if needed
+        const lastRowNeeded = startRow + lines.length;
+        ensureRows(lastRowNeeded + 5);
+        markUnsaved();
+        toast(`Pasted ${lines.length} row(s)`, 'success');
+    }
+
+    function ensureRows(count) {
+        const body = document.getElementById('gridBody');
+        while (body.rows.length < count) {
+            const idx = body.rows.length;
+            body.appendChild(makeRow(idx, {}));
         }
     }
 
-    // =============================================
-    // UPDATE STATS
-    // =============================================
-    function updateStats(data) {
-        document.getElementById('totalStudents').textContent = data.length;
-        document.getElementById('grade6Count').textContent   = data.filter(s => String(s.grade) === '6').length;
-        document.getElementById('grade7Count').textContent   = data.filter(s => String(s.grade) === '7').length;
-        document.getElementById('grade8Count').textContent   = data.filter(s => String(s.grade) === '8').length;
+    // ─────────────────────────────
+    // KEYBOARD NAVIGATION
+    // ─────────────────────────────
+    function handleKeyNav(e, idx, field) {
+        const fieldOrder = COLS;
+        const colIdx     = fieldOrder.indexOf(field);
+
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            const nextCol = e.shiftKey ? colIdx - 1 : colIdx + 1;
+            if (nextCol >= 0 && nextCol < fieldOrder.length) {
+                focusCell(idx, fieldOrder[nextCol]);
+            } else if (!e.shiftKey && colIdx === fieldOrder.length - 1) {
+                ensureRows(idx + 2);
+                focusCell(idx + 1, fieldOrder[0]);
+            }
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            ensureRows(idx + 2);
+            focusCell(idx + 1, field);
+        } else if (e.key === 'ArrowDown') {
+            ensureRows(idx + 2);
+            focusCell(idx + 1, field);
+        } else if (e.key === 'ArrowUp' && idx > 0) {
+            focusCell(idx - 1, field);
+        }
     }
 
-    // =============================================
-    // PARSE PASTED EXCEL DATA
-    // =============================================
-    function previewPaste() {
-        const text  = document.getElementById('pasteArea').value.trim();
-        const grade = document.getElementById('gradeSelect').value;
+    function focusCell(idx, field) {
+        const inp = document.querySelector(`input[data-idx="${idx}"][data-field="${field}"]`);
+        if (inp) { inp.focus(); inp.select(); }
+        const sel = document.querySelector(`select[data-idx="${idx}"][data-field="${field}"]`);
+        if (sel) sel.focus();
+    }
 
-        if (!text) {
-            showMsg('pasteError', 'Please paste data from Excel first!');
-            return;
+    // ─────────────────────────────
+    // ROW SELECTION
+    // ─────────────────────────────
+    function selectRow(idx) {
+        selectedRow = idx;
+        document.querySelectorAll('.grid tbody tr').forEach((tr, i) => {
+            tr.querySelector('.row-num').style.background =
+                i === idx ? '#E8F0FE' : '';
+        });
+    }
+
+    // ─────────────────────────────
+    // ADD / DELETE ROWS
+    // ─────────────────────────────
+    function addRow() {
+        const body = document.getElementById('gridBody');
+        const idx  = body.rows.length;
+        body.appendChild(makeRow(idx, {}));
+        focusCell(idx, 'sr_no');
+        updateStatus();
+    }
+
+    function deleteSelectedRow() {
+        if (selectedRow === null) { toast('Click on a row number to select it first'); return; }
+        const idx = selectedRow;
+        gradeData[currentGrade].splice(idx, 1);
+        renderGrid(currentGrade);
+        markUnsaved();
+        toast('Row deleted');
+        selectedRow = null;
+    }
+
+    function clearSheet() {
+        if (!confirm(`Clear ALL students in Grade ${currentGrade}? This cannot be undone.`)) return;
+        gradeData[currentGrade] = [];
+        renderGrid(currentGrade);
+        markUnsaved();
+    }
+
+    // ─────────────────────────────
+    // SWITCH GRADE TAB
+    // ─────────────────────────────
+    async function switchGrade(grade) {
+        if (unsaved) {
+            if (!confirm('You have unsaved changes. Save before switching?')) {
+                // Switch without saving
+            } else {
+                await saveSheet();
+            }
         }
+        currentGrade = grade;
+        [6, 7, 8].forEach(g => {
+            document.getElementById('tab' + g).classList.toggle('active', g === grade);
+        });
+        renderGrid(grade);
+    }
 
-        const lines = text.split('\n').filter(l => l.trim());
-        parsedRows  = [];
-        const errors = [];
+    // ─────────────────────────────
+    // SAVE
+    // ─────────────────────────────
+    async function saveSheet() {
+        showLoading(true);
+        document.getElementById('saveBtn').disabled = true;
 
-        lines.forEach((line, idx) => {
-            const cols = line.split('\t');
-            if (cols.length < 5) {
-                errors.push(`Row ${idx + 1}: Not enough columns`);
+        try {
+            // Collect non-empty rows from current grade
+            const rows = collectRows();
+
+            if (rows.length === 0) {
+                toast('Nothing to save — add some students first!');
                 return;
             }
 
-            // Parse columns: Sr No | First | Middle | Last | Full Name | Gender | Mother | Father | DOB | Grade
-            const row = {
-                udise_code:   username,
-                school_name:  schoolName,
-                district:     sessionStorage.getItem('district') || '',
-                sr_no:        parseInt(cols[0]) || (idx + 1),
-                first_name:   (cols[1] || '').trim(),
-                middle_name:  (cols[2] || '').trim(),
-                last_name:    (cols[3] || '').trim(),
-                full_name:    (cols[4] || '').trim() || [(cols[1]||'').trim(), (cols[2]||'').trim(), (cols[3]||'').trim()].filter(Boolean).join(' '),
-                gender:       (cols[5] || '').trim(),
-                mother_name:  (cols[6] || '').trim(),
-                father_name:  (cols[7] || '').trim(),
-                date_of_birth:(cols[8] || '').trim(),
-                grade:        String(grade)
-            };
-
-            if (row.first_name || row.full_name) {
-                parsedRows.push(row);
-            }
-        });
-
-        if (parsedRows.length === 0) {
-            showMsg('pasteError', 'Could not parse any student rows. Please check the format.');
-            return;
-        }
-
-        if (errors.length > 0) {
-            showMsg('pasteInfo', `Parsed ${parsedRows.length} students. ${errors.length} rows skipped.`);
-        }
-
-        showPreview(parsedRows);
-    }
-
-    // =============================================
-    // SHOW PREVIEW TABLE
-    // =============================================
-    function showPreview(rows) {
-        document.getElementById('previewTitle').textContent =
-            `Preview: ${rows.length} students ready to import for Grade ${document.getElementById('gradeSelect').value}`;
-
-        let html = `<table style="margin-bottom:16px;">
-            <thead><tr>
-                <th>#</th><th>Full Name</th><th>Gender</th>
-                <th>Mother</th><th>Father</th><th>DOB</th><th>Grade</th>
-            </tr></thead><tbody>`;
-
-        rows.forEach((r, i) => {
-            html += `<tr>
-                <td>${i + 1}</td>
-                <td><strong>${r.full_name}</strong></td>
-                <td><span class="badge ${r.gender === 'Female' ? 'badge-female' : 'badge-male'}">${r.gender || '—'}</span></td>
-                <td>${r.mother_name || '—'}</td>
-                <td>${r.father_name || '—'}</td>
-                <td>${r.date_of_birth || '—'}</td>
-                <td>${r.grade}</td>
-            </tr>`;
-        });
-
-        html += '</tbody></table>';
-
-        document.getElementById('previewTable').innerHTML    = html;
-        document.getElementById('previewSection').style.display = 'block';
-    }
-
-    // =============================================
-    // CONFIRM IMPORT
-    // =============================================
-    async function confirmImport() {
-        if (parsedRows.length === 0) return;
-
-        const btn = document.getElementById('confirmImportBtn');
-        btn.disabled    = true;
-        btn.textContent = 'Saving...';
-
-        try {
-            const { data, error } = await supabaseClient
-                .from('students')
-                .insert(parsedRows);
-
-            if (error) throw error;
-
-            showMsg('pasteSuccess', `✅ Successfully imported ${parsedRows.length} students!`);
-            document.getElementById('previewSection').style.display = 'none';
-            document.getElementById('pasteArea').value = '';
-            parsedRows = [];
-            await loadStudents();
-
-        } catch (err) {
-            console.error(err);
-            showMsg('pasteError', 'Import failed: ' + err.message);
-        } finally {
-            btn.disabled    = false;
-            btn.textContent = '✅ Confirm Import';
-        }
-    }
-
-    function cancelPreview() {
-        document.getElementById('previewSection').style.display = 'none';
-        parsedRows = [];
-    }
-
-    function clearPaste() {
-        document.getElementById('pasteArea').value = '';
-        document.getElementById('previewSection').style.display = 'none';
-        parsedRows = [];
-    }
-
-    // =============================================
-    // RENDER STUDENT TABLE
-    // =============================================
-    function renderStudentTable(data) {
-        if (data.length === 0) {
-            document.getElementById('studentTableContainer').innerHTML = `
-                <div class="empty-state">
-                    <div class="icon">👥</div>
-                    <p>No students added yet.</p>
-                    <p style="font-size:13px;margin-top:8px;">Use the "Paste from Excel" tab to import students.</p>
-                </div>`;
-            return;
-        }
-
-        let html = `<table>
-            <thead><tr>
-                <th>#</th><th>Full Name</th><th>Gender</th>
-                <th>Mother</th><th>Father</th><th>Date of Birth</th><th>Grade</th><th></th>
-            </tr></thead><tbody>`;
-
-        data.forEach((s, i) => {
-            html += `<tr>
-                <td>${i + 1}</td>
-                <td><strong>${s.full_name || [s.first_name, s.middle_name, s.last_name].filter(Boolean).join(' ')}</strong></td>
-                <td><span class="badge ${s.gender === 'Female' ? 'badge-female' : 'badge-male'}">${s.gender || '—'}</span></td>
-                <td>${s.mother_name || '—'}</td>
-                <td>${s.father_name || '—'}</td>
-                <td>${s.date_of_birth || '—'}</td>
-                <td>Grade ${s.grade}</td>
-                <td><button class="del-btn" onclick="deleteStudent('${s.id}')">🗑</button></td>
-            </tr>`;
-        });
-
-        html += '</tbody></table>';
-        document.getElementById('studentTableContainer').innerHTML = html;
-    }
-
-    // =============================================
-    // FILTER TABLE
-    // =============================================
-    function filterTable() {
-        const search = document.getElementById('searchBox').value.toLowerCase();
-        const grade  = document.getElementById('gradeFilter').value;
-        const gender = document.getElementById('genderFilter').value;
-
-        const filtered = allStudents.filter(s => {
-            const name = (s.full_name || '').toLowerCase();
-            const matchSearch = !search || name.includes(search);
-            const matchGrade  = !grade  || String(s.grade) === grade;
-            const matchGender = !gender || s.gender === gender;
-            return matchSearch && matchGrade && matchGender;
-        });
-
-        renderStudentTable(filtered);
-    }
-
-    // =============================================
-    // DELETE STUDENT
-    // =============================================
-    async function deleteStudent(id) {
-        if (!confirm('Delete this student?')) return;
-
-        try {
-            const { error } = await supabaseClient
+            // Delete existing records for this grade+UDISE
+            const { error: delErr } = await sb
                 .from('students')
                 .delete()
-                .eq('id', id);
+                .eq('udise_code', USERNAME)
+                .eq('grade', String(currentGrade));
 
-            if (error) throw error;
+            if (delErr) throw delErr;
 
-            showMsg('viewSuccess', 'Student deleted.');
-            await loadStudents();
+            // Insert new records
+            const toInsert = rows.map((r, i) => ({
+                udise_code:    USERNAME,
+                school_name:   SCHOOL_NAME,
+                grade:         String(currentGrade),
+                sr_no:         parseInt(r.sr_no) || (i + 1),
+                first_name:    r.first_name || '',
+                middle_name:   r.middle_name || '',
+                last_name:     r.last_name || '',
+                full_name:     r.full_name || [r.first_name, r.middle_name, r.last_name].filter(Boolean).join(' '),
+                gender:        r.gender || '',
+                mother_name:   r.mother_name || '',
+                father_name:   r.father_name || '',
+                date_of_birth: r.date_of_birth || ''
+            }));
 
-        } catch (err) {
-            showMsg('viewError', 'Could not delete: ' + err.message);
+            const { error: insErr } = await sb.from('students').insert(toInsert);
+            if (insErr) throw insErr;
+
+            // Update local state
+            gradeData[currentGrade] = rows;
+
+            setSaveStatus(true);
+            markUnsaved(false);
+            toast(`✅ Saved ${rows.length} students for Grade ${currentGrade}`, 'success');
+
+        } catch (e) {
+            toast('Save failed: ' + e.message, 'error');
+        } finally {
+            showLoading(false);
+            document.getElementById('saveBtn').disabled = false;
         }
     }
 
-    // =============================================
+    // Collect non-empty rows from the DOM
+    function collectRows() {
+        const body = document.getElementById('gridBody');
+        const rows = [];
+
+        Array.from(body.rows).forEach((tr, idx) => {
+            const row = {};
+            COLS.forEach(field => {
+                const inp = tr.querySelector(`input[data-field="${field}"]`);
+                const sel = tr.querySelector(`select[data-field="${field}"]`);
+                row[field] = (inp ? inp.value : sel ? sel.value : '').trim();
+            });
+            // Only save if at least a first name exists
+            if (row.first_name || row.full_name) rows.push(row);
+        });
+
+        return rows;
+    }
+
+    // ─────────────────────────────
     // EXPORT CSV
-    // =============================================
+    // ─────────────────────────────
     function exportCSV() {
-        if (allStudents.length === 0) { alert('No students to export'); return; }
+        const rows = collectRows();
+        if (rows.length === 0) { toast('No data to export'); return; }
 
-        const headers = ['Sr No','Full Name','Gender','Mother Name','Father Name','Date of Birth','Grade','School','UDISE'];
-        const rows = allStudents.map((s, i) => [
-            i + 1, s.full_name, s.gender, s.mother_name,
-            s.father_name, s.date_of_birth, s.grade, schoolName, username
-        ]);
+        const headers = ['Sr No','First Name','Middle Name','Last Name','Full Name','Gender','Mother Name','Father Name','Date of Birth','Grade','School','UDISE'];
+        const csvRows = rows.map(r => [
+            r.sr_no, r.first_name, r.middle_name, r.last_name,
+            r.full_name, r.gender, r.mother_name, r.father_name,
+            r.date_of_birth, currentGrade, SCHOOL_NAME, USERNAME
+        ].map(v => `"${(v||'').replace(/"/g,'""')}"`));
 
-        const csv  = [headers, ...rows].map(r => r.join(',')).join('\n');
-        const blob = new Blob([csv], { type: 'text/csv' });
+        const csv  = [headers, ...csvRows].map(r => r.join(',')).join('\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
         const url  = URL.createObjectURL(blob);
         const a    = document.createElement('a');
         a.href     = url;
-        a.download = (schoolName || 'students') + '_students.csv';
+        a.download = `${SCHOOL_NAME}_Grade${currentGrade}_students.csv`;
         a.click();
+        toast('CSV downloaded!', 'success');
     }
 
-    // =============================================
+    // ─────────────────────────────
+    // PASTE HELP
+    // ─────────────────────────────
+    function pasteHelp() {
+        alert('📋 How to paste from Excel:\n\n1. Open your Excel file (Grade_6, Grade_7, Grade_8 sheet)\n2. Select the data rows (from Sr No column to Date of Birth column)\n3. Press Ctrl+C to copy\n4. Click on the first cell (Sr No column, Row 1) in the grid\n5. Press Ctrl+V to paste\n\nData will fill in automatically!');
+    }
+
+    // ─────────────────────────────
     // HELPERS
-    // =============================================
-    function showMsg(id, text) {
-        const el = document.getElementById(id);
-        el.textContent = text;
-        el.classList.add('show');
-        setTimeout(() => el.classList.remove('show'), 5000);
+    // ─────────────────────────────
+    function colLetter(field) {
+        const map = { sr_no:'A', first_name:'B', middle_name:'C', last_name:'D', full_name:'E', gender:'F', mother_name:'G', father_name:'H', date_of_birth:'I' };
+        return map[field] || 'A';
+    }
+
+    function markUnsaved(state = true) {
+        unsaved = state;
+        setSaveStatus(!state);
+    }
+
+    function setSaveStatus(saved) {
+        const el = document.getElementById('saveStatus');
+        if (saved) {
+            el.className = 'status-saved';
+            el.textContent = '✓ All changes saved';
+        } else if (unsaved) {
+            el.className = 'status-unsaved';
+            el.textContent = '● Unsaved changes';
+        } else {
+            el.textContent = '';
+        }
+    }
+
+    function updateStatus() {
+        const rows = collectRows();
+        document.getElementById('statusText').textContent = `Grade ${currentGrade}`;
+        document.getElementById('rowCountText').textContent = `${rows.length} students`;
+    }
+
+    function showLoading(show) {
+        document.getElementById('loadingOverlay').classList.toggle('show', show);
+    }
+
+    function toast(msg, type = '') {
+        const el = document.getElementById('toast');
+        el.textContent = msg;
+        el.className   = 'toast show ' + type;
+        setTimeout(() => { el.className = 'toast'; }, 3000);
     }
 
     function logout() {
         if (confirm('Logout?')) { sessionStorage.clear(); window.location.href = 'login.html'; }
     }
+
+    // Warn before leaving with unsaved changes
+    window.onbeforeunload = (e) => {
+        if (unsaved) { e.preventDefault(); e.returnValue = ''; }
+    };
 </script>
 </body>
 </html>
