@@ -69,6 +69,16 @@
         .card-button { display:inline-flex; align-items:center; gap:6px; background:var(--c4); color:var(--white); border:none; padding:9px 20px; border-radius:8px; font-size:.82rem; font-weight:600; font-family:'DM Sans',sans-serif; cursor:pointer; transition:all var(--ease); text-decoration:none; }
         .card-button:hover { background:var(--c4d); transform:translateY(-1px); box-shadow:0 4px 12px rgba(191,146,112,.3); }
 
+        /* One-time card style */
+        .card-onetime .card-header { background: var(--c3); }
+        .one-time-badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: rgba(191,146,112,.12); border: 1px solid rgba(191,146,112,.25);
+            color: var(--c4); font-size: .68rem; font-weight: 700;
+            letter-spacing: .8px; text-transform: uppercase;
+            padding: 4px 10px; border-radius: 20px; margin-bottom: 16px;
+        }
+
         @media(max-width:768px) {
             .nav-inner { padding:0 20px; }
             .container { padding:32px 20px 48px; }
@@ -96,49 +106,47 @@
     <div class="container">
         <h1 class="page-title">School Reporting</h1>
 
-        <!-- Student Registration Section -->
+        <!-- ONE-TIME SETUP -->
         <div class="section">
-            <h2 class="section-title">Student Data</h2>
+            <h2 class="section-title">One-Time Setup</h2>
             <div class="cards-grid">
-                <div class="card" onclick="window.location.href='student-registration.html'" style="cursor:pointer;">
+
+                <div class="card card-onetime" onclick="window.location.href='student-registration.html'" style="cursor:pointer;">
                     <div class="card-header">
-                        <h3>👨‍🎓 Student Registration</h3>
+                        <h3>Student Registration</h3>
                     </div>
                     <div class="card-body">
-                        <p class="card-description">Add and manage your school's student list. Paste directly from Excel — fast and easy!</p>
-                        <button class="card-button">Open Student Registration →</button>
+                        <div class="one-time-badge">Do Once</div>
+                        <p class="card-description">Register all students in Grades 6–8. Paste directly from your Excel sheet — done once at the start of the year.</p>
+                        <button class="card-button">Open →</button>
                     </div>
                 </div>
+
+                <div class="card card-onetime" onclick="openForm('YOUR_KOBO_FORM_URL')">
+                    <div class="card-header">
+                        <h3>Tools Inventory</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="one-time-badge">Do Once</div>
+                        <p class="card-description">Record the tools and equipment available in your school — quantity, condition, and usage. Submit once per year.</p>
+                        <button class="card-button">Open Form →</button>
+                    </div>
+                </div>
+
             </div>
         </div>
 
-        <!-- Multi Sector Skill Subject Section -->
+        <!-- GRADE 9 -->
         <div class="section">
-            <div class="section-header">
-                <h2 class="section-title">Multi Sector Skill Subject (Grade 9th)</h2>
-            </div>
-            
+            <h2 class="section-title">Multi Sector Skill Subject — Grade 9</h2>
             <div class="cards-grid">
+
                 <div class="card" onclick="openForm('https://ee-eu.kobotoolbox.org/x/c90sPuxQ')">
                     <div class="card-header">
                         <h3>Chapter Reporting</h3>
                     </div>
                     <div class="card-body">
-                        <p class="card-description">
-                            Chapter Reporting for Class 9. Records chapter-wise teaching progress for each class and subject.
-                        </p>
-                        <button class="card-button">Open Form →</button>
-                    </div>
-                </div>
-
-                <div class="card" onclick="openForm('YOUR_KOBO_FORM_URL')">
-                    <div class="card-header">
-                        <h3>Student Registration</h3>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-description">
-                            Register Class 9 students by entering their personal details and school details.
-                        </p>
+                        <p class="card-description">Records chapter-wise teaching progress for Grade 9 vocational subjects. Submit regularly as chapters are completed.</p>
                         <button class="card-button">Open Form →</button>
                     </div>
                 </div>
@@ -148,72 +156,39 @@
                         <h3>Guest Lecture / Field Visit</h3>
                     </div>
                     <div class="card-body">
-                        <p class="card-description">
-                            Captures details of student visits to industries, including location and guest details.
-                        </p>
+                        <p class="card-description">Captures details of student visits to industries and guest lecture sessions including location and guest details.</p>
                         <button class="card-button">Open Form →</button>
                     </div>
                 </div>
+
             </div>
         </div>
 
-        <!-- Kaushal Bodh Section -->
+        <!-- KAUSHAL BODH -->
         <div class="section">
-            <div class="section-header kaushal-bodh">
-                <h2 class="section-title">Kaushal Bodh (Grade 6th to Grade 8th)</h2>
-            </div>
-            
+            <h2 class="section-title">Kaushal Bodh — Grade 6 to 8</h2>
             <div class="cards-grid">
-                <div class="card outlined-card" onclick="openForm('YOUR_KOBO_FORM_URL')">
+
+                <div class="card" onclick="openForm('YOUR_KOBO_FORM_URL')">
                     <div class="card-header">
                         <h3>Kaushal Bodh Reporting</h3>
                     </div>
                     <div class="card-body">
-                        <p class="card-description">
-                            Collects school information and records grades implementing Kaushal Bodh program.
-                        </p>
+                        <p class="card-description">Records chapter-wise progress for Kaushal Bodh programme across Grades 6, 7, and 8.</p>
                         <button class="card-button">Open Form →</button>
                     </div>
                 </div>
 
-                <div class="card outlined-card" onclick="openForm('YOUR_KOBO_FORM_URL')">
+                <div class="card" onclick="openForm('YOUR_KOBO_FORM_URL')">
                     <div class="card-header">
-                        <h3>Kaushal Bodh Student Registration</h3>
+                        <h3>Guest Lecture / Field Visit</h3>
                     </div>
                     <div class="card-body">
-                        <p class="card-description">
-                            Register Class 6-8 students with personal details and school information.
-                        </p>
+                        <p class="card-description">Captures Grade 6–8 student visits to industries and guest lecture details.</p>
                         <button class="card-button">Open Form →</button>
                     </div>
                 </div>
 
-                <div class="card outlined-card" onclick="openForm('YOUR_KOBO_FORM_URL')">
-                    <div class="card-header">
-                        <h3>Kaushal Bodh Guest/Field</h3>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-description">
-                            Captures Class 6-8 student visits to industries with location and guest details.
-                        </p>
-                        <button class="card-button">Open Form →</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tools Inventory Section -->
-        <div class="section">
-            <div class="single-card card outlined-card" onclick="openForm('YOUR_KOBO_FORM_URL')">
-                <div class="card-header">
-                    <h3>Tools Inventory</h3>
-                </div>
-                <div class="card-body">
-                    <p class="card-description">
-                        Records available tools with quantity, condition, and usage details in the school.
-                    </p>
-                    <button class="card-button">Open Form →</button>
-                </div>
             </div>
         </div>
     </div>
