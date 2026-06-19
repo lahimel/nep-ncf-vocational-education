@@ -1,348 +1,228 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - Lend A Hand India</title>
-    <link rel="icon" type="image/png" href="favicon-96x96.png">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --cream:   #FFEDDB;
-            --beige:   #EDCDBB;
-            --sand:    #E3B7A0;
-            --caramel: #BF9270;
-            --text-dark: #3A2E25;
-            --text-mid:  #6A5445;
-            --text-light:#9A8478;
-            --white:   #FFFFFF;
-            --sh-sm: 0 1px 3px rgba(58,46,37,.07), 0 1px 2px rgba(58,46,37,.04);
-            --sh-md: 0 4px 16px rgba(58,46,37,.10), 0 2px 6px rgba(58,46,37,.05);
-            --sh-lg: 0 12px 40px rgba(58,46,37,.12), 0 4px 12px rgba(58,46,37,.06);
-            --r-sm: 10px; --r-md: 14px; --r-lg: 18px;
-            --ease: 220ms cubic-bezier(.4,0,.2,1);
-        }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NEP Vocational Education — Lend A Hand India</title>
+<link rel="icon" type="image/png" href="favicon-96x96.png"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --c1: #FFEDDB;
+  --c2: #EDCDBB;
+  --c3: #E3B7A0;
+  --c4: #BF9270;
+  --brown: #3A2E25;
+  --brown-mid: #6A5445;
+  --brown-light: #9A8070;
+  --white: #FFFFFF;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: 'DM Sans', sans-serif; background: var(--c1); color: var(--brown); overflow-x: hidden; }
 
-        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+/* NAV */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(255,237,219,.96);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(191,146,112,.2);
+  padding: 0 5%;
+  height: 66px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.nav-logo img { height: 42px; }
 
-        html { scroll-behavior: smooth; }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--cream);
-            color: var(--text-dark);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
 
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: var(--cream); }
-        ::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 3px; }
+/* HERO */
+.hero {
+  background: var(--c4);
+  padding: 100px 5% 80px;
+  position: relative; overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    radial-gradient(circle at 8% 60%, rgba(255,237,219,.18) 0%, transparent 50%),
+    radial-gradient(circle at 90% 10%, rgba(237,205,187,.12) 0%, transparent 45%);
+}
+.hero-grid {
+  position: absolute; inset: 0; pointer-events: none; opacity: .04;
+  background-image:
+    linear-gradient(rgba(255,255,255,1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px);
+  background-size: 52px 52px;
+}
+.hero-inner { position: relative; z-index: 2; max-width: 680px; }
 
-        .blob { display: none; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(255,237,219,.14);
+  border: 1px solid rgba(255,237,219,.26);
+  color: rgba(255,255,255,.85);
+  font-size: .72rem; font-weight: 600;
+  letter-spacing: 1.2px; text-transform: uppercase;
+  padding: 6px 14px; border-radius: 30px; margin-bottom: 26px;
+}
+.hero-badge::before {
+  content: ''; width: 6px; height: 6px;
+  background: rgba(255,255,255,.7); border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1);}50%{opacity:.3;transform:scale(.7);} }
 
-        /* NAV */
-        .navbar {
-            background: rgba(255,237,219,.95);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(191,146,112,.18);
-            padding: 0 48px;
-            height: 68px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: var(--sh-sm);
-        }
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
+  font-weight: 700; line-height: 1.1;
+  color: var(--brown); margin-bottom: 18px;
+}
+.hero h1 em { font-style: italic; color: var(--brown-mid); }
 
-        .nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-        .nav-logo img { height: 44px; width: auto; border-radius: 8px; }
-        .nav-logo-text { font-size: 15px; font-weight: 700; color: var(--text-dark); letter-spacing: -.2px; }
+.hero-sub {
+  font-size: 1rem; color: var(--brown-mid);
+  line-height: 1.8; font-weight: 300;
+  max-width: 520px; margin-bottom: 36px;
+}
 
-        .nav-links { display: flex; align-items: center; gap: 8px; }
+.hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn-warm {
+  background: var(--c1); color: var(--c4);
+  padding: 12px 26px; border-radius: 8px;
+  font-weight: 600; font-size: .9rem;
+  text-decoration: none; transition: all .2s;
+}
+.btn-warm:hover { background: var(--white); transform: translateY(-2px); }
+.btn-ghost {
+  background: transparent; color: var(--brown);
+  border: 1.5px solid rgba(58,46,37,.35);
+  padding: 12px 26px; border-radius: 8px;
+  font-weight: 500; font-size: .9rem;
+  text-decoration: none; transition: all .2s;
+}
+.btn-ghost:hover { border-color: var(--brown); color: var(--brown); background: rgba(58,46,37,.06); }
 
-        .nav-link {
-            color: var(--text-mid);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            padding: 8px 16px;
-            border-radius: var(--r-sm);
-            transition: all var(--ease);
-        }
-        .nav-link:hover { color: var(--caramel); background: rgba(191,146,112,.08); }
+/* MARQUEE */
 
-        .nav-login-btn {
-            background: var(--caramel);
-            color: var(--white);
-            padding: 9px 22px;
-            border-radius: var(--r-sm);
-            font-size: 14px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all var(--ease);
-        }
-        .nav-login-btn:hover {
-            background: #a87c60;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(191,146,112,.35);
-        }
 
-        /* HERO */
-        .hero {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 80px 48px 60px;
-        }
 
-        .hero-content { max-width: 620px; }
 
-        .hero-eyebrow {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--beige);
-            border: 1px solid rgba(191,146,112,.25);
-            color: var(--caramel);
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            padding: 6px 14px;
-            border-radius: 50px;
-            margin-bottom: 24px;
-        }
 
-        .hero h1 {
-            font-size: 46px;
-            font-weight: 800;
-            line-height: 1.12;
-            letter-spacing: -1.5px;
-            color: var(--text-dark);
-            margin-bottom: 20px;
-        }
+ to{transform:translateX(-50%);} }
 
-        .hero h1 span { color: var(--caramel); }
+/* CONTENT */
+.content {
+  max-width: 1100px; margin: 0 auto;
+  padding: 72px 5%;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 64px; align-items: center;
+}
+.content-img img {
+  width: 100%; height: auto;
+  border-radius: 16px;
+  border: 1px solid rgba(191,146,112,.2);
+  box-shadow: 0 8px 32px rgba(58,46,37,.1);
+}
+.content-text .tag {
+  font-size: .7rem; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--c4); margin-bottom: 14px;
+}
+.content-text h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.7rem, 3vw, 2.4rem);
+  font-weight: 700; line-height: 1.2;
+  color: var(--brown); margin-bottom: 14px;
+}
+.content-text h2 em { font-style: italic; }
+.content-text p {
+  font-size: .92rem; color: var(--brown-mid);
+  line-height: 1.8; font-weight: 300;
+}
 
-        .hero-description {
-            font-size: 17px;
-            color: var(--text-mid);
-            line-height: 1.65;
-            margin-bottom: 36px;
-            font-weight: 400;
-        }
 
-        .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+/* FOOTER */
+footer {
+  background: var(--c4);
+  padding: 32px 5%;
+  display: flex; align-items: center;
+  justify-content: space-between; flex-wrap: wrap; gap: 16px;
+  border-top: 1px solid rgba(255,237,219,.12);
+}
+.footer-logo { display: flex; align-items: center; gap: 10px; }
+.footer-logo img { height: 36px; opacity: .85; }
 
-        .btn-primary {
-            background: var(--caramel);
-            color: var(--white);
-            padding: 13px 28px;
-            border-radius: var(--r-sm);
-            font-size: 14px;
-            font-weight: 600;
-            font-family: 'Inter', sans-serif;
-            border: none;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all var(--ease);
-            letter-spacing: .1px;
-        }
-        .btn-primary:hover {
-            background: #a87c60;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(191,146,112,.35);
-        }
+.footer-links { display: flex; gap: 20px; }
+.footer-links a { font-size: .78rem; color: rgba(255,255,255,.35); text-decoration: none; transition: color .2s; }
+.footer-links a:hover { color: rgba(255,237,219,.8); }
+.footer-copy { font-size: .72rem; color: rgba(255,255,255,.2); }
 
-        .btn-outline {
-            background: transparent;
-            color: var(--text-dark);
-            padding: 13px 28px;
-            border-radius: var(--r-sm);
-            font-size: 14px;
-            font-weight: 600;
-            font-family: 'Inter', sans-serif;
-            border: 1.5px solid var(--sand);
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all var(--ease);
-        }
-        .btn-outline:hover { border-color: var(--caramel); color: var(--caramel); }
-
-        /* CONTENT SECTIONS */
-        .content-section {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 60px 48px;
-        }
-
-        .section-header {
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--caramel);
-            margin-bottom: 12px;
-        }
-
-        .section-title {
-            font-size: 30px;
-            font-weight: 700;
-            color: var(--text-dark);
-            letter-spacing: -.6px;
-            margin-bottom: 14px;
-        }
-
-        .section-description {
-            font-size: 15px;
-            color: var(--text-mid);
-            line-height: 1.65;
-            max-width: 600px;
-            margin-bottom: 40px;
-        }
-
-        /* FEATURE CARDS */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-        }
-
-        .feature-card {
-            background: var(--beige);
-            padding: 28px;
-            border-radius: var(--r-lg);
-            border: 1px solid rgba(191,146,112,.18);
-            box-shadow: var(--sh-sm);
-            transition: transform var(--ease), box-shadow var(--ease);
-        }
-        .feature-card:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--sh-md);
-        }
-
-        .feature-icon {
-            width: 44px; height: 44px;
-            background: rgba(191,146,112,.12);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            margin-bottom: 16px;
-        }
-
-        .feature-title {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-dark);
-            margin-bottom: 8px;
-            letter-spacing: -.1px;
-        }
-
-        .feature-desc {
-            font-size: 13px;
-            color: var(--text-mid);
-            line-height: 1.6;
-        }
-
-        /* CONTENT IMAGE */
-        .content-image {
-            border-radius: var(--r-lg);
-            box-shadow: var(--sh-md);
-            border: 1px solid rgba(191,146,112,.2);
-            max-width: 100%;
-            height: auto;
-        }
-
-        /* FOOTER */
-        .footer {
-            background: var(--beige);
-            border-top: 1px solid rgba(191,146,112,.18);
-            text-align: center;
-            padding: 28px 48px;
-            font-size: 13px;
-            color: var(--text-mid);
-        }
-
-        @media (max-width: 768px) {
-            .navbar { padding: 0 20px; height: 60px; }
-            .hero   { padding: 48px 20px 40px; }
-            .hero h1 { font-size: 32px; }
-            .content-section { padding: 40px 20px; }
-            .features-grid { grid-template-columns: 1fr; }
-            .nav-links .nav-link { display: none; }
-        }
-    </style>
+@media (max-width: 768px) {
+  nav { padding: 0 20px; }
+  .hero { padding: 80px 20px 60px; }
+  .content { grid-template-columns: 1fr; gap: 36px; padding: 48px 20px; }
+  
+  footer { flex-direction: column; align-items: flex-start; padding: 28px 20px; }
+  .footer-links { display: none; }
+}
+</style>
 </head>
 <body>
-    <nav id="nav">
-        <div class="nav-inner">
-            <a href="index.html" class="nav-logo">
-                <img src="logo.png" alt="Lend A Hand India">
-            </a>
-            <ul class="nav-right">
-                <li><a href="login.html" class="login-btn">Login</a></li>
-            </ul>
-            <div class="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </div>
-    </nav>
 
-    <div class="hero">
-        <div class="hero-blob blob-1"></div>
-        <div class="hero-blob blob-2"></div>
-        <div class="hero-blob blob-3"></div>
-        
-        <div class="hero-inner">
-            <div class="hero-content">
-                <h1>Fostering <span>School-Based</span><br>Vocational Education in Maharashtra</h1>
-                <p class="hero-sub">In alignment with NEP 2020, empowering students through hands-on learning, practical skills, and real-world exposure for holistic development and career readiness.</p>
-            </div>
-        </div>
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <img src="logo.png" alt="Lend A Hand India"/>
+  </a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <h1>Fostering <em>School-Based</em><br/>Vocational Education</h1>
+    <p class="hero-sub">In alignment with NEP 2020, empowering students through hands-on learning, practical skills, and real-world exposure for holistic development and career readiness.</p>
+    <div class="hero-btns">
+      <a href="login.html" class="btn-warm">Login to Portal →</a>
+      <a href="#about" class="btn-ghost">Learn More</a>
     </div>
+  </div>
+</section>
 
-    <section>
-        <div class="section-wrap">
-            <div class="content-section">
-                <div class="content-grid">
-                    <div class="content-image-wrapper">
-                        <img src="NEP 6 Modules.png" alt="NEP Modules" class="content-image">
-                    </div>
-                    
-                    <div class="content-inner">
-                        <span class="section-tag">Our Approach</span>
-                        <h2 class="section-heading"><span>NEP - NCF</span> Aligned Vocational Education Implementation</h2>
-                        <p class="section-para">
-                            In line with the National Education Policy 2020, National Curriculum Framework 2023, and the State Curriculum Framework 2024, our school implements vocational education to support holistic development. The program emphasizes hands-on learning, practical skills, and real-world exposure, enabling students to link academic learning with career readiness and future opportunities.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <script>
-        // Sticky nav
-        window.addEventListener('scroll', function() {
-            const nav = document.getElementById('nav');
-            if (window.scrollY > 50) {
-                nav.classList.add('stuck');
-            } else {
-                nav.classList.remove('stuck');
-            }
-        });
-    </script>
+<!-- CONTENT -->
+<section id="about" class="content">
+  <div class="content-img">
+    <img src="NEP 6 Modules.png" alt="NEP 6 Modules"/>
+  </div>
+  <div class="content-text">
+    <div class="tag">Our Approach</div>
+    <h2>NEP – NCF Aligned<br/><em>Vocational Education</em></h2>
+    <p>In line with the National Education Policy 2020, National Curriculum Framework 2023, and the State Curriculum Framework 2024, our programme implements vocational education to support holistic development. The programme emphasises hands-on learning, practical skills, and real-world exposure — enabling students to link academic learning with career readiness and future opportunities.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">
+    <img src="logo.png" alt="Lend A Hand India"/>
+  </div>
+  <div class="footer-links">
+    <a href="#about">About</a>
+    <a href="login.html">Login</a>
+  </div>
+  <div class="footer-copy">© 2025 Lend A Hand India · Maharashtra</div>
+</footer>
+
+<script>
+  window.addEventListener('scroll', () => {
+    document.querySelector('nav').style.boxShadow =
+      window.scrollY > 40 ? '0 4px 20px rgba(58,46,37,.1)' : 'none';
+  });
+</script>
+
 </body>
 </html>
