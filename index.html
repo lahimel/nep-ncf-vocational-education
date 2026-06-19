@@ -38,8 +38,11 @@ nav {
 
 /* HERO */
 .hero {
-  background: var(--c4);
-  padding: 100px 5% 80px;
+  background: var(--c3);
+  min-height: 100vh;
+  padding: 0 8%;
+  display: flex;
+  align-items: center;
   position: relative; overflow: hidden;
 }
 .hero-bg {
@@ -55,7 +58,7 @@ nav {
     linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px);
   background-size: 52px 52px;
 }
-.hero-inner { position: relative; z-index: 2; max-width: 680px; }
+.hero-inner { position: relative; z-index: 2; max-width: 760px; width: 100%; }
 
 .hero-badge {
   display: inline-flex; align-items: center; gap: 8px;
@@ -75,31 +78,31 @@ nav {
 
 .hero h1 {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(2.4rem, 5vw, 3.8rem);
+  font-size: clamp(2.4rem, 4.5vw, 3.6rem);
   font-weight: 700; line-height: 1.1;
-  color: var(--brown); margin-bottom: 18px;
+  color: var(--brown); margin-bottom: 24px;
 }
 .hero h1 em { font-style: italic; color: var(--brown-mid); }
 
 .hero-sub {
   font-size: 1rem; color: var(--brown-mid);
   line-height: 1.8; font-weight: 300;
-  max-width: 520px; margin-bottom: 36px;
+  max-width: 520px; margin-bottom: 40px;
 }
 
 .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
 .btn-warm {
   background: var(--c1); color: var(--c4);
-  padding: 12px 26px; border-radius: 8px;
-  font-weight: 600; font-size: .9rem;
+  padding: 15px 34px; border-radius: 8px;
+  font-weight: 600; font-size: 1rem;
   text-decoration: none; transition: all .2s;
 }
 .btn-warm:hover { background: var(--white); transform: translateY(-2px); }
 .btn-ghost {
   background: transparent; color: var(--brown);
   border: 1.5px solid rgba(58,46,37,.35);
-  padding: 12px 26px; border-radius: 8px;
-  font-weight: 500; font-size: .9rem;
+  padding: 15px 34px; border-radius: 8px;
+  font-weight: 500; font-size: 1rem;
   text-decoration: none; transition: all .2s;
 }
 .btn-ghost:hover { border-color: var(--brown); color: var(--brown); background: rgba(58,46,37,.06); }
@@ -107,23 +110,31 @@ nav {
 /* MARQUEE */
 
 
-
-
-
- to{transform:translateX(-50%);} }
-
 /* CONTENT */
 .content {
-  max-width: 1100px; margin: 0 auto;
-  padding: 72px 5%;
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 64px; align-items: center;
+  padding: 80px 8%;
+  background: var(--c1);
+}
+.content-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 64px;
+}
+.content-img {
+  flex: 0 0 420px;
+  max-width: 420px;
 }
 .content-img img {
   width: 100%; height: auto;
   border-radius: 16px;
   border: 1px solid rgba(191,146,112,.2);
   box-shadow: 0 8px 32px rgba(58,46,37,.1);
+}
+.content-text {
+  flex: 1;
 }
 .content-text .tag {
   font-size: .7rem; font-weight: 700;
@@ -145,7 +156,7 @@ nav {
 
 /* FOOTER */
 footer {
-  background: var(--c4);
+  background: var(--c3);
   padding: 32px 5%;
   display: flex; align-items: center;
   justify-content: space-between; flex-wrap: wrap; gap: 16px;
@@ -161,8 +172,8 @@ footer {
 
 @media (max-width: 768px) {
   nav { padding: 0 20px; }
-  .hero { padding: 80px 20px 60px; }
-  .content { grid-template-columns: 1fr; gap: 36px; padding: 48px 20px; }
+  .hero { padding: 0 6%; min-height: 100vh; }
+  .content { padding: 48px 6%; } .content-inner { flex-direction: column; gap: 36px; } .content-img { flex: none; max-width: 100%; }
   
   footer { flex-direction: column; align-items: flex-start; padding: 28px 20px; }
   .footer-links { display: none; }
@@ -195,6 +206,7 @@ footer {
 
 <!-- CONTENT -->
 <section id="about" class="content">
+  <div class="content-inner">
   <div class="content-img">
     <img src="NEP 6 Modules.png" alt="NEP 6 Modules"/>
   </div>
@@ -202,6 +214,7 @@ footer {
     <div class="tag">Our Approach</div>
     <h2>NEP – NCF Aligned<br/><em>Vocational Education</em></h2>
     <p>In line with the National Education Policy 2020, National Curriculum Framework 2023, and the State Curriculum Framework 2024, our programme implements vocational education to support holistic development. The programme emphasises hands-on learning, practical skills, and real-world exposure — enabling students to link academic learning with career readiness and future opportunities.</p>
+  </div>
   </div>
 </section>
 
