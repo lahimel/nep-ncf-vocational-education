@@ -216,6 +216,7 @@
                     sessionStorage.setItem('userName', user.full_name);
                     sessionStorage.setItem('udiseCode', user.udise_code || '');
                     sessionStorage.setItem('schoolName', user.school_name || '');
+                    sessionStorage.setItem('hasKaushalBodh', user.has_kaushal_bodh ? 'true' : 'false');
                     
                     // Check if password change required
                     if (user.must_change_password) {
