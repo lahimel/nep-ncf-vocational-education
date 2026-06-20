@@ -103,7 +103,65 @@
     </nav>
 
     <div class="container">
-        <h1 class="page-title">School Reporting</h1>
+        <h1 class="page-title" id="pageGreeting">School Reporting</h1>
+
+        <!-- GRADE 9 -->
+        <div class="section">
+            <h2 class="section-title">Multi Sector Skill Subject, Grade 9</h2>
+            <div class="cards-grid">
+
+                <div class="card" onclick="openForm('https://ee-eu.kobotoolbox.org/x/c90sPuxQ')">
+                    <div class="card-header">
+                        <h3>Chapter Reporting</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-description">Records chapter-wise teaching progress for Grade 9 vocational subjects. Submit as chapters are completed.</p>
+                        <button class="card-button">Open Form →</button>
+                    </div>
+                </div>
+
+                <div class="card" onclick="openForm('YOUR_KOBO_FORM_URL')">
+                    <div class="card-header">
+                        <h3>Guest Lecture / Field Visit</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-description">Captures details of student visits to industries and guest lecture sessions including location and guest details.</p>
+                        <button class="card-button">Open Form →</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- KAUSHAL BODH -->
+        <div id="kaushalBodhSection" style="display:none;">
+        <div class="section">
+            <h2 class="section-title">Kaushal Bodh, Grade 6 to 8</h2>
+            <div class="cards-grid">
+
+                <div class="card" onclick="openForm('YOUR_KOBO_FORM_URL')">
+                    <div class="card-header">
+                        <h3>Kaushal Bodh Reporting</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-description">Records chapter-wise progress for Kaushal Bodh programme across Grades 6, 7, and 8.</p>
+                        <button class="card-button">Open Form →</button>
+                    </div>
+                </div>
+
+                <div class="card" onclick="openForm('YOUR_KOBO_FORM_URL')">
+                    <div class="card-header">
+                        <h3>Guest Lecture / Field Visit</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-description">Captures Grade 6–8 student visits to industries and guest lecture details.</p>
+                        <button class="card-button">Open Form →</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        </div><!-- end kaushalBodhSection -->
 
         <!-- ONE-TIME SETUP -->
         <div class="section">
@@ -135,65 +193,21 @@
             </div>
         </div>
 
-        <!-- GRADE 9 -->
-        <div class="section">
-            <h2 class="section-title">Multi Sector Skill Subject, Grade 9</h2>
-            <div class="cards-grid">
-
-                <div class="card" onclick="openForm('https://ee-eu.kobotoolbox.org/x/c90sPuxQ')">
-                    <div class="card-header">
-                        <h3>Chapter Reporting</h3>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-description">Records chapter-wise teaching progress for Grade 9 vocational subjects. Submit as chapters are completed.</p>
-                        <button class="card-button">Open Form →</button>
-                    </div>
-                </div>
-
-                <div class="card" onclick="openForm('YOUR_KOBO_FORM_URL')">
-                    <div class="card-header">
-                        <h3>Guest Lecture / Field Visit</h3>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-description">Captures details of student visits to industries and guest lecture sessions including location and guest details.</p>
-                        <button class="card-button">Open Form →</button>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- KAUSHAL BODH -->
-        <div class="section">
-            <h2 class="section-title">Kaushal Bodh, Grade 6 to 8</h2>
-            <div class="cards-grid">
-
-                <div class="card" onclick="openForm('YOUR_KOBO_FORM_URL')">
-                    <div class="card-header">
-                        <h3>Kaushal Bodh Reporting</h3>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-description">Records chapter-wise progress for Kaushal Bodh programme across Grades 6, 7, and 8.</p>
-                        <button class="card-button">Open Form →</button>
-                    </div>
-                </div>
-
-                <div class="card" onclick="openForm('YOUR_KOBO_FORM_URL')">
-                    <div class="card-header">
-                        <h3>Guest Lecture / Field Visit</h3>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-description">Captures Grade 6–8 student visits to industries and guest lecture details.</p>
-                        <button class="card-button">Open Form →</button>
-                    </div>
-                </div>
-
-            </div>
-        </div>
     </div>
 
     <script>
         // Check if logged in and is teacher
+        // Show Kaushal Bodh section only if school has it
+        if (sessionStorage.getItem('hasKaushalBodh') === 'true') {
+            document.getElementById('kaushalBodhSection').style.display = 'block';
+        }
+
+        // Set greeting
+        const schoolName = sessionStorage.getItem('schoolName') || sessionStorage.getItem('userName') || '';
+        if (schoolName) {
+            document.getElementById('pageGreeting').textContent = 'Hi, ' + schoolName;
+        }
+
         if (sessionStorage.getItem('loggedIn') !== 'true') {
             window.location.href = 'login.html';
         }
