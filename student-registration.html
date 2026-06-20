@@ -31,7 +31,6 @@
         .topbar { background:var(--white); border-bottom:1.5px solid var(--brown); padding:0 16px; display:flex; align-items:center; gap:12px; height:58px; flex-shrink:0; }
         .back-btn { background:none; border:none; cursor:pointer; color:var(--brown); font-size:18px; padding:6px 8px; border-radius:8px; text-decoration:none; display:flex; align-items:center; transition:background var(--ease),color var(--ease); }
         .back-btn:hover { background:var(--white); color:var(--brown); }
-        .sheet-icon { width:32px; height:32px; background:var(--white); border:1.5px solid var(--brown); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; }
         .doc-info { flex:1; min-width:0; }
         .doc-title { font-family:'Playfair Display',serif; font-size:.95rem; font-weight:700; color:var(--brown); letter-spacing:-.1px; }
         .doc-sub { font-size:.72rem; color:var(--brown); }
@@ -109,15 +108,19 @@
 <!-- TOP BAR -->
 <div class="topbar">
     <a href="teacher-space.html" class="back-btn" title="Back">←</a>
-    <div class="sheet-icon">👨‍🎓</div>
     <div class="doc-info">
         <div class="doc-title" id="docTitle">Student Registration</div>
         <div class="doc-sub" id="docSub">Loading...</div>
     </div>
     <div class="topbar-actions">
         <button class="tb-btn tb-btn-outline" onclick="addRow()">+ Add Row</button>
-        <button class="tb-btn tb-btn-outline" onclick="deleteSelectedRow()">🗑 Delete Row</button>
-        <button class="tb-btn tb-btn-save" id="saveBtn" onclick="saveSheet()">💾 Save</button>
+        <button class="tb-btn tb-btn-outline" onclick="deleteSelectedRow()">Delete Row</button>
+        <button class="tb-btn tb-btn-save" id="saveBtn" onclick="saveSheet()">Save</button>
+        <div style="display:flex;gap:16px;align-items:center;padding:0 16px;border-left:1px solid rgba(58,46,37,.2);border-right:1px solid rgba(58,46,37,.2);">
+            <span style="font-size:.75rem;color:var(--brown);">Total <strong id="sumTotal">0</strong></span>
+            <span style="font-size:.75rem;color:var(--brown);">Male <strong id="sumMale">0</strong></span>
+            <span style="font-size:.75rem;color:var(--brown);">Female <strong id="sumFemale">0</strong></span>
+        </div>
         <span class="logout-link" onclick="logout()">Logout</span>
     </div>
 </div>
@@ -201,7 +204,7 @@
     const SCHOOL_NAME = sessionStorage.getItem('schoolName') || '';
 
     document.getElementById('docTitle').textContent = SCHOOL_NAME || 'Student Registration';
-    document.getElementById('docSub').textContent   = 'UDISE: ' + USERNAME + ' · Students (Grade 6-8)';
+    document.getElementById('docSub').textContent   = 'UDISE: ' + USERNAME;
 
     // ─────────────────────────────
     // STATE
@@ -365,7 +368,7 @@
 
         ['','Male','Female','Other'].forEach(opt => {
             const o = document.createElement('option');
-            o.value = opt; o.textContent = opt || '— select —';
+            o.value = opt; o.textContent = opt || 'select';
             if (opt === value) o.selected = true;
             sel.appendChild(o);
         });
@@ -548,7 +551,7 @@
             const rows = collectRows();
 
             if (rows.length === 0) {
-                toast('Nothing to save — add some students first!');
+                toast('Nothing to save add some students first!');
                 return;
             }
 
@@ -675,6 +678,7 @@
         const rows = collectRows();
         document.getElementById('statusText').textContent = `Grade ${currentGrade}`;
         document.getElementById('rowCountText').textContent = `${rows.length} students`;
+        updateSummary();
     }
 
     function showLoading(show) {
