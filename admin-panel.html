@@ -41,7 +41,7 @@
 
         .btn { padding:8px 18px; border:none; border-radius:8px; font-size:.83rem; font-weight:600; font-family:'DM Sans',sans-serif; cursor:pointer; transition:all var(--ease); }
         .btn-primary { background:var(--white); color:var(--brown); border:1.5px solid var(--brown); }
-        .btn-primary:hover { background:var(--brown); transform:translateY(-1px); box-shadow:0 4px 12px rgba(191,146,112,.28); }
+        .btn-primary:hover { background:rgba(58,46,37,.08); transform:translateY(-1px); }
         .btn-secondary { background:var(--c1); color:var(--brown); border:1.5px solid rgba(58,46,37,.3); }
         .btn-secondary:hover { border-color:var(--brown); color:var(--brown); }
 
@@ -137,7 +137,7 @@
         <div class="panel">
             <div class="panel-header">
                 <h2 class="panel-title">All Users</h2>
-                <button class="btn btn-primary" onclick="loadUsers()">🔄 Refresh</button>
+                <button class="btn btn-primary" onclick="loadUsers()">Refresh</button>
             </div>
 
             <div class="success-message" id="successMessage"></div>
@@ -223,7 +223,7 @@
                     <small style="color: #666;">User will be required to change this on first login</small>
                 </div>
 
-                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                <button type="submit" class="btn btn-primary" style="width:100%;">
                     Create User
                 </button>
             </form>
