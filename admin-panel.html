@@ -210,6 +210,13 @@
                     <input type="text" id="newSchool" />
                 </div>
 
+                <div class="form-group" id="kaushalGroup" style="display:none;">
+                    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+                        <input type="checkbox" id="newKaushalBodh" style="width:auto;accent-color:var(--brown);">
+                        School has Kaushal Bodh (Grade 6–8)
+                    </label>
+                </div>
+
                 <div class="form-group">
                     <label>Temporary Password <span class="required">*</span></label>
                     <input type="text" id="newPassword" required />
@@ -336,10 +343,12 @@
             if (role === 'teacher') {
                 udiseGroup.style.display = 'block';
                 schoolGroup.style.display = 'block';
+                document.getElementById('kaushalGroup').style.display = 'block';
                 document.getElementById('newUdise').required = true;
             } else {
                 udiseGroup.style.display = 'none';
                 schoolGroup.style.display = 'none';
+                document.getElementById('kaushalGroup').style.display = 'none';
                 document.getElementById('newUdise').required = false;
             }
         });
@@ -367,7 +376,8 @@
                     p_full_name: fullName,
                     p_udise_code: udise || null,
                     p_school_name: school || null,
-                    p_created_by: currentUserId
+                    p_created_by: currentUserId,
+                    p_has_kaushal_bodh: hasKaushalBodh
                 });
                 
                 if (error) throw error;
