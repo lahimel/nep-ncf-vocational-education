@@ -26,73 +26,73 @@
 
         *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
         body { font-family:'DM Sans',sans-serif; background:var(--white); height:100vh; display:flex; flex-direction:column; overflow:hidden; }
-        ::-webkit-scrollbar{width:7px;height:7px;} ::-webkit-scrollbar-track{background:var(--c1);} ::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px;} ::-webkit-scrollbar-corner{background:var(--c1);}
+        ::-webkit-scrollbar{width:7px;height:7px;} ::-webkit-scrollbar-track{background:var(--c1);} ::-webkit-scrollbar-thumb{background:var(--white);border-radius:3px;} ::-webkit-scrollbar-corner{background:var(--c1);}
 
-        .topbar { background:rgba(255,237,219,.96); backdrop-filter:blur(12px); border-bottom:1px solid rgba(191,146,112,.18); padding:0 16px; display:flex; align-items:center; gap:12px; height:58px; flex-shrink:0; }
-        .back-btn { background:none; border:none; cursor:pointer; color:var(--brown-mid); font-size:18px; padding:6px 8px; border-radius:8px; text-decoration:none; display:flex; align-items:center; transition:background var(--ease),color var(--ease); }
-        .back-btn:hover { background:var(--c3); color:var(--brown); }
-        .sheet-icon { width:32px; height:32px; background:var(--c4); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; }
+        .topbar { background:var(--white); border-bottom:1.5px solid var(--brown); padding:0 16px; display:flex; align-items:center; gap:12px; height:58px; flex-shrink:0; }
+        .back-btn { background:none; border:none; cursor:pointer; color:var(--brown); font-size:18px; padding:6px 8px; border-radius:8px; text-decoration:none; display:flex; align-items:center; transition:background var(--ease),color var(--ease); }
+        .back-btn:hover { background:var(--white); color:var(--brown); }
+        .sheet-icon { width:32px; height:32px; background:var(--white); border:1.5px solid var(--brown); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; }
         .doc-info { flex:1; min-width:0; }
         .doc-title { font-family:'Playfair Display',serif; font-size:.95rem; font-weight:700; color:var(--brown); letter-spacing:-.1px; }
-        .doc-sub { font-size:.72rem; color:var(--brown-mid); }
+        .doc-sub { font-size:.72rem; color:var(--brown); }
         .topbar-actions { display:flex; align-items:center; gap:8px; margin-left:auto; }
         .tb-btn { padding:7px 14px; border-radius:8px; border:none; font-family:'DM Sans',sans-serif; font-size:.82rem; cursor:pointer; font-weight:600; transition:all var(--ease); display:flex; align-items:center; gap:5px; }
-        .tb-btn-save { background:var(--c4); color:var(--white); }
-        .tb-btn-save:hover { background:var(--c4d); box-shadow:0 3px 10px rgba(191,146,112,.3); }
+        .tb-btn-save { background:var(--white); color:var(--brown); border:1.5px solid var(--brown); }
+        .tb-btn-save:hover { background:var(--brown); box-shadow:0 3px 10px rgba(191,146,112,.3); }
         .tb-btn-save:disabled { opacity:.5; cursor:not-allowed; box-shadow:none; }
-        .tb-btn-outline { background:var(--c1); color:var(--brown-mid); border:1.5px solid var(--c3); }
-        .tb-btn-outline:hover { border-color:var(--c4); color:var(--c4); }
-        .logout-link { font-size:.82rem; color:var(--brown-mid); cursor:pointer; padding:6px 10px; border-radius:8px; font-weight:500; transition:all var(--ease); }
-        .logout-link:hover { color:var(--c4); background:rgba(191,146,112,.08); }
+        .tb-btn-outline { background:var(--c1); color:var(--brown); border:1.5px solid rgba(58,46,37,.3); }
+        .tb-btn-outline:hover { border-color:var(--brown); color:var(--brown); }
+        .logout-link { font-size:.82rem; color:var(--brown); cursor:pointer; padding:6px 10px; border-radius:8px; font-weight:500; transition:all var(--ease); }
+        .logout-link:hover { color:var(--brown); background:rgba(58,46,37,.05); }
 
-        .menubar { background:rgba(237,205,187,.7); border-bottom:1px solid rgba(191,146,112,.13); padding:0 52px; display:flex; align-items:center; gap:2px; height:32px; flex-shrink:0; }
-        .menu-item { padding:3px 11px; font-size:.78rem; color:var(--brown-mid); cursor:pointer; border-radius:5px; font-weight:500; transition:all var(--ease); }
-        .menu-item:hover { background:var(--c3); color:var(--brown); }
+        .menubar { background:var(--white); border-bottom:1.5px solid var(--brown); padding:0 52px; display:flex; align-items:center; gap:2px; height:32px; flex-shrink:0; }
+        .menu-item { padding:3px 11px; font-size:.78rem; color:var(--brown); cursor:pointer; border-radius:5px; font-weight:500; transition:all var(--ease); }
+        .menu-item:hover { background:var(--white); color:var(--brown); }
 
-        .formula-bar { background:rgba(237,205,187,.5); border-bottom:1px solid rgba(191,146,112,.12); padding:0 8px; display:flex; align-items:center; gap:8px; height:30px; flex-shrink:0; }
-        .cell-ref { width:68px; border:1.5px solid var(--c3); border-radius:5px; padding:2px 6px; font-size:.75rem; font-family:'DM Sans',sans-serif; color:var(--brown); text-align:center; background:var(--c1); }
-        .formula-divider { width:1px; height:16px; background:var(--c3); }
+        .formula-bar { background:var(--white); border-bottom:1px solid rgba(58,46,37,.15); padding:0 8px; display:flex; align-items:center; gap:8px; height:30px; flex-shrink:0; }
+        .cell-ref { width:68px; border:1.5px solid rgba(58,46,37,.3); border-radius:5px; padding:2px 6px; font-size:.75rem; font-family:'DM Sans',sans-serif; color:var(--brown); text-align:center; background:var(--c1); }
+        .formula-divider { width:1px; height:16px; background:var(--white); }
         .formula-input { flex:1; border:none; outline:none; font-size:.78rem; font-family:'DM Sans',sans-serif; color:var(--brown); background:transparent; }
 
         .sheet-area { flex:1; overflow:auto; background:var(--white); order:2; }
         .grid-wrapper { min-width:max-content; }
         table.grid { border-collapse:collapse; table-layout:fixed; }
 
-        .grid th.row-num,.grid td.row-num { width:42px; min-width:42px; background:var(--c2); border-right:1px solid rgba(191,146,112,.18); border-bottom:1px solid rgba(191,146,112,.12); text-align:center; font-size:.72rem; color:var(--brown-mid); font-weight:500; padding:0; user-select:none; position:sticky; left:0; z-index:2; }
-        .grid thead th { background:var(--c3); border-right:1px solid rgba(191,146,112,.22); border-bottom:2px solid rgba(191,146,112,.35); font-size:.72rem; font-weight:700; color:var(--brown); padding:7px 8px; text-align:left; white-space:nowrap; user-select:none; position:sticky; top:0; z-index:1; text-transform:uppercase; letter-spacing:.4px; }
-        .grid thead th.required-col::after { content:' *'; color:var(--c4); }
-        .grid td { border-right:1px solid rgba(191,146,112,.1); border-bottom:1px solid rgba(191,146,112,.08); padding:0; height:26px; vertical-align:middle; }
-        .grid td.selected { background:rgba(191,146,112,.1); outline:2px solid var(--c4); outline-offset:-2px; }
+        .grid th.row-num,.grid td.row-num { width:42px; min-width:42px; background:var(--white); border-right:1px solid rgba(58,46,37,.12); border-bottom:1px solid rgba(58,46,37,.1); text-align:center; font-size:.72rem; color:var(--brown); font-weight:500; padding:0; user-select:none; position:sticky; left:0; z-index:2; }
+        .grid thead th { background:var(--white); border-right:1px solid rgba(58,46,37,.12); border-bottom:1.5px solid var(--brown); font-size:.72rem; font-weight:700; color:var(--brown); padding:7px 8px; text-align:left; white-space:nowrap; user-select:none; position:sticky; top:0; z-index:1; text-transform:uppercase; letter-spacing:.4px; }
+        .grid thead th.required-col::after { content:' *'; color:var(--brown); }
+        .grid td { border-right:1px solid rgba(58,46,37,.08); border-bottom:1px solid rgba(58,46,37,.07); padding:0; height:26px; vertical-align:middle; }
+        .grid td.selected { background:rgba(58,46,37,.06); outline:2px solid var(--brown); outline-offset:-2px; }
         .grid td input,.grid td select { width:100%; height:100%; border:none; outline:none; font-family:'DM Sans',sans-serif; font-size:.8rem; padding:0 6px; background:transparent; color:var(--brown); }
         .grid td select { cursor:pointer; background:var(--white); }
-        .grid td:hover { background:rgba(191,146,112,.05); }
-        .grid td input:focus,.grid td select:focus { background:rgba(255,237,219,.7); outline:2px solid var(--c4); outline-offset:-2px; }
-        .grid tbody tr:nth-child(even) td:not(.row-num) { background:rgba(237,205,187,.2); }
+        .grid td:hover { background:rgba(58,46,37,.03); }
+        .grid td input:focus,.grid td select:focus { background:rgba(58,46,37,.04); outline:2px solid var(--brown); outline-offset:-2px; }
+        .grid tbody tr:nth-child(even) td:not(.row-num) { background:rgba(58,46,37,.03); }
         .grid tbody tr:nth-child(even) td input { background:transparent; }
-        .grid tbody tr:nth-child(even) td:hover { background:rgba(191,146,112,.07); }
+        .grid tbody tr:nth-child(even) td:hover { background:rgba(58,46,37,.05); }
 
         .col-srno{width:60px;min-width:60px;} .col-fname{width:140px;min-width:120px;} .col-mname{width:130px;min-width:100px;} .col-lname{width:140px;min-width:120px;} .col-full{width:220px;min-width:180px;} .col-gender{width:90px;min-width:80px;} .col-mother{width:130px;min-width:100px;} .col-father{width:130px;min-width:100px;} .col-dob{width:130px;min-width:110px;}
 
-        .sheet-bottom { background:var(--c2); border-top:1px solid rgba(191,146,112,.15); padding:0 8px; display:flex; align-items:center; gap:2px; height:36px; flex-shrink:0; order:3; }
-        .add-sheet-btn { background:none; border:none; cursor:pointer; font-size:15px; color:var(--brown-mid); padding:4px 8px; border-radius:5px; }
-        .add-sheet-btn:hover { background:var(--c3); }
-        .sheet-tab { padding:0 16px; height:28px; border:1.5px solid transparent; border-bottom:none; border-radius:6px 6px 0 0; background:none; font-family:'DM Sans',sans-serif; font-size:.78rem; cursor:pointer; color:var(--brown-mid); display:flex; align-items:center; gap:6px; font-weight:500; transition:all var(--ease); position:relative; bottom:-1px; }
-        .sheet-tab:hover { background:var(--c3); color:var(--brown); }
-        .sheet-tab.active { background:var(--c1); border-color:rgba(191,146,112,.28); color:var(--c4); font-weight:700; border-bottom-color:var(--c1); }
+        .sheet-bottom { background:var(--white); border-top:1.5px solid var(--brown); padding:0 8px; display:flex; align-items:center; gap:2px; height:36px; flex-shrink:0; order:3; }
+        .add-sheet-btn { background:none; border:none; cursor:pointer; font-size:15px; color:var(--brown); padding:4px 8px; border-radius:5px; }
+        .add-sheet-btn:hover { background:var(--white); }
+        .sheet-tab { padding:0 16px; height:28px; border:1.5px solid transparent; border-bottom:none; border-radius:6px 6px 0 0; background:none; font-family:'DM Sans',sans-serif; font-size:.78rem; cursor:pointer; color:var(--brown); display:flex; align-items:center; gap:6px; font-weight:500; transition:all var(--ease); position:relative; bottom:-1px; }
+        .sheet-tab:hover { background:var(--white); color:var(--brown); }
+        .sheet-tab.active { background:var(--white); border-color:var(--brown); color:var(--brown); font-weight:700; border-bottom-color:var(--white); }
         .tab-dot { width:7px; height:7px; border-radius:50%; }
 
-        .status-bar { background:var(--c2); border-top:1px solid rgba(191,146,112,.1); padding:3px 12px; font-size:.72rem; color:var(--brown-mid); display:flex; gap:16px; align-items:center; flex-shrink:0; order:4; }
+        .status-bar { background:var(--white); border-top:1px solid rgba(58,46,37,.12); padding:3px 12px; font-size:.72rem; color:var(--brown); display:flex; gap:16px; align-items:center; flex-shrink:0; order:4; }
         .status-saved { color:#1E6B36; font-weight:600; }
-        .status-unsaved { color:var(--c4); font-weight:600; }
+        .status-unsaved { color:var(--brown); font-weight:600; }
 
         .toast { position:fixed; bottom:52px; left:50%; transform:translateX(-50%) translateY(14px); background:var(--brown); color:var(--white); padding:9px 20px; border-radius:8px; font-size:.82rem; font-weight:500; opacity:0; transition:all 220ms ease; z-index:100; pointer-events:none; }
         .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
         .toast.success { background:#1E6B36; }
         .toast.error { background:#8B2020; }
 
-        .loading-overlay { position:fixed; inset:0; background:rgba(255,237,219,.85); display:none; align-items:center; justify-content:center; z-index:200; }
+        .loading-overlay { position:fixed; inset:0; background:rgba(255,255,255,.9); display:none; align-items:center; justify-content:center; z-index:200; }
         .loading-overlay.show { display:flex; }
-        .spinner { width:28px; height:28px; border:3px solid var(--c3); border-top-color:var(--c4); border-radius:50%; animation:spin .8s linear infinite; }
+        .spinner { width:28px; height:28px; border:3px solid rgba(58,46,37,.2); border-top-color:var(--brown); border-radius:50%; animation:spin .8s linear infinite; }
         @keyframes spin{to{transform:rotate(360deg);}}
     </style>
 </head>
@@ -164,13 +164,16 @@
 <div class="sheet-bottom">
     <button class="add-sheet-btn" title="Add grade" disabled>+</button>
     <button class="sheet-tab active" id="tab6" onclick="switchGrade(6)">
-        <span class="tab-dot" style="background:#4285F4"></span> Grade 6
+        Grade 6
     </button>
     <button class="sheet-tab" id="tab7" onclick="switchGrade(7)">
-        <span class="tab-dot" style="background:#34A853"></span> Grade 7
+        Grade 7
     </button>
     <button class="sheet-tab" id="tab8" onclick="switchGrade(8)">
-        <span class="tab-dot" style="background:#FBBC04"></span> Grade 8
+        Grade 8
+    </button>
+    <button class="sheet-tab" id="tab9" onclick="switchGrade(9)">
+        Grade 9
     </button>
 </div>
 
@@ -204,7 +207,7 @@
     // STATE
     // ─────────────────────────────
     let currentGrade  = 6;
-    let gradeData     = { 6: [], 7: [], 8: [] };  // rows per grade
+    let gradeData     = { 6: [], 7: [], 8: [], 9: [] };  // rows per grade
     let selectedRow   = null;
     let unsaved       = false;
 
@@ -226,7 +229,7 @@
             if (error) throw error;
 
             // Distribute into grade buckets
-            [6, 7, 8].forEach(g => {
+            [6, 7, 8, 9].forEach(g => {
                 gradeData[g] = (data || [])
                     .filter(r => String(r.grade) === String(g))
                     .map(r => ({
@@ -367,7 +370,7 @@
             sel.appendChild(o);
         });
 
-        sel.onchange = () => { setCell(idx, 'gender', sel.value); markUnsaved(); };
+        sel.onchange = () => { setCell(idx, 'gender', sel.value); markUnsaved(); updateSummary(); };
         sel.onfocus  = () => selectRow(idx);
         td.appendChild(sel);
         return td;
@@ -527,7 +530,7 @@
             }
         }
         currentGrade = grade;
-        [6, 7, 8].forEach(g => {
+        [6, 7, 8, 9].forEach(g => {
             document.getElementById('tab' + g).classList.toggle('active', g === grade);
         });
         renderGrid(grade);
@@ -687,6 +690,17 @@
 
     function logout() {
         if (confirm('Logout?')) { sessionStorage.clear(); window.location.href = 'login.html'; }
+    }
+
+    // Update summary counts
+    function updateSummary() {
+        const rows = collectRows();
+        const total  = rows.length;
+        const male   = rows.filter(r => (r.gender||'').toLowerCase() === 'male').length;
+        const female = rows.filter(r => (r.gender||'').toLowerCase() === 'female').length;
+        document.getElementById('sumTotal').textContent  = total;
+        document.getElementById('sumMale').textContent   = male;
+        document.getElementById('sumFemale').textContent = female;
     }
 
     // Warn before leaving with unsaved changes
