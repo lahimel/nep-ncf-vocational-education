@@ -103,7 +103,7 @@
     </nav>
 
     <div class="container">
-        <h1 class="page-title" id="pageGreeting">School Reporting</h1>
+        <h1 class="page-title" id="pageGreeting"></h1>
 
         <!-- GRADE 9 -->
         <div class="section">
@@ -204,9 +204,7 @@
 
         // Set greeting
         const schoolName = sessionStorage.getItem('schoolName') || sessionStorage.getItem('userName') || '';
-        if (schoolName) {
-            document.getElementById('pageGreeting').textContent = 'Hi, ' + schoolName;
-        }
+        document.getElementById('pageGreeting').textContent = 'Hi, ' + (schoolName || 'Teacher');
 
         if (sessionStorage.getItem('loggedIn') !== 'true') {
             window.location.href = 'login.html';
