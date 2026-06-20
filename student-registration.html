@@ -204,7 +204,18 @@
     const SCHOOL_NAME = sessionStorage.getItem('schoolName') || '';
 
     document.getElementById('docTitle').textContent = SCHOOL_NAME || 'Student Registration';
-    document.getElementById('docSub').textContent   = 'UDISE: ' + USERNAME;
+    const hasKaushalBodh = sessionStorage.getItem('hasKaushalBodh') === 'true';
+    document.getElementById('docSub').textContent = 'UDISE: ' + USERNAME;
+
+    // Show/hide grade tabs based on Kaushal Bodh
+    if (!hasKaushalBodh) {
+        // Hide grade 6, 7, 8 tabs — only show grade 9
+        document.getElementById('tab6').style.display = 'none';
+        document.getElementById('tab7').style.display = 'none';
+        document.getElementById('tab8').style.display = 'none';
+        // Start on grade 9
+        switchGrade(9);
+    }
 
     // ─────────────────────────────
     // STATE
