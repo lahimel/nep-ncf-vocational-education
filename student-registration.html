@@ -154,7 +154,7 @@
 <div class="grade-picker" id="gradePicker">
     <div class="grade-picker-box">
         <div class="grade-picker-title" id="pickerSchoolName">Select a Class</div>
-        <div class="grade-picker-sub">Choose the class you want to enroll</div>
+        <div class="grade-picker-sub">Choose the class you want to update</div>
         <div class="grade-picker-btns" id="pickerBtns">
             <!-- buttons injected by JS -->
         </div>
@@ -262,7 +262,7 @@
     }
 
     // Build grade picker buttons
-    const grades = hasKaushalBodh ? [6, 7, 8, 9] : [9];
+    const grades = hasKaushalBodh ? [6, 7, 8, 9, 10] : [9, 10];
     const pickerBtns = document.getElementById('pickerBtns');
     document.getElementById('pickerSchoolName').textContent = SCHOOL_NAME || 'Select a Class';
     grades.forEach(g => {
@@ -280,7 +280,7 @@
     // STATE
     // ─────────────────────────────
     let currentGrade  = 6;
-    let gradeData     = { 6: [], 7: [], 8: [], 9: [] };  // rows per grade
+    let gradeData     = { 6: [], 7: [], 8: [], 9: [], 10: [] };  // rows per grade
     let selectedRow   = null;
     let unsaved       = false;
 
@@ -302,7 +302,7 @@
             if (error) throw error;
 
             // Distribute into grade buckets
-            [6, 7, 8, 9].forEach(g => {
+            [6, 7, 8, 9, 10].forEach(g => {
                 gradeData[g] = (data || [])
                     .filter(r => String(r.grade) === String(g))
                     .map(r => ({
