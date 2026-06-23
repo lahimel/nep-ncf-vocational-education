@@ -406,9 +406,15 @@
         };
 
         inp.oninput = () => {
+            if (field === 'date_of_birth') {
+                // Only auto-format if value looks like digits (not text month)
+                if (!/[a-zA-Z]/.test(inp.value)) {
+                    const formatted = formatDOB(inp.value);
+                    inp.value = formatted;
+                }
+            }
             setCell(idx, field, inp.value);
             document.getElementById('formulaBar').value = inp.value;
-            // Auto-fill Full Name
             if (['first_name','middle_name','last_name'].includes(field)) {
                 autoFillFullName(idx);
             }
@@ -425,6 +431,17 @@
         };
 
         inp.onkeydown = (e) => handleKeyNav(e, idx, field);
+
+        // On blur, normalize DOB
+        if (field === 'date_of_birth') {
+            inp.onblur = () => {
+                const parsed = parseDOB(inp.value);
+                if (parsed !== inp.value) {
+                    inp.value = parsed;
+                    setCell(idx, field, parsed);
+                }
+            };
+        }
 
         td.appendChild(inp);
         return td;
@@ -720,6 +737,66 @@
     // ─────────────────────────────
     // HELPERS
     // ─────────────────────────────
+    // Auto-format DOB as DD/MM/YYYY while typing (digits only)
+    function formatDOB(value) {
+        const digits = value.replace(/\D/g, '').slice(0, 8);
+        if (digits.length <= 2) return digits;
+        if (digits.length <= 4) return digits.slice(0,2) + '/' + digits.slice(2);
+        return digits.slice(0,2) + '/' + digits.slice(2,4) + '/' + digits.slice(4);
+    }
+
+    // Smart parser for any date format on blur
+    const MONTHS = {
+        jan:1,feb:2,mar:3,apr:4,may:5,jun:6,
+        jul:7,aug:8,sep:9,oct:10,nov:11,dec:12,
+        january:1,february:2,march:3,april:4,june:6,
+        july:7,august:8,september:9,october:10,november:11,december:12
+    };
+
+    function pad(n) { return String(n).padStart(2,'0'); }
+
+    function parseDOB(value) {
+        const v = value.trim().toLowerCase();
+        if (!v) return value;
+
+        // Already DD/MM/YYYY
+        if (/^\d{2}\/\d{2}\/\d{4}$/.test(v)) return value;
+
+        // "10 oct 2003" or "10 october 2003"
+        const textMatch = v.match(/^(\d{1,2})\s+([a-z]+)\s+(\d{4})$/);
+        if (textMatch) {
+            const d = parseInt(textMatch[1]);
+            const m = MONTHS[textMatch[2]];
+            const y = textMatch[3];
+            if (m) return pad(d) + '/' + pad(m) + '/' + y;
+        }
+
+        // "oct 10 2003" or "october 10, 2003"
+        const textMatch2 = v.match(/^([a-z]+)\s+(\d{1,2})[,\s]+(\d{4})$/);
+        if (textMatch2) {
+            const m = MONTHS[textMatch2[1]];
+            const d = parseInt(textMatch2[2]);
+            const y = textMatch2[3];
+            if (m) return pad(d) + '/' + pad(m) + '/' + y;
+        }
+
+        // YYYY-MM-DD (ISO)
+        const isoMatch = v.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (isoMatch) return isoMatch[3] + '/' + isoMatch[2] + '/' + isoMatch[1];
+
+        // DD-MM-YYYY or DD.MM.YYYY
+        const dashMatch = v.match(/^(\d{1,2})[.\-](\d{1,2})[.\-](\d{4})$/);
+        if (dashMatch) return pad(dashMatch[1]) + '/' + pad(dashMatch[2]) + '/' + dashMatch[3];
+
+        // All digits DDMMYYYY
+        const digitsOnly = v.replace(/\D/g,'');
+        if (digitsOnly.length === 8) {
+            return digitsOnly.slice(0,2) + '/' + digitsOnly.slice(2,4) + '/' + digitsOnly.slice(4);
+        }
+
+        return value; // return as-is if can't parse
+    }
+
     function colLetter(field) {
         const map = { sr_no:'A', first_name:'B', middle_name:'C', last_name:'D', full_name:'E', gender:'F', mother_name:'G', father_name:'H', date_of_birth:'I' };
         return map[field] || 'A';
