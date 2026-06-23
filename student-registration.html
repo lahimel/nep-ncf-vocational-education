@@ -37,10 +37,10 @@
         .topbar-actions { display:flex; align-items:center; gap:8px; margin-left:auto; }
         .tb-btn { padding:7px 14px; border-radius:8px; border:none; font-family:'DM Sans',sans-serif; font-size:.82rem; cursor:pointer; font-weight:600; transition:all var(--ease); display:flex; align-items:center; gap:5px; }
         .tb-btn-save { background:var(--white); color:var(--brown); border:1.5px solid var(--brown); }
-        .tb-btn-save:hover { background:var(--brown); box-shadow:0 3px 10px rgba(191,146,112,.3); }
+        .tb-btn-save:hover { background:var(--brown); color:var(--white); box-shadow:0 3px 10px rgba(58,46,37,.2); }
         .tb-btn-save:disabled { opacity:.5; cursor:not-allowed; box-shadow:none; }
-        .tb-btn-outline { background:var(--c1); color:var(--brown); border:1.5px solid rgba(58,46,37,.3); }
-        .tb-btn-outline:hover { border-color:var(--brown); color:var(--brown); }
+        .tb-btn-outline { background:var(--white); color:var(--brown); border:1.5px solid rgba(58,46,37,.35); }
+        .tb-btn-outline:hover { border-color:var(--brown); background:rgba(58,46,37,.05); }
         .logout-link { font-size:.82rem; color:var(--brown); cursor:pointer; padding:6px 10px; border-radius:8px; font-weight:500; transition:all var(--ease); }
         .logout-link:hover { color:var(--brown); background:rgba(58,46,37,.05); }
 
@@ -93,6 +93,51 @@
         .loading-overlay.show { display:flex; }
         .spinner { width:28px; height:28px; border:3px solid rgba(58,46,37,.2); border-top-color:var(--brown); border-radius:50%; animation:spin .8s linear infinite; }
         @keyframes spin{to{transform:rotate(360deg);}}
+
+        /* Grade Picker */
+        .grade-picker {
+            position: fixed; inset: 0;
+            background: var(--white);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 300;
+            flex-direction: column;
+        }
+        .grade-picker.hidden { display: none; }
+        .grade-picker-box {
+            border: 1.5px solid var(--brown);
+            border-radius: 16px;
+            padding: 40px 48px;
+            text-align: center;
+            max-width: 420px;
+            width: 90%;
+        }
+        .grade-picker-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem; font-weight: 700;
+            color: var(--brown); margin-bottom: 6px;
+        }
+        .grade-picker-sub {
+            font-size: .84rem; color: var(--brown);
+            margin-bottom: 28px; opacity: .6;
+        }
+        .grade-picker-btns {
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .grade-pick-btn {
+            padding: 13px 24px;
+            border: 1.5px solid var(--brown);
+            border-radius: 8px;
+            background: var(--white);
+            color: var(--brown);
+            font-family: 'DM Sans', sans-serif;
+            font-size: .95rem; font-weight: 600;
+            cursor: pointer;
+            transition: all 200ms ease;
+        }
+        .grade-pick-btn:hover {
+            background: var(--brown);
+            color: var(--white);
+        }
     </style>
 </head>
 <body>
@@ -105,6 +150,17 @@
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
+<!-- GRADE PICKER -->
+<div class="grade-picker" id="gradePicker">
+    <div class="grade-picker-box">
+        <div class="grade-picker-title" id="pickerSchoolName">Select a Class</div>
+        <div class="grade-picker-sub">Choose the class you want to update</div>
+        <div class="grade-picker-btns" id="pickerBtns">
+            <!-- buttons injected by JS -->
+        </div>
+    </div>
+</div>
+
 <!-- TOP BAR -->
 <div class="topbar">
     <a href="teacher-space.html" class="back-btn" title="Back">←</a>
@@ -113,14 +169,23 @@
         <div class="doc-sub" id="docSub">Loading...</div>
     </div>
     <div class="topbar-actions">
+        <div style="display:flex;gap:8px;align-items:center;margin-right:4px;">
+            <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(58,46,37,.06);border:1.5px solid var(--brown);border-radius:20px;padding:5px 14px;">
+                <span style="font-size:.72rem;font-weight:600;color:var(--brown);">Total</span>
+                <strong id="sumTotal" style="font-size:.82rem;color:var(--brown);">0</strong>
+            </div>
+            <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(58,46,37,.06);border:1.5px solid var(--brown);border-radius:20px;padding:5px 14px;">
+                <span style="font-size:.72rem;font-weight:600;color:var(--brown);">Male</span>
+                <strong id="sumMale" style="font-size:.82rem;color:var(--brown);">0</strong>
+            </div>
+            <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(58,46,37,.06);border:1.5px solid var(--brown);border-radius:20px;padding:5px 14px;">
+                <span style="font-size:.72rem;font-weight:600;color:var(--brown);">Female</span>
+                <strong id="sumFemale" style="font-size:.82rem;color:var(--brown);">0</strong>
+            </div>
+        </div>
         <button class="tb-btn tb-btn-outline" onclick="addRow()">+ Add Row</button>
         <button class="tb-btn tb-btn-outline" onclick="deleteSelectedRow()">Delete Row</button>
         <button class="tb-btn tb-btn-save" id="saveBtn" onclick="saveSheet()">Save</button>
-        <div style="display:flex;gap:16px;align-items:center;padding:0 16px;border-left:1px solid rgba(58,46,37,.2);border-right:1px solid rgba(58,46,37,.2);">
-            <span style="font-size:.75rem;color:var(--brown);">Total <strong id="sumTotal">0</strong></span>
-            <span style="font-size:.75rem;color:var(--brown);">Male <strong id="sumMale">0</strong></span>
-            <span style="font-size:.75rem;color:var(--brown);">Female <strong id="sumFemale">0</strong></span>
-        </div>
         <span class="logout-link" onclick="logout()">Logout</span>
     </div>
 </div>
@@ -209,13 +274,25 @@
 
     // Show/hide grade tabs based on Kaushal Bodh
     if (!hasKaushalBodh) {
-        // Hide grade 6, 7, 8 tabs — only show grade 9
         document.getElementById('tab6').style.display = 'none';
         document.getElementById('tab7').style.display = 'none';
         document.getElementById('tab8').style.display = 'none';
-        // Start on grade 9
-        switchGrade(9);
     }
+
+    // Build grade picker buttons
+    const grades = hasKaushalBodh ? [6, 7, 8, 9] : [9];
+    const pickerBtns = document.getElementById('pickerBtns');
+    document.getElementById('pickerSchoolName').textContent = SCHOOL_NAME || 'Select a Class';
+    grades.forEach(g => {
+        const btn = document.createElement('button');
+        btn.className = 'grade-pick-btn';
+        btn.textContent = 'Grade ' + g;
+        btn.onclick = () => {
+            document.getElementById('gradePicker').classList.add('hidden');
+            switchGrade(g);
+        };
+        pickerBtns.appendChild(btn);
+    });
 
     // ─────────────────────────────
     // STATE
