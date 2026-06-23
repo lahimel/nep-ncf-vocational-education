@@ -100,12 +100,31 @@
         .success-message{background:#E8F5EA;color:#1E6B36;border:1px solid rgba(30,107,54,.12);}
         .error-message{background:#FAE8E8;color:#8B2020;border:1px solid rgba(139,32,32,.12);}
 
+        /* Tabs */
+        .tabs { display:flex; gap:2px; margin-bottom:24px; border-bottom:1.5px solid var(--brown); }
+        .tab-btn { padding:10px 24px; border:none; background:none; font-family:'DM Sans',sans-serif; font-size:.85rem; font-weight:500; color:var(--brown); cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px; transition:all 200ms; }
+        .tab-btn.active { font-weight:700; border-bottom-color:var(--brown); }
+        .tab-btn:hover { background:rgba(58,46,37,.04); }
+        .tab-panel { display:none; }
+        .tab-panel.active { display:block; }
+
+        /* Import area */
+        .import-area { width:100%; min-height:160px; padding:14px; border:1.5px solid var(--brown); border-radius:12px; font-family:'DM Sans',sans-serif; font-size:13px; color:var(--brown); resize:vertical; background:var(--white); }
+        .import-area:focus { outline:none; }
+        .import-hint { font-size:.78rem; color:var(--brown); opacity:.6; margin-top:8px; line-height:1.6; }
+        .preview-table-wrap { overflow-x:auto; margin-top:16px; }
+
+        /* Student filter row */
+        .filter-row { display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:16px; }
+        .filter-row select, .filter-row input { padding:8px 12px; border:1.5px solid var(--brown); border-radius:8px; font-family:'DM Sans',sans-serif; font-size:.83rem; color:var(--brown); background:var(--white); min-width:180px; }
+        .filter-row select:focus, .filter-row input:focus { outline:none; }
+
         @media(max-width:768px){.header{padding:0 20px;}.container{padding:20px;}.stats{grid-template-columns:repeat(2,1fr);}}
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>User Management</h1>
+        <h1 id="adminTitle">User Management</h1>
         <div class="header-actions">
             <button class="btn btn-primary" onclick="showAddUserModal()">+ Add User</button>
             <button class="btn btn-secondary" onclick="logout()">Logout</button>
@@ -113,57 +132,112 @@
     </div>
 
     <div class="container">
-        <!-- Statistics -->
+
+        <!-- Stats -->
         <div class="stats">
-            <div class="stat-card">
-                <div class="stat-value" id="totalUsers">0</div>
-                <div class="stat-label">Total Users</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="totalTeachers">0</div>
-                <div class="stat-label">Teachers</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="totalOfficers">0</div>
-                <div class="stat-label">Field Officers</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="activeUsers">0</div>
-                <div class="stat-label">Active Users</div>
+            <div class="stat-card"><div class="stat-value" id="totalUsers">0</div><div class="stat-label">Total Users</div></div>
+            <div class="stat-card"><div class="stat-value" id="totalTeachers">0</div><div class="stat-label">Teachers</div></div>
+            <div class="stat-card"><div class="stat-value" id="totalOfficers">0</div><div class="stat-label">Field Officers</div></div>
+            <div class="stat-card"><div class="stat-value" id="activeUsers">0</div><div class="stat-label">Active Users</div></div>
+            <div class="stat-card"><div class="stat-value" id="totalStudents">0</div><div class="stat-label">Total Students</div></div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('users', this)">Users</button>
+            <button class="tab-btn" onclick="switchTab('students', this)">Students</button>
+            <button class="tab-btn" onclick="switchTab('import', this)">Bulk Import</button>
+        </div>
+
+        <!-- USERS TAB -->
+        <div class="tab-panel active" id="tab-users">
+            <div class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">All Users</h2>
+                    <button class="btn btn-primary" onclick="loadUsers()">Refresh</button>
+                </div>
+                <div class="success-message" id="successMessage"></div>
+                <div class="error-message" id="errorMessage"></div>
+                <table><thead><tr>
+                    <th>Username</th><th>Full Name</th><th>Role</th>
+                    <th>UDISE</th><th>Kaushal Bodh</th><th>Status</th><th>Last Login</th><th>Actions</th>
+                </tr></thead>
+                <tbody id="usersTableBody"><tr><td colspan="8" style="text-align:center;padding:40px;">Loading...</td></tr></tbody>
+                </table>
             </div>
         </div>
 
-        <!-- Users Table -->
-        <div class="panel">
-            <div class="panel-header">
-                <h2 class="panel-title">All Users</h2>
-                <button class="btn btn-primary" onclick="loadUsers()">Refresh</button>
+        <!-- STUDENTS TAB -->
+        <div class="tab-panel" id="tab-students">
+            <div class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">Student Data</h2>
+                    <button class="btn btn-primary" onclick="loadStudents()">Refresh</button>
+                </div>
+                <div class="filter-row">
+                    <select id="studentSchoolFilter" onchange="filterStudents()">
+                        <option value="">All Schools</option>
+                    </select>
+                    <select id="studentGradeFilter" onchange="filterStudents()">
+                        <option value="">All Grades</option>
+                        <option value="6">Grade 6</option>
+                        <option value="7">Grade 7</option>
+                        <option value="8">Grade 8</option>
+                        <option value="9">Grade 9</option>
+                        <option value="10">Grade 10</option>
+                    </select>
+                    <select id="studentGenderFilter" onchange="filterStudents()">
+                        <option value="">All Genders</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+                <div style="font-size:.82rem;color:var(--brown);margin-bottom:12px;">
+                    Showing <strong id="studentCount">0</strong> students
+                    &nbsp;|&nbsp; Male: <strong id="studentMale">0</strong>
+                    &nbsp;|&nbsp; Female: <strong id="studentFemale">0</strong>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table><thead><tr>
+                        <th>School</th><th>UDISE</th><th>Grade</th>
+                        <th>Full Name</th><th>Gender</th><th>Date of Birth</th>
+                        <th>Father Name</th><th>Mother Name</th>
+                    </tr></thead>
+                    <tbody id="studentsTableBody"><tr><td colspan="8" style="text-align:center;padding:40px;">Select a tab to load students</td></tr></tbody>
+                    </table>
+                </div>
             </div>
-
-            <div class="success-message" id="successMessage"></div>
-            <div class="error-message" id="errorMessage"></div>
-
-            <table id="usersTable">
-                <thead>
-                    <tr>
-                        <th>Username</th>
-                        <th>Full Name</th>
-                        <th>Role</th>
-                        <th>UDISE/ID</th>
-                        <th>Status</th>
-                        <th>Last Login</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="usersTableBody">
-                    <tr>
-                        <td colspan="7" style="text-align: center; padding: 40px;">
-                            Loading users...
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
+
+        <!-- BULK IMPORT TAB -->
+        <div class="tab-panel" id="tab-import">
+            <div class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">Bulk Import Users</h2>
+                </div>
+                <div class="import-hint" style="margin-bottom:16px;">
+                    Paste your CSV data below. Each row = one user.<br>
+                    <strong>Required columns (in order):</strong>
+                    username, full_name, role, school_name, udise_code, password, has_kaushal_bodh<br>
+                    <strong>Example:</strong> 27080408703, Dnyanba Highschool Teacher, teacher, Dnyanba Highschool, 27080408703, Welcome@123, true
+                </div>
+                <div class="success-message" id="importSuccess"></div>
+                <div class="error-message" id="importError"></div>
+                <textarea class="import-area" id="importArea" placeholder="27080408703, Teacher Name, teacher, Dnyanba Highschool, 27080408703, Welcome@123, true
+27080408704, Teacher Name, teacher, Anglo Hindi School, 27080408704, Welcome@123, false
+27080408705, Officer Name, field_officer, , , Welcome@123, false"></textarea>
+                <div style="display:flex;gap:10px;margin-top:12px;">
+                    <button class="btn btn-primary" onclick="previewImport()">Preview</button>
+                    <button class="btn btn-secondary" onclick="clearImport()">Clear</button>
+                </div>
+                <div class="preview-table-wrap" id="importPreview"></div>
+                <div id="importConfirmRow" style="display:none;margin-top:16px;">
+                    <button class="btn btn-primary" onclick="confirmImport()" id="confirmImportBtn">Create All Users</button>
+                    <span style="font-size:.82rem;color:var(--brown);margin-left:12px;" id="importStatus"></span>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- Add User Modal -->
@@ -460,6 +534,142 @@
             setTimeout(() => el.classList.remove('show'), 5000);
         }
         
+        // ── TAB SWITCHING ──────────────────────────────────────────────────────
+        function switchTab(name, btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('tab-' + name).classList.add('active');
+            if (name === 'students') loadStudents();
+        }
+
+        // ── STUDENTS ───────────────────────────────────────────────────────────
+        let allStudents = [];
+        async function loadStudents() {
+            document.getElementById('studentsTableBody').innerHTML =
+                '<tr><td colspan="8" style="text-align:center;padding:40px;">Loading...</td></tr>';
+            try {
+                const { data, error } = await supabaseClient
+                    .from('students').select('*')
+                    .order('school_name').order('grade').order('sr_no');
+                if (error) throw error;
+                allStudents = data || [];
+                document.getElementById('totalStudents').textContent = allStudents.length;
+
+                // Populate school filter
+                const schools = [...new Set(allStudents.map(s => s.school_name).filter(Boolean))].sort();
+                const sel = document.getElementById('studentSchoolFilter');
+                sel.innerHTML = '<option value="">All Schools</option>';
+                schools.forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = s; sel.appendChild(o); });
+
+                filterStudents();
+            } catch(e) { console.error(e); }
+        }
+
+        function filterStudents() {
+            const school = document.getElementById('studentSchoolFilter').value;
+            const grade  = document.getElementById('studentGradeFilter').value;
+            const gender = document.getElementById('studentGenderFilter').value;
+            const filtered = allStudents.filter(s =>
+                (!school || s.school_name === school) &&
+                (!grade  || String(s.grade) === grade) &&
+                (!gender || s.gender === gender)
+            );
+            document.getElementById('studentCount').textContent  = filtered.length;
+            document.getElementById('studentMale').textContent   = filtered.filter(s => s.gender === 'Male').length;
+            document.getElementById('studentFemale').textContent = filtered.filter(s => s.gender === 'Female').length;
+            const tbody = document.getElementById('studentsTableBody');
+            if (!filtered.length) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:32px;">No students found</td></tr>';
+                return;
+            }
+            tbody.innerHTML = filtered.map(s => `<tr>
+                <td>${s.school_name || '-'}</td>
+                <td>${s.udise_code || '-'}</td>
+                <td>Grade ${s.grade}</td>
+                <td><strong>${s.full_name || [s.first_name,s.middle_name,s.last_name].filter(Boolean).join(' ')}</strong></td>
+                <td>${s.gender || '-'}</td>
+                <td>${s.date_of_birth || '-'}</td>
+                <td>${s.father_name || '-'}</td>
+                <td>${s.mother_name || '-'}</td>
+            </tr>`).join('');
+        }
+
+        // ── BULK IMPORT ────────────────────────────────────────────────────────
+        let importRows = [];
+        function previewImport() {
+            const text = document.getElementById('importArea').value.trim();
+            if (!text) { showImportMsg('error', 'Please paste CSV data first.'); return; }
+            importRows = [];
+            const lines = text.split('\n').filter(l => l.trim());
+            const errors = [];
+            lines.forEach((line, i) => {
+                const cols = line.split(',').map(c => c.trim().replace(/^"|"$/g,''));
+                if (cols.length < 5) { errors.push('Row ' + (i+1) + ': not enough columns'); return; }
+                importRows.push({
+                    username:         cols[0],
+                    full_name:        cols[1],
+                    role:             cols[2] || 'teacher',
+                    school_name:      cols[3] || '',
+                    udise_code:       cols[4] || '',
+                    password:         cols[5] || 'Welcome@123',
+                    has_kaushal_bodh: (cols[6]||'').toLowerCase() === 'true'
+                });
+            });
+            if (!importRows.length) { showImportMsg('error', 'No valid rows found.'); return; }
+            const preview = document.getElementById('importPreview');
+            preview.innerHTML = `
+                <p style="font-size:.82rem;margin-bottom:10px;"><strong>${importRows.length} users</strong> ready to import${errors.length ? ' (' + errors.length + ' rows skipped)' : ''}</p>
+                <table><thead><tr><th>#</th><th>Username</th><th>Name</th><th>Role</th><th>School</th><th>UDISE</th><th>Password</th><th>Kaushal Bodh</th></tr></thead>
+                <tbody>${importRows.map((r,i) => `<tr>
+                    <td>${i+1}</td><td>${r.username}</td><td>${r.full_name}</td>
+                    <td>${r.role}</td><td>${r.school_name}</td><td>${r.udise_code}</td>
+                    <td>${r.password}</td><td>${r.has_kaushal_bodh ? 'Yes' : 'No'}</td>
+                </tr>`).join('')}</tbody></table>`;
+            document.getElementById('importConfirmRow').style.display = 'block';
+        }
+
+        async function confirmImport() {
+            const btn = document.getElementById('confirmImportBtn');
+            const status = document.getElementById('importStatus');
+            btn.disabled = true;
+            let done = 0, failed = 0;
+            for (const r of importRows) {
+                try {
+                    await supabaseClient.rpc('create_user_admin', {
+                        p_username: r.username, p_email: null,
+                        p_password: r.password, p_role: r.role,
+                        p_full_name: r.full_name, p_udise_code: r.udise_code || null,
+                        p_school_name: r.school_name || null,
+                        p_created_by: currentUserId,
+                        p_has_kaushal_bodh: r.has_kaushal_bodh
+                    });
+                    done++;
+                } catch(e) { failed++; }
+                status.textContent = `${done} created, ${failed} failed...`;
+            }
+            showImportMsg('success', `Done! ${done} users created${failed ? ', ' + failed + ' failed (may already exist)' : ''}.`);
+            btn.disabled = false;
+            document.getElementById('importConfirmRow').style.display = 'none';
+            document.getElementById('importArea').value = '';
+            document.getElementById('importPreview').innerHTML = '';
+            importRows = [];
+            loadUsers();
+        }
+
+        function clearImport() {
+            document.getElementById('importArea').value = '';
+            document.getElementById('importPreview').innerHTML = '';
+            document.getElementById('importConfirmRow').style.display = 'none';
+            importRows = [];
+        }
+
+        function showImportMsg(type, msg) {
+            const el = document.getElementById(type === 'error' ? 'importError' : 'importSuccess');
+            el.textContent = msg; el.classList.add('show');
+            setTimeout(() => el.classList.remove('show'), 6000);
+        }
+
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
                 sessionStorage.clear();
