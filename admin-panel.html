@@ -115,9 +115,9 @@
         .preview-table-wrap { overflow-x:auto; margin-top:16px; }
 
         /* Student filter row */
-        .filter-row { display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:16px; }
-        .filter-row select, .filter-row input { padding:8px 12px; border:1.5px solid var(--brown); border-radius:8px; font-family:'DM Sans',sans-serif; font-size:.83rem; color:var(--brown); background:var(--white); min-width:180px; }
-        .filter-row select:focus, .filter-row input:focus { outline:none; }
+        .filter-row { display:flex; gap:10px; align-items:center; margin-bottom:16px; flex-wrap:nowrap; }
+        .filter-row select { padding:8px 12px; border:1.5px solid var(--brown); border-radius:8px; font-family:'DM Sans',sans-serif; font-size:.83rem; color:var(--brown); background:var(--white); flex:1; min-width:0; }
+        .filter-row select:focus { outline:none; }
 
         @media(max-width:768px){.header{padding:0 20px;}.container{padding:20px;}.stats{grid-template-columns:repeat(2,1fr);}}
     </style>
@@ -159,8 +159,8 @@
                 <div class="success-message" id="successMessage"></div>
                 <div class="error-message" id="errorMessage"></div>
                 <table><thead><tr>
-                    <th>Username</th><th>Full Name</th><th>Role</th>
-                    <th>UDISE</th><th>Kaushal Bodh</th><th>Status</th><th>Last Login</th><th>Actions</th>
+                    <th>Username / UDISE</th><th>Full Name</th><th>Role</th>
+                    <th>School</th><th>Status</th><th>Last Login</th><th>Actions</th>
                 </tr></thead>
                 <tbody id="usersTableBody"><tr><td colspan="8" style="text-align:center;padding:40px;">Loading...</td></tr></tbody>
                 </table>
@@ -214,6 +214,9 @@
             <div class="panel">
                 <div class="panel-header">
                     <h2 class="panel-title">Bulk Import Users</h2>
+                </div>
+                <div style="margin-bottom:16px;">
+                    <button class="btn btn-primary" onclick="downloadTemplate()">Download CSV Template</button>
                 </div>
                 <div class="import-hint" style="margin-bottom:16px;">
                     Paste your CSV data below. Each row = one user.<br>
@@ -662,6 +665,20 @@
             document.getElementById('importPreview').innerHTML = '';
             document.getElementById('importConfirmRow').style.display = 'none';
             importRows = [];
+        }
+
+        function downloadTemplate() {
+            const headers = 'username,full_name,role,school_name,udise_code,password,has_kaushal_bodh';
+            const example = [
+                '27080408703,Teacher Name,teacher,Dnyanba Highschool,27080408703,Welcome@123,true',
+                '27080408704,Teacher Name,teacher,Anglo Hindi School,27080408704,Welcome@123,false',
+                'officer1,Officer Name,field_officer,,,Welcome@123,false'
+            ].join('\n');
+            const csv  = headers + '\n' + example;
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url  = URL.createObjectURL(blob);
+            const a    = document.createElement('a');
+            a.href = url; a.download = 'bulk-import-template.csv'; a.click();
         }
 
         function showImportMsg(type, msg) {
