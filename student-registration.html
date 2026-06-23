@@ -72,13 +72,13 @@
 
         .col-srno{width:60px;min-width:60px;} .col-fname{width:140px;min-width:120px;} .col-mname{width:130px;min-width:100px;} .col-lname{width:140px;min-width:120px;} .col-full{width:220px;min-width:180px;} .col-gender{width:90px;min-width:80px;} .col-mother{width:130px;min-width:100px;} .col-father{width:130px;min-width:100px;} .col-dob{width:130px;min-width:110px;}
 
-        .sheet-bottom { background:var(--white); border-top:1.5px solid var(--brown); padding:0 8px; display:flex; align-items:center; gap:2px; height:36px; flex-shrink:0; order:3; }
-        .add-sheet-btn { background:none; border:none; cursor:pointer; font-size:15px; color:var(--brown); padding:4px 8px; border-radius:5px; }
-        .add-sheet-btn:hover { background:var(--white); }
-        .sheet-tab { padding:0 16px; height:28px; border:1.5px solid transparent; border-bottom:none; border-radius:6px 6px 0 0; background:none; font-family:'DM Sans',sans-serif; font-size:.78rem; cursor:pointer; color:var(--brown); display:flex; align-items:center; gap:6px; font-weight:500; transition:all var(--ease); position:relative; bottom:-1px; }
-        .sheet-tab:hover { background:var(--white); color:var(--brown); }
-        .sheet-tab.active { background:var(--white); border-color:var(--brown); color:var(--brown); font-weight:700; border-bottom-color:var(--white); }
-        .tab-dot { width:7px; height:7px; border-radius:50%; }
+        
+        
+        
+        
+        
+        
+        
 
         .status-bar { background:var(--white); border-top:1px solid rgba(58,46,37,.12); padding:3px 12px; font-size:.72rem; color:var(--brown); display:flex; gap:16px; align-items:center; flex-shrink:0; order:4; }
         .status-saved { color:#1E6B36; font-weight:600; }
@@ -183,6 +183,7 @@
                 <strong id="sumFemale" style="font-size:.82rem;color:var(--brown);">0</strong>
             </div>
         </div>
+        <button class="tb-btn tb-btn-outline" onclick="showGradePicker()" id="gradePickerBtn">Grade 6</button>
         <button class="tb-btn tb-btn-outline" onclick="addRow()">+ Add Row</button>
         <button class="tb-btn tb-btn-outline" onclick="deleteSelectedRow()">Delete Row</button>
         <button class="tb-btn tb-btn-save" id="saveBtn" onclick="saveSheet()">Save</button>
@@ -226,23 +227,6 @@
             <tbody id="gridBody"></tbody>
         </table>
     </div>
-</div>
-
-<!-- SHEET TABS -->
-<div class="sheet-bottom">
-    <button class="add-sheet-btn" title="Add grade" disabled>+</button>
-    <button class="sheet-tab active" id="tab6" onclick="switchGrade(6)">
-        Grade 6
-    </button>
-    <button class="sheet-tab" id="tab7" onclick="switchGrade(7)">
-        Grade 7
-    </button>
-    <button class="sheet-tab" id="tab8" onclick="switchGrade(8)">
-        Grade 8
-    </button>
-    <button class="sheet-tab" id="tab9" onclick="switchGrade(9)">
-        Grade 9
-    </button>
 </div>
 
 <!-- STATUS BAR -->
@@ -621,9 +605,8 @@
             }
         }
         currentGrade = grade;
-        [6, 7, 8, 9].forEach(g => {
-            document.getElementById('tab' + g).classList.toggle('active', g === grade);
-        });
+        const btn = document.getElementById('gradePickerBtn');
+        if (btn) btn.textContent = 'Grade ' + grade;
         renderGrid(grade);
     }
 
@@ -785,6 +768,10 @@
     }
 
     // Update summary counts
+    function showGradePicker() {
+        document.getElementById('gradePicker').classList.remove('hidden');
+    }
+
     function updateSummary() {
         const rows = collectRows();
         const total  = rows.length;
