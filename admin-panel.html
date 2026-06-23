@@ -42,8 +42,8 @@
         .btn { padding:8px 18px; border:none; border-radius:8px; font-size:.83rem; font-weight:600; font-family:'DM Sans',sans-serif; cursor:pointer; transition:all var(--ease); }
         .btn-primary { background:var(--white); color:var(--brown); border:1.5px solid var(--brown); }
         .btn-primary:hover { background:rgba(58,46,37,.08); transform:translateY(-1px); }
-        .btn-secondary { background:var(--c1); color:var(--brown); border:1.5px solid rgba(58,46,37,.3); }
-        .btn-secondary:hover { border-color:var(--brown); color:var(--brown); }
+        .btn-secondary { background:var(--white); color:var(--brown); border:1.5px solid var(--brown); }
+        .btn-secondary:hover { background:rgba(58,46,37,.05); }
 
         .container { max-width:1400px; margin:0 auto; padding:32px 5%; }
 
@@ -110,6 +110,7 @@
 
         /* Import area */
         .import-area { width:100%; min-height:160px; padding:14px; border:1.5px solid var(--brown); border-radius:12px; font-family:'DM Sans',sans-serif; font-size:13px; color:var(--brown); resize:vertical; background:var(--white); }
+        .import-area::placeholder { color:rgba(58,46,37,.35); }
         .import-area:focus { outline:none; }
         .import-hint { font-size:.78rem; color:var(--brown); opacity:.6; margin-top:8px; line-height:1.6; }
         .preview-table-wrap { overflow-x:auto; margin-top:16px; }
