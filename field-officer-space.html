@@ -25,13 +25,13 @@
 
         *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
         body { font-family:'DM Sans',sans-serif; background:var(--white); color:var(--brown); min-height:100vh; }
-        ::-webkit-scrollbar{width:5px;} ::-webkit-scrollbar-track{background:var(--c1);} ::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px;}
+        ::-webkit-scrollbar{width:5px;} ::-webkit-scrollbar-track{background:var(--c1);} ::-webkit-scrollbar-thumb{background:var(--white);border-radius:3px;}
         .blob { display:none !important; }
 
         nav {
             background: rgba(255,237,219,.96);
             backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(191,146,112,.18);
+            border-bottom: 1px solid rgba(58,46,37,.15);
             position: sticky; top:0; z-index:100;
         }
         .nav-inner {
@@ -42,10 +42,10 @@
         .nav-logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
         .nav-logo img { height:40px; }
         .nav-right { display:flex; align-items:center; gap:12px; }
-        .nav-right a { color:var(--brown-mid); text-decoration:none; font-size:.84rem; font-weight:500; padding:6px 12px; border-radius:8px; transition:all var(--ease); }
+        .nav-right a { color:var(--brown); text-decoration:none; font-size:.84rem; font-weight:500; padding:6px 12px; border-radius:8px; transition:all var(--ease); }
         .nav-right a:hover { color:var(--brown); background:rgba(191,146,112,.08); }
-        .logout-btn { background:none; border:1.5px solid var(--c3); color:var(--brown-mid); padding:7px 18px; border-radius:8px; font-size:.84rem; font-weight:500; font-family:'DM Sans',sans-serif; cursor:pointer; transition:all var(--ease); }
-        .logout-btn:hover { border-color:var(--c4); color:var(--c4); }
+        .logout-btn { background:none; border:1.5px solid rgba(58,46,37,.3); color:var(--brown); padding:7px 18px; border-radius:8px; font-size:.84rem; font-weight:500; font-family:'DM Sans',sans-serif; cursor:pointer; transition:all var(--ease); }
+        .logout-btn:hover { border-color:var(--brown); color:var(--brown); }
 
         .container { max-width:1200px; margin:0 auto; padding:52px 5% 64px; }
 
@@ -53,7 +53,7 @@
 
         .section { margin-bottom:44px; }
         .section-header { margin-bottom:16px; }
-        .section-title { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--brown-light); padding-bottom:10px; border-bottom:1px solid rgba(191,146,112,.18); }
+        .section-title { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--brown); padding-bottom:10px; border-bottom:1px solid rgba(58,46,37,.15); }
 
         .cards-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:18px; }
 
@@ -64,16 +64,18 @@
         .card-header h3 { color:var(--brown); font-size:.92rem; font-weight:600; }
 
         .card-body { padding:18px 22px 22px; }
-        .card-description { font-size:.83rem; color:var(--brown-mid); line-height:1.68; margin-bottom:18px; }
+        .card-description { font-size:.83rem; color:var(--brown); line-height:1.68; margin-bottom:18px; }
 
         .card-button { display:inline-flex; align-items:center; gap:6px; background:var(--white); color:var(--brown); border:1.5px solid var(--brown); padding:9px 20px; border-radius:8px; font-size:.82rem; font-weight:600; font-family:'DM Sans',sans-serif; cursor:pointer; transition:all var(--ease); text-decoration:none; }
         .card-button:hover { background:var(--brown); color:var(--white); transform:translateY(-1px); }
 
         @media(max-width:768px) {
-            .nav-inner { padding:0 20px; }
-            .container { padding:32px 20px 48px; }
+            .nav-inner { padding:0 16px; height:auto; flex-wrap:wrap; gap:8px; padding:10px 16px; }
+            .nav-right a { display:none; }
+            .container { padding:24px 16px 48px; }
             .cards-grid { grid-template-columns:1fr; }
-            .page-title { font-size:1.8rem; }
+            .page-title { font-size:1.5rem; }
+            .logout-btn { padding:6px 12px; font-size:.78rem; }
         }
     </style>
 </head>
