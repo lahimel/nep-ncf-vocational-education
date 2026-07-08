@@ -79,10 +79,13 @@
         }
 
         @media(max-width:768px) {
-            .nav-inner { padding:0 20px; }
-            .container { padding:32px 20px 48px; }
+            .nav-inner { padding:0 16px; height:auto; flex-wrap:wrap; gap:8px; padding:10px 16px; }
+            .nav-right { gap:8px; }
+            .nav-right a { display:none; }
+            .container { padding:24px 16px 48px; }
             .cards-grid { grid-template-columns:1fr; }
-            .page-title { font-size:1.8rem; }
+            .page-title { font-size:1.5rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
+            .logout-btn { padding:6px 12px; font-size:.78rem; }
         }
     </style>
 </head>
