@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>School Reporting - Lend A Hand India</title>
     <link rel="icon" type="image/png" href="favicon-96x96.png"/>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --c1: #FFEDDB;
@@ -25,7 +25,7 @@
 
         *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
         body { font-family:'DM Sans',sans-serif; background:var(--white); color:var(--brown); min-height:100vh; }
-        ::-webkit-scrollbar{width:5px;} ::-webkit-scrollbar-track{background:var(--c1);} ::-webkit-scrollbar-thumb{background:var(--white);border-radius:3px;}
+        ::-webkit-scrollbar{width:5px;} ::-webkit-scrollbar-track{background:var(--c1);} ::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px;}
         .blob { display:none !important; }
 
         nav {
@@ -42,18 +42,47 @@
         .nav-logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
         .nav-logo img { height:40px; }
         .nav-right { display:flex; align-items:center; gap:12px; }
-        .nav-right a { color:var(--brown); text-decoration:none; font-size:.84rem; font-weight:500; padding:6px 12px; border-radius:8px; transition:all var(--ease); }
+        .nav-right a { color:var(--brown); text-decoration:none; font-size:.9rem; font-weight:500; padding:6px 12px; border-radius:8px; transition:all var(--ease); }
         .nav-right a:hover { color:var(--brown); background:rgba(191,146,112,.08); }
         .logout-btn { background:none; border:1.5px solid rgba(58,46,37,.3); color:var(--brown); padding:7px 18px; border-radius:8px; font-size:.84rem; font-weight:500; font-family:'DM Sans',sans-serif; cursor:pointer; transition:all var(--ease); }
-        .logout-btn:hover { border-color:var(--brown); color:var(--brown); }
+        .logout-btn:hover { border-color:var(--brown); }
 
         .container { max-width:1200px; margin:0 auto; padding:52px 5% 64px; }
 
-        .page-title { font-family:'Playfair Display',serif; font-size:2.2rem; font-weight:700; color:var(--brown); letter-spacing:-.5px; margin-bottom:40px; }
+        .page-title { font-family:'Playfair Display',serif; font-size:2.2rem; font-weight:700; color:var(--brown); letter-spacing:-.5px; margin-bottom:48px; }
 
-        .section { margin-bottom:44px; }
-        .section-header { margin-bottom:16px; }
-        .section-title { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--brown); padding-bottom:10px; }
+        .section { margin-bottom:48px; }
+
+        /* Section heading with left accent bar */
+        .section-heading {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+        .section-accent {
+            width: 4px;
+            border-radius: 4px;
+            flex-shrink: 0;
+            align-self: stretch;
+            min-height: 36px;
+        }
+        .section-heading-text { }
+        .section-label {
+            font-size: .78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--brown-light);
+            margin-bottom: 4px;
+        }
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--brown);
+            letter-spacing: -.3px;
+        }
 
         .cards-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:18px; }
 
@@ -61,14 +90,13 @@
         .card:hover { transform:translateY(-3px); box-shadow:var(--sh); }
 
         .card-header { background:transparent; border-bottom:1.5px solid var(--brown); padding:16px 22px; }
-        .card-header h3 { color:var(--brown); font-size:.92rem; font-weight:600; }
+        .card-header h3 { color:var(--brown); font-size:1rem; font-weight:600; }
 
         .card-body { padding:18px 22px 22px; }
-        .card-description { font-size:.83rem; color:var(--brown); line-height:1.68; margin-bottom:18px; }
+        .card-description { font-size:.9rem; color:var(--brown); line-height:1.7; margin-bottom:18px; }
 
-        .card-button { display:inline-flex; align-items:center; gap:6px; background:var(--white); color:var(--brown); border:1.5px solid var(--brown); padding:9px 20px; border-radius:8px; font-size:.82rem; font-weight:600; font-family:'DM Sans',sans-serif; cursor:pointer; transition:all var(--ease); text-decoration:none; }
+        .card-button { display:inline-flex; align-items:center; gap:6px; background:var(--white); color:var(--brown); border:1.5px solid var(--brown); padding:9px 20px; border-radius:8px; font-size:.88rem; font-weight:600; font-family:'DM Sans',sans-serif; cursor:pointer; transition:all var(--ease); text-decoration:none; }
         .card-button:hover { background:var(--brown); color:var(--white); transform:translateY(-1px); }
-
 
         .one-time-badge {
             display: inline-flex; align-items: center; gap: 5px;
@@ -79,20 +107,34 @@
         }
 
         @media(max-width:768px) {
-            .nav-inner { padding:0 16px; height:auto; flex-wrap:wrap; gap:8px; padding:10px 16px; }
-            .nav-right { gap:8px; }
+            .nav-inner { padding:10px 16px; height:auto; flex-wrap:wrap; gap:8px; }
             .nav-right a { display:none; }
-            .container { padding:24px 16px 48px; }
-            .cards-grid { grid-template-columns:1fr; }
-            .page-title { font-size:1.5rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
-            .logout-btn { padding:6px 12px; font-size:.78rem; }
+            .logout-btn { padding:6px 12px; font-size:.82rem; }
+
+            .container { padding:20px 16px 48px; }
+
+            /* Page title — allow wrapping, not clipped */
+            .page-title { font-size:1.6rem; white-space:normal; line-height:1.2; margin-bottom:32px; }
+
+            /* Section headings — tighter on mobile */
+            .section-heading { gap:10px; margin-bottom:14px; }
+            .section-accent { min-height:28px; width:3px; }
+            .section-label { font-size:.7rem; }
+            .section-title { font-size:1.1rem; }
+
+            /* Cards */
+            .cards-grid { grid-template-columns:1fr; gap:14px; }
+            .card-header { padding:13px 16px; }
+            .card-header h3 { font-size:.95rem; }
+            .card-body { padding:14px 16px 18px; }
+            .card-description { font-size:.86rem; }
+            .card-button { font-size:.84rem; padding:8px 16px; }
+
+            .section { margin-bottom:36px; }
         }
     </style>
 </head>
 <body>
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-    
     <nav>
         <div class="nav-inner">
             <a href="index.html" class="nav-logo">
@@ -108,25 +150,27 @@
     <div class="container">
         <h1 class="page-title" id="pageGreeting"></h1>
 
-        <!-- GRADE 9 -->
+        <!-- GRADE 9 & 10 -->
         <div class="section">
-            <h2 class="section-title">Multi Sector Skill Subject, Grade 9 - 10</h2>
+            <div class="section-heading">
+                <div class="section-accent" style="background:var(--brown);"></div>
+                <div class="section-heading-text">
+                    <div class="section-label">Grade 9 &amp; 10</div>
+                    <div class="section-title">Multi Sector Skill Subject</div>
+                </div>
+            </div>
             <div class="cards-grid">
 
                 <div class="card" onclick="openForm('https://ee-eu.kobotoolbox.org/x/c90sPuxQ')">
-                    <div class="card-header">
-                        <h3>Chapter Reporting</h3>
-                    </div>
+                    <div class="card-header"><h3>Chapter Reporting</h3></div>
                     <div class="card-body">
-                        <p class="card-description">Records chapter-wise teaching progress for Grade 9 & Grade 10 vocational subjects. Submit as chapters are completed.</p>
+                        <p class="card-description">Records chapter-wise teaching progress for Grade 9 &amp; 10 vocational subjects. Submit as chapters are completed.</p>
                         <button class="card-button">Open Form →</button>
                     </div>
                 </div>
 
                 <div class="card" onclick="openForm('https://ee-eu.kobotoolbox.org/x/z7K6eMOA')">
-                    <div class="card-header">
-                        <h3>Guest Lecture / Field Visit</h3>
-                    </div>
+                    <div class="card-header"><h3>Guest Lecture / Field Visit</h3></div>
                     <div class="card-body">
                         <p class="card-description">Captures details of student visits to industries and guest lecture sessions including location and guest details.</p>
                         <button class="card-button">Open Form →</button>
@@ -139,13 +183,17 @@
         <!-- KAUSHAL BODH -->
         <div id="kaushalBodhSection" style="display:none;">
         <div class="section">
-            <h2 class="section-title">Vocational Education, Grade 6 to 8 (Kaushal Bodh)</h2>
+            <div class="section-heading">
+                <div class="section-accent" style="background:var(--c3);"></div>
+                <div class="section-heading-text">
+                    <div class="section-label">Grade 6 to 8 · Kaushal Bodh</div>
+                    <div class="section-title">Vocational Education</div>
+                </div>
+            </div>
             <div class="cards-grid">
 
                 <div class="card" onclick="openForm('https://ee-eu.kobotoolbox.org/x/mne7orJV')">
-                    <div class="card-header">
-                        <h3>Kaushal Bodh Reporting</h3>
-                    </div>
+                    <div class="card-header"><h3>Kaushal Bodh Reporting</h3></div>
                     <div class="card-body">
                         <p class="card-description">Records chapter-wise progress for Kaushal Bodh programme across Grades 6, 7, and 8.</p>
                         <button class="card-button">Open Form →</button>
@@ -153,39 +201,39 @@
                 </div>
 
                 <div class="card" onclick="openForm('https://ee-eu.kobotoolbox.org/x/Of59QxVa')">
-                    <div class="card-header">
-                        <h3>Guest Lecture / Field Visit</h3>
-                    </div>
+                    <div class="card-header"><h3>Guest Lecture / Field Visit</h3></div>
                     <div class="card-body">
-                        <p class="card-description">Captures Grade 6–8 student visits to industries and guest lecture details.</p>
+                        <p class="card-description">Captures Grade 6 to 8 student visits to industries and guest lecture details.</p>
                         <button class="card-button">Open Form →</button>
                     </div>
                 </div>
 
             </div>
         </div>
-        </div><!-- end kaushalBodhSection -->
+        </div>
 
         <!-- ONE-TIME SETUP -->
         <div class="section">
-            <h2 class="section-title">One-Time Setup</h2>
+            <div class="section-heading">
+                <div class="section-accent" style="background:var(--c4); opacity:.5;"></div>
+                <div class="section-heading-text">
+                    <div class="section-label">Do Once · Start of Year</div>
+                    <div class="section-title">One-Time Setup</div>
+                </div>
+            </div>
             <div class="cards-grid">
 
-                <div class="card card-onetime" onclick="window.location.href='student-registration.html'" style="cursor:pointer;">
-                    <div class="card-header">
-                        <h3>Student Registration</h3>
-                    </div>
+                <div class="card" onclick="window.location.href='student-registration.html'" style="cursor:pointer;">
+                    <div class="card-header"><h3>Student Registration</h3></div>
                     <div class="card-body">
                         <div class="one-time-badge">Do Once</div>
-                        <p class="card-description">Register all students in Grades 6–8. Paste directly from your Excel sheet. Submit once at the start of the year.</p>
+                        <p class="card-description">Register all students in Grades 6 to 8. Paste directly from your Excel sheet. Submit once at the start of the year.</p>
                         <button class="card-button">Open →</button>
                     </div>
                 </div>
 
-                <div class="card card-onetime" onclick="openForm('YOUR_KOBO_FORM_URL')">
-                    <div class="card-header">
-                        <h3>Tools Inventory</h3>
-                    </div>
+                <div class="card" onclick="openForm('YOUR_KOBO_FORM_URL')">
+                    <div class="card-header"><h3>Tools Inventory</h3></div>
                     <div class="card-body">
                         <div class="one-time-badge">Do Once</div>
                         <p class="card-description">Record the tools and equipment available in your school — quantity, condition, and usage. Submit once per year.</p>
@@ -199,20 +247,17 @@
     </div>
 
     <script>
-        // Check if logged in and is teacher
-        // Show Kaushal Bodh section only if school has it
         if (sessionStorage.getItem('hasKaushalBodh') === 'true') {
             document.getElementById('kaushalBodhSection').style.display = 'block';
         }
 
-        // Set greeting
         const schoolName = sessionStorage.getItem('schoolName') || sessionStorage.getItem('userName') || '';
         document.getElementById('pageGreeting').textContent = 'Hi, ' + (schoolName || 'Teacher');
 
         if (sessionStorage.getItem('loggedIn') !== 'true') {
             window.location.href = 'login.html';
         }
-        
+
         if (sessionStorage.getItem('userRole') !== 'teacher') {
             alert('Access denied. This page is for teachers only.');
             window.location.href = 'login.html';
@@ -227,11 +272,9 @@
 
         function openForm(url) {
             if (url === 'YOUR_KOBO_FORM_URL') {
-                alert('Please add your Kobo form URL for this form.\n\nEdit teacher-space.html and replace "YOUR_KOBO_FORM_URL" with your actual Kobo form link.');
+                alert('This form link has not been added yet. Please contact your administrator.');
                 return;
             }
-
-            // Open form in full page view
             window.location.href = 'form-view.html?url=' + encodeURIComponent(url);
         }
     </script>
