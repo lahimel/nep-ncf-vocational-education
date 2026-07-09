@@ -214,7 +214,8 @@
     const USERNAME    = sessionStorage.getItem('username')   || '';
     const SCHOOL_NAME = sessionStorage.getItem('schoolName') || '';
     const hasKaushalBodh = sessionStorage.getItem('hasKaushalBodh') === 'true';
-    const spokeSchools   = JSON.parse(sessionStorage.getItem('spokeSchools') || '[]');
+    let spokeSchools = [];
+    try { spokeSchools = JSON.parse(sessionStorage.getItem('spokeSchools') || '[]'); } catch(e) { spokeSchools = []; }
     const isHub          = spokeSchools.length > 0;
 
     // Selected school — set after picker
@@ -237,47 +238,61 @@
     // ── PICKER LOGIC ──────────────────────────────────────────────────────────
     const pickerBtns = document.getElementById('pickerBtns');
 
+    function setPickerText(title, subtitle) {
+        const t = document.getElementById('pickerTitle');
+        const s = document.getElementById('pickerSubtitle');
+        if (t) t.textContent = title;
+        if (s) s.textContent = subtitle;
+    }
+
     function buildGradePicker() {
-        pickerBtns.innerHTML = '';
-        document.getElementById('pickerTitle').textContent    = selectedSchoolName || 'Select a Class';
-        document.getElementById('pickerSubtitle').textContent = 'Choose the class to update';
-        const grades = hasKaushalBodh ? [6,7,8,9,10] : [9,10];
-        grades.forEach(g => {
-            const btn = document.createElement('button');
-            btn.className   = 'grade-pick-btn';
-            btn.textContent = 'Grade ' + g;
-            btn.onclick = async () => {
-                document.getElementById('gradePicker').classList.add('hidden');
-                document.getElementById('gradePickerBtn').textContent = 'Grade ' + g;
-                document.getElementById('docTitle').textContent = selectedSchoolName;
-                document.getElementById('docSub').textContent   = 'UDISE: ' + selectedUDISE;
-                // Load data for this school if not yet loaded
-                if (!dataLoaded) await loadSchoolData();
-                switchGrade(g);
-            };
-            pickerBtns.appendChild(btn);
-        });
+        try {
+            pickerBtns.innerHTML = '';
+            setPickerText(selectedSchoolName || SCHOOL_NAME || 'Select a Class', 'Choose the class to update');
+            const grades = hasKaushalBodh ? [6,7,8,9,10] : [9,10];
+            grades.forEach(g => {
+                const btn = document.createElement('button');
+                btn.className   = 'grade-pick-btn';
+                btn.textContent = 'Grade ' + g;
+                btn.onclick = async () => {
+                    document.getElementById('gradePicker').classList.add('hidden');
+                    const gb = document.getElementById('gradePickerBtn');
+                    if (gb) gb.textContent = 'Grade ' + g;
+                    document.getElementById('docTitle').textContent = selectedSchoolName || SCHOOL_NAME;
+                    document.getElementById('docSub').textContent   = 'UDISE: ' + selectedUDISE;
+                    if (!dataLoaded) await loadSchoolData();
+                    switchGrade(g);
+                };
+                pickerBtns.appendChild(btn);
+            });
+        } catch(err) {
+            console.error('buildGradePicker error:', err);
+        }
     }
 
     function buildSchoolPicker() {
-        pickerBtns.innerHTML = '';
-        document.getElementById('pickerTitle').textContent    = SCHOOL_NAME || 'Select a School';
-        document.getElementById('pickerSubtitle').textContent = 'Choose which school to register students for';
-        const allSchools = [{ udise: USERNAME, name: SCHOOL_NAME }, ...spokeSchools];
-        allSchools.forEach(school => {
-            const btn = document.createElement('button');
-            btn.className = 'grade-pick-btn';
-            btn.innerHTML = '<span style="font-weight:700;">' + school.name + '</span><br><span style="font-size:.75rem;opacity:.7;">' + school.udise + '</span>';
-            btn.style.lineHeight = '1.5';
-            btn.onclick = () => {
-                selectedUDISE      = school.udise;
-                selectedSchoolName = school.name;
-                dataLoaded = false; // reset so data loads fresh for this school
-                gradeData  = { 6:[], 7:[], 8:[], 9:[], 10:[] }; // clear previous
-                buildGradePicker();
-            };
-            pickerBtns.appendChild(btn);
-        });
+        try {
+            pickerBtns.innerHTML = '';
+            setPickerText(SCHOOL_NAME || 'Select a School', 'Choose which school to register students for');
+            const allSchools = [{ udise: USERNAME, name: SCHOOL_NAME || USERNAME }, ...spokeSchools];
+            allSchools.forEach(school => {
+                const btn = document.createElement('button');
+                btn.className = 'grade-pick-btn';
+                btn.innerHTML = '<span style="font-weight:700;">' + (school.name || school.udise) + '</span><br>'
+                              + '<span style="font-size:.75rem;opacity:.6;">' + school.udise + '</span>';
+                btn.style.lineHeight = '1.5';
+                btn.onclick = () => {
+                    selectedUDISE      = school.udise;
+                    selectedSchoolName = school.name || school.udise;
+                    dataLoaded = false;
+                    gradeData  = { 6:[], 7:[], 8:[], 9:[], 10:[] };
+                    buildGradePicker();
+                };
+                pickerBtns.appendChild(btn);
+            });
+        } catch(err) {
+            console.error('buildSchoolPicker error:', err);
+        }
     }
 
     // Init picker
