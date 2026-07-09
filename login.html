@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Lend A Hand India</title>
     <link rel="icon" type="image/png" href="favicon-96x96.png"/>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
@@ -44,6 +44,7 @@
             background: var(--white);
             padding: 40px 36px 32px;
             text-align: center;
+            border-bottom: 1.5px solid var(--brown);
         }
         .logo { width: 72px; height: auto; margin-bottom: 16px; }
         .login-header h1 {
@@ -68,7 +69,7 @@
 
         .btn { width:100%; padding:12px; border:none; border-radius:var(--r); font-size:.92rem; font-weight:600; font-family:'DM Sans',sans-serif; cursor:pointer; transition:all var(--ease); }
         .btn-primary { background:var(--white); color:var(--brown); border:1.5px solid var(--brown); }
-        .btn-primary:hover { background:var(--brown); transform:translateY(-1px); box-shadow:0 6px 18px rgba(191,146,112,.3); }
+        .btn-primary:hover { background:var(--brown); color:var(--white); transform:translateY(-1px); box-shadow:0 6px 18px rgba(191,146,112,.3); }
         .btn-primary:disabled { opacity:.5; cursor:not-allowed; transform:none; box-shadow:none; }
 
         .error-message { background:rgba(139,32,32,.07); color:#7A1A1A; border:1px solid rgba(139,32,32,.12); padding:10px 14px; border-radius:var(--r); margin-bottom:16px; font-size:.82rem; display:none; }
@@ -111,16 +112,14 @@
                     <input type="password" id="password" name="password" required autocomplete="current-password" />
                 </div>
                 
-                <button type="submit" class="btn btn-primary" id="loginBtn">
-                    Login
-                </button>
+                <button type="submit" class="btn btn-primary" id="loginBtn">Login</button>
             </form>
 
             <!-- Change Password Form (shown on first login) -->
             <form id="changePasswordForm" class="change-password-form">
                 <div class="error-message" id="changePasswordError"></div>
                 
-                <div style="background: #FFF4E6; padding: 16px; border-radius: 8px; margin-bottom: 24px; border-left: 4px solid #FF9800;">
+                <div style="background:var(--c1);padding:16px;border-radius:8px;margin-bottom:24px;border-left:4px solid var(--brown);">
                     <strong>First Login:</strong> You must change your password to continue.
                 </div>
                 
@@ -140,9 +139,7 @@
                     <input type="password" id="confirmPassword" required minlength="8" />
                 </div>
                 
-                <button type="submit" class="btn btn-primary" id="changePasswordBtn">
-                    Change Password & Continue
-                </button>
+                <button type="submit" class="btn btn-primary" id="changePasswordBtn">Change Password &amp; Continue</button>
             </form>
 
             <div class="home-link">
@@ -152,44 +149,33 @@
     </div>
 
     <script>
-        // =============================================
-        // SUPABASE CONFIGURATION
-        // =============================================
-        const SUPABASE_URL = 'https://soesdipnikhtnuuemstm.supabase.co';
+        const SUPABASE_URL      = 'https://soesdipnikhtnuuemstm.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNvZXNkaXBuaWtodG51dWVtc3RtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNTM4NDMsImV4cCI6MjA5NDkyOTg0M30._o831V46iMi9y7d_FRZ_ZfZ8nDOuFflLJLiUdpZKzko';
         
         const { createClient } = window.supabase;
-        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabaseClient   = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
-        // DOM elements
-        const loginForm = document.getElementById('loginForm');
+        const loginForm          = document.getElementById('loginForm');
         const changePasswordForm = document.getElementById('changePasswordForm');
-        const errorMessage = document.getElementById('errorMessage');
-        const changePasswordError = document.getElementById('changePasswordError');
-        const loginBtn = document.getElementById('loginBtn');
-        const changePasswordBtn = document.getElementById('changePasswordBtn');
+        const errorMessage       = document.getElementById('errorMessage');
+        const changePasswordError= document.getElementById('changePasswordError');
+        const loginBtn           = document.getElementById('loginBtn');
+        const changePasswordBtn  = document.getElementById('changePasswordBtn');
         
         let currentUser = null;
         
-        // =============================================
-        // LOGIN HANDLER
-        // =============================================
+        // ── LOGIN ──────────────────────────────────────────────────────────────
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
             
-            if (!username || !password) {
-                showError('Please enter both username and password');
-                return;
-            }
+            if (!username || !password) { showError('Please enter both username and password'); return; }
             
-            loginBtn.disabled = true;
+            loginBtn.disabled    = true;
             loginBtn.textContent = 'Logging in...';
             
             try {
-                // Call Supabase function to authenticate
                 const { data, error } = await supabaseClient.rpc('authenticate_user', {
                     p_username: username,
                     p_password: password
@@ -201,25 +187,22 @@
                     const user = data[0];
                     currentUser = user;
                     
-                    // Log successful login
                     await supabaseClient.rpc('log_login', {
                         p_user_id: user.user_id,
                         p_username: username,
                         p_success: true
                     });
                     
-                    // Store user info in session
-                    sessionStorage.setItem('loggedIn', 'true');
-                    sessionStorage.setItem('userId', user.user_id);
-                    sessionStorage.setItem('username', user.username);
-                    sessionStorage.setItem('userRole', user.role);
-                    sessionStorage.setItem('userName', user.full_name);
-                    sessionStorage.setItem('udiseCode', user.udise_code || '');
-                    sessionStorage.setItem('schoolName', user.school_name || '');
-                    sessionStorage.setItem('hasKaushalBodh', user.has_kaushal_bodh ? 'true' : 'false');
-                    sessionStorage.setItem('spokeSchools', JSON.stringify(user.spoke_schools || []));
+                    sessionStorage.setItem('loggedIn',       'true');
+                    sessionStorage.setItem('userId',          user.user_id);
+                    sessionStorage.setItem('username',        user.username);
+                    sessionStorage.setItem('userRole',        user.role);
+                    sessionStorage.setItem('userName',        user.full_name);
+                    sessionStorage.setItem('udiseCode',       user.udise_code   || '');
+                    sessionStorage.setItem('schoolName',      user.school_name  || '');
+                    sessionStorage.setItem('hasKaushalBodh',  user.has_kaushal_bodh ? 'true' : 'false');
+                    sessionStorage.setItem('spokeSchools',    JSON.stringify(user.spoke_schools || []));
                     
-                    // Check if password change required
                     if (user.must_change_password) {
                         showChangePasswordForm();
                     } else {
@@ -227,49 +210,34 @@
                     }
                 } else {
                     showError('Invalid username or password');
-                    loginBtn.disabled = false;
+                    loginBtn.disabled    = false;
                     loginBtn.textContent = 'Login';
                 }
             } catch (error) {
                 console.error('Login error:', error);
                 showError('Login failed. Please try again.');
-                loginBtn.disabled = false;
+                loginBtn.disabled    = false;
                 loginBtn.textContent = 'Login';
             }
         });
         
-        // =============================================
-        // CHANGE PASSWORD HANDLER
-        // =============================================
+        // ── CHANGE PASSWORD ────────────────────────────────────────────────────
         changePasswordForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
             const currentPassword = document.getElementById('currentPassword').value;
-            const newPassword = document.getElementById('newPassword').value;
+            const newPassword     = document.getElementById('newPassword').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
             
-            // Validation
-            if (newPassword.length < 8) {
-                showChangePasswordError('Password must be at least 8 characters');
-                return;
-            }
+            if (newPassword.length < 8)         { showChangePasswordError('Password must be at least 8 characters'); return; }
+            if (newPassword !== confirmPassword)  { showChangePasswordError('New passwords do not match'); return; }
+            if (currentPassword === newPassword)  { showChangePasswordError('New password must be different from current password'); return; }
             
-            if (newPassword !== confirmPassword) {
-                showChangePasswordError('New passwords do not match');
-                return;
-            }
-            
-            if (currentPassword === newPassword) {
-                showChangePasswordError('New password must be different from current password');
-                return;
-            }
-            
-            changePasswordBtn.disabled = true;
+            changePasswordBtn.disabled    = true;
             changePasswordBtn.textContent = 'Changing Password...';
             
             try {
                 const { data, error } = await supabaseClient.rpc('change_password', {
-                    p_user_id: currentUser.user_id,
+                    p_user_id:     currentUser.user_id,
                     p_old_password: currentPassword,
                     p_new_password: newPassword
                 });
@@ -281,34 +249,28 @@
                     redirectToDashboard(currentUser.role);
                 } else {
                     showChangePasswordError('Current password is incorrect');
-                    changePasswordBtn.disabled = false;
+                    changePasswordBtn.disabled    = false;
                     changePasswordBtn.textContent = 'Change Password & Continue';
                 }
             } catch (error) {
                 console.error('Change password error:', error);
                 showChangePasswordError('Failed to change password. Please try again.');
-                changePasswordBtn.disabled = false;
+                changePasswordBtn.disabled    = false;
                 changePasswordBtn.textContent = 'Change Password & Continue';
             }
         });
         
-        // =============================================
-        // HELPER FUNCTIONS
-        // =============================================
-        function showError(message) {
-            errorMessage.textContent = message;
+        // ── HELPERS ────────────────────────────────────────────────────────────
+        function showError(msg) {
+            errorMessage.textContent = msg;
             errorMessage.classList.add('show');
-            setTimeout(() => {
-                errorMessage.classList.remove('show');
-            }, 5000);
+            setTimeout(() => errorMessage.classList.remove('show'), 5000);
         }
         
-        function showChangePasswordError(message) {
-            changePasswordError.textContent = message;
+        function showChangePasswordError(msg) {
+            changePasswordError.textContent = msg;
             changePasswordError.classList.add('show');
-            setTimeout(() => {
-                changePasswordError.classList.remove('show');
-            }, 5000);
+            setTimeout(() => changePasswordError.classList.remove('show'), 5000);
         }
         
         function showChangePasswordForm() {
@@ -318,21 +280,15 @@
         }
         
         function redirectToDashboard(role) {
-            if (role === 'admin') {
-                window.location.href = 'admin-panel.html';
-            } else if (role === 'teacher') {
-                window.location.href = 'teacher-space.html';
-            } else if (role === 'field_officer') {
-                window.location.href = 'field-officer-space.html';
-            } else {
-                window.location.href = 'index.html';
-            }
+            if      (role === 'admin')        window.location.href = 'admin-panel.html';
+            else if (role === 'teacher')      window.location.href = 'teacher-space.html';
+            else if (role === 'field_officer')window.location.href = 'field-officer-space.html';
+            else                              window.location.href = 'index.html';
         }
         
-        // Check if already logged in
+        // Redirect if already logged in
         if (sessionStorage.getItem('loggedIn') === 'true') {
-            const role = sessionStorage.getItem('userRole');
-            redirectToDashboard(role);
+            redirectToDashboard(sessionStorage.getItem('userRole'));
         }
     </script>
 </body>
