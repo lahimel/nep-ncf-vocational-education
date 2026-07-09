@@ -274,7 +274,7 @@
         try {
             pickerBtns.innerHTML = '';
             setPickerText(SCHOOL_NAME || 'Select a School', 'Choose which school to register students for');
-            const allSchools = [{ udise: USERNAME, name: SCHOOL_NAME || USERNAME }, ...spokeSchools];
+            const allSchools = spokeSchools; // hub fills for spokes only
             allSchools.forEach(school => {
                 const btn = document.createElement('button');
                 btn.className = 'grade-pick-btn';
