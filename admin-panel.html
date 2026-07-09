@@ -499,7 +499,12 @@
                 loadUsers();
             } catch (error) {
                 console.error('Error creating user:', error);
-                showError('Failed to create user. Username might already exist.');
+                const msg = error?.message || JSON.stringify(error);
+                if (msg.includes('duplicate') || msg.includes('unique') || msg.includes('already')) {
+                    showError('Username already exists. Please use a different username.');
+                } else {
+                    showError('Failed to create user: ' + msg);
+                }
             }
         });
         
