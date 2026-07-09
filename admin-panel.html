@@ -79,6 +79,8 @@
         .action-btn-enable{background:#E8F5EA;color:#1E6B36;border-color:rgba(30,107,54,.12);}
         .action-btn-enable:hover{background:#1E6B36;color:white;}
         .action-btn-reset{background:rgba(191,146,112,.12);color:var(--brown);border-color:rgba(191,146,112,.22);}
+        .action-btn-edit{background:rgba(58,46,37,.07);color:var(--brown);border-color:rgba(58,46,37,.2);}
+        .action-btn-edit:hover{background:var(--brown);color:white;}
         .action-btn-reset:hover{background:var(--c4);color:white;}
 
         .modal{display:none;position:fixed;inset:0;background:rgba(58,46,37,.4);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;}
@@ -269,6 +271,55 @@
 
     </div>
 
+    <!-- Edit User Modal -->
+    <div class="modal" id="editUserModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit User</h3>
+                <button class="close-btn" onclick="closeEditUserModal()">×</button>
+            </div>
+            <input type="hidden" id="editUserId"/>
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="editUsername" disabled style="opacity:.5;cursor:not-allowed;"/>
+            </div>
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="editFullName"/>
+            </div>
+            <div class="form-group">
+                <label>Role</label>
+                <select id="editRole">
+                    <option value="teacher">Teacher</option>
+                    <option value="field_officer">Field Officer</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>UDISE Code</label>
+                <input type="text" id="editUdise"/>
+            </div>
+            <div class="form-group">
+                <label>School Name</label>
+                <input type="text" id="editSchool"/>
+            </div>
+            <div class="form-group">
+                <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+                    <input type="checkbox" id="editKaushalBodh" style="width:auto;accent-color:var(--brown);">
+                    School has Kaushal Bodh (Grade 6–8)
+                </label>
+            </div>
+            <div class="form-group">
+                <label>Spoke Schools <span style="font-size:.75rem;opacity:.6;font-weight:400;">(hub teachers only)</span></label>
+                <div id="editSpokeRows"></div>
+                <button type="button" class="add-spoke-btn" onclick="addEditSpokeRow()">+ Add Spoke School</button>
+            </div>
+            <div class="success-message" id="editSuccess"></div>
+            <div class="error-message"   id="editError"></div>
+            <button class="btn btn-primary" style="width:100%;margin-top:8px;" onclick="saveEditUser()">Save Changes</button>
+        </div>
+    </div>
+
     <!-- Add User Modal -->
     <div class="modal" id="addUserModal">
         <div class="modal-content">
@@ -364,18 +415,22 @@
         // =============================================
         async function loadUsers() {
             try {
-                const { data, error } = await supabaseClient
-                    .from('users')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-                
+                const { data, error } = await supabaseClient.rpc('get_all_users');
                 if (error) throw error;
-                
                 displayUsers(data);
                 updateStats(data);
             } catch (error) {
                 console.error('Error loading users:', error);
-                showError('Failed to load users');
+                // Fallback to direct query if RPC not available yet
+                try {
+                    const { data, error: err2 } = await supabaseClient
+                        .from('users').select('*').order('created_at', { ascending: false });
+                    if (err2) throw err2;
+                    displayUsers(data);
+                    updateStats(data);
+                } catch(e2) {
+                    showError('Failed to load users: ' + e2.message);
+                }
             }
         }
         
@@ -388,6 +443,7 @@
                 tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No users found</td></tr>';
                 return;
             }
+            window._allUsers = users;
             const rows = users.map(user => {
                 const spokes   = (user.spoke_schools || []).length;
                 const kb       = user.has_kaushal_bodh ? ' · KB' : '';
@@ -399,7 +455,8 @@
                 const roleBadge = '<span class="badge badge-' + (user.role==='admin'?'admin':user.role==='teacher'?'teacher':'officer') + '">' + user.role.replace('_',' ').toUpperCase() + '</span>';
                 const statusBadge = '<span class="badge ' + (user.is_active?'badge-active':'badge-inactive') + '">' + (user.is_active?'Active':'Inactive') + '</span>';
                 const actions = user.role !== 'admin'
-                    ? '<button class="action-btn ' + (user.is_active?'action-btn-disable':'action-btn-enable') + '" onclick="toggleUserStatus(\'' + user.id + '\', ' + (!user.is_active) + ')">' + (user.is_active?'Disable':'Enable') + '</button> <button class="action-btn action-btn-reset" onclick="resetPassword(\'' + user.id + '\', \'' + user.username + '\')">Reset</button>'
+                    ? '<button class="action-btn action-btn-edit" onclick="editUser(\'' + user.id + '\')" >Edit</button> '
+                    + '<button class="action-btn ' + (user.is_active?'action-btn-disable':'action-btn-enable') + '" onclick="toggleUserStatus(\'' + user.id + '\', ' + (!user.is_active) + ')">' + (user.is_active?'Disable':'Enable') + '</button> <button class="action-btn action-btn-reset" onclick="resetPassword(\'' + user.id + '\', \'' + user.username + '\')">Reset</button>'
                     : '';
                 return '<tr>'
                     + '<td><strong>' + user.username + '</strong></td>'
@@ -705,6 +762,75 @@
             document.getElementById('importPreview').innerHTML = '';
             document.getElementById('importConfirmRow').style.display = 'none';
             importRows = [];
+        }
+
+        // ── EDIT USER ──────────────────────────────────────────────────────────
+        function editUser(userId) {
+            const user = (window._allUsers || []).find(u => u.id === userId);
+            if (!user) { showError('User not found'); return; }
+
+            document.getElementById('editUserId').value   = user.id;
+            document.getElementById('editUsername').value = user.username;
+            document.getElementById('editFullName').value = user.full_name || '';
+            document.getElementById('editRole').value     = user.role;
+            document.getElementById('editUdise').value    = user.udise_code || '';
+            document.getElementById('editSchool').value   = user.school_name || '';
+            document.getElementById('editKaushalBodh').checked = !!user.has_kaushal_bodh;
+
+            // Populate spoke rows
+            const spokeContainer = document.getElementById('editSpokeRows');
+            spokeContainer.innerHTML = '';
+            const spokes = user.spoke_schools || [];
+            spokes.forEach(s => addEditSpokeRow(s.udise, s.name));
+
+            document.getElementById('editSuccess').classList.remove('show');
+            document.getElementById('editError').classList.remove('show');
+            document.getElementById('editUserModal').classList.add('show');
+        }
+
+        function closeEditUserModal() {
+            document.getElementById('editUserModal').classList.remove('show');
+            document.getElementById('editSpokeRows').innerHTML = '';
+        }
+
+        function addEditSpokeRow(udise='', name='') {
+            const container = document.getElementById('editSpokeRows');
+            const row = document.createElement('div');
+            row.className = 'spoke-row';
+            row.innerHTML = '<input type="text" class="spoke-udise" placeholder="UDISE Code" value="' + udise + '" style="max-width:160px;">'
+                          + '<input type="text" class="spoke-name" placeholder="School Name" value="' + name + '">'
+                          + '<button type="button" class="spoke-remove" onclick="this.parentElement.remove()">×</button>';
+            container.appendChild(row);
+        }
+
+        async function saveEditUser() {
+            const userId = document.getElementById('editUserId').value;
+            const spokeRows   = document.querySelectorAll('#editSpokeRows .spoke-row');
+            const spokeSchools = Array.from(spokeRows).map(row => ({
+                udise: row.querySelector('.spoke-udise').value.trim(),
+                name:  row.querySelector('.spoke-name').value.trim()
+            })).filter(s => s.udise && s.name);
+
+            try {
+                const { error } = await supabaseClient.rpc('update_user_admin', {
+                    p_user_id:          userId,
+                    p_full_name:        document.getElementById('editFullName').value.trim() || null,
+                    p_school_name:      document.getElementById('editSchool').value.trim()   || null,
+                    p_udise_code:       document.getElementById('editUdise').value.trim()    || null,
+                    p_role:             document.getElementById('editRole').value             || null,
+                    p_has_kaushal_bodh: document.getElementById('editKaushalBodh').checked,
+                    p_spoke_schools:    spokeSchools
+                });
+                if (error) throw error;
+                const el = document.getElementById('editSuccess');
+                el.textContent = 'User updated successfully!';
+                el.classList.add('show');
+                setTimeout(() => { closeEditUserModal(); loadUsers(); }, 1200);
+            } catch(err) {
+                const el = document.getElementById('editError');
+                el.textContent = 'Failed to update: ' + (err.message || err);
+                el.classList.add('show');
+            }
         }
 
         function addSpokeRow() {
