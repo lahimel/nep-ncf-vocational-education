@@ -98,6 +98,19 @@
         .card-button { display:inline-flex; align-items:center; gap:6px; background:var(--white); color:var(--brown); border:1.5px solid var(--brown); padding:9px 20px; border-radius:8px; font-size:.88rem; font-weight:600; font-family:'DM Sans',sans-serif; cursor:pointer; transition:all var(--ease); text-decoration:none; }
         .card-button:hover { background:var(--brown); color:var(--white); transform:translateY(-1px); }
 
+        /* Grade 9 card — dark filled header */
+        .card-grade9 .card-header { background:var(--brown); border-bottom:1.5px solid var(--brown); }
+        .card-grade9 .card-header h3 { color:var(--white); }
+
+        /* Kaushal Bodh card — sand filled header */
+        .card-kb .card-header { background:var(--c3); border-bottom:1.5px solid var(--c3); }
+        .card-kb .card-header h3 { color:var(--brown); }
+        .card-kb { border-color:var(--c3); }
+
+        /* One-time card — dashed border */
+        .card-onetime { border-style:dashed; border-color:var(--brown); opacity:.85; }
+        .card-onetime:hover { opacity:1; }
+
         .one-time-badge {
             display: inline-flex; align-items: center; gap: 5px;
             background: rgba(191,146,112,.12); border: 1px solid rgba(191,146,112,.25);
@@ -161,7 +174,7 @@
             </div>
             <div class="cards-grid">
 
-                <div class="card" onclick="openForm('https://ee-eu.kobotoolbox.org/x/c90sPuxQ')">
+                <div class="card card-grade9" onclick="openForm('https://ee-eu.kobotoolbox.org/x/c90sPuxQ')">
                     <div class="card-header"><h3>Chapter Reporting</h3></div>
                     <div class="card-body">
                         <p class="card-description">Records chapter-wise teaching progress for Grade 9 &amp; 10 vocational subjects. Submit as chapters are completed.</p>
@@ -169,7 +182,7 @@
                     </div>
                 </div>
 
-                <div class="card" onclick="openForm('https://ee-eu.kobotoolbox.org/x/z7K6eMOA')">
+                <div class="card card-grade9" onclick="openForm('https://ee-eu.kobotoolbox.org/x/z7K6eMOA')">
                     <div class="card-header"><h3>Guest Lecture / Field Visit</h3></div>
                     <div class="card-body">
                         <p class="card-description">Captures details of student visits to industries and guest lecture sessions including location and guest details.</p>
@@ -192,7 +205,7 @@
             </div>
             <div class="cards-grid">
 
-                <div class="card" onclick="openForm('https://ee-eu.kobotoolbox.org/x/mne7orJV')">
+                <div class="card card-kb" onclick="openForm('https://ee-eu.kobotoolbox.org/x/mne7orJV')">
                     <div class="card-header"><h3>Kaushal Bodh Reporting</h3></div>
                     <div class="card-body">
                         <p class="card-description">Records chapter-wise progress for Kaushal Bodh programme across Grades 6, 7, and 8.</p>
@@ -200,7 +213,7 @@
                     </div>
                 </div>
 
-                <div class="card" onclick="openForm('https://ee-eu.kobotoolbox.org/x/Of59QxVa')">
+                <div class="card card-kb" onclick="openForm('https://ee-eu.kobotoolbox.org/x/Of59QxVa')">
                     <div class="card-header"><h3>Guest Lecture / Field Visit</h3></div>
                     <div class="card-body">
                         <p class="card-description">Captures Grade 6 to 8 student visits to industries and guest lecture details.</p>
@@ -223,7 +236,7 @@
             </div>
             <div class="cards-grid">
 
-                <div class="card" onclick="window.location.href='student-registration.html'" style="cursor:pointer;">
+                <div class="card card-onetime" onclick="window.location.href='student-registration.html'" style="cursor:pointer;">
                     <div class="card-header"><h3>Student Registration</h3></div>
                     <div class="card-body">
                         <div class="one-time-badge">Do Once</div>
@@ -232,7 +245,7 @@
                     </div>
                 </div>
 
-                <div class="card" onclick="openForm('YOUR_KOBO_FORM_URL')">
+                <div class="card card-onetime" onclick="openForm('YOUR_KOBO_FORM_URL')">
                     <div class="card-header"><h3>Tools Inventory</h3></div>
                     <div class="card-body">
                         <div class="one-time-badge">Do Once</div>
