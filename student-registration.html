@@ -5,191 +5,129 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Registration</title>
     <link rel="icon" type="image/png" href="favicon-96x96.png"/>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
-            --c1: #FFEDDB;
-            --c2: #EDCDBB;
-            --c3: #E3B7A0;
-            --c4: #BF9270;
-            --c4d: #a87c60;
-            --brown: #3A2E25;
-            --brown-mid: #6A5445;
-            --brown-light: #9A8070;
-            --white: #FFFFFF;
-            --sh: 0 2px 12px rgba(58,46,37,.08);
-            --sh-md: 0 6px 24px rgba(58,46,37,.12);
-            --r: 12px;
-            --ease: 200ms cubic-bezier(.4,0,.2,1);
+            --c1:#FFEDDB;--c2:#EDCDBB;--c3:#E3B7A0;--c4:#BF9270;
+            --brown:#3A2E25;--white:#FFFFFF;
+            --sh:0 2px 12px rgba(58,46,37,.08);
+            --r:12px;--ease:200ms cubic-bezier(.4,0,.2,1);
         }
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'DM Sans',sans-serif;background:var(--white);height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+        ::-webkit-scrollbar{width:7px;height:7px;}
+        ::-webkit-scrollbar-track{background:var(--c1);}
+        ::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px;}
+        ::-webkit-scrollbar-corner{background:var(--c1);}
 
-        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family:'DM Sans',sans-serif; background:var(--white); height:100vh; display:flex; flex-direction:column; overflow:hidden; }
-        ::-webkit-scrollbar{width:7px;height:7px;} ::-webkit-scrollbar-track{background:var(--c1);} ::-webkit-scrollbar-thumb{background:var(--white);border-radius:3px;} ::-webkit-scrollbar-corner{background:var(--c1);}
+        /* TOPBAR */
+        .topbar{background:var(--white);border-bottom:1.5px solid var(--brown);padding:0 16px;display:flex;align-items:center;gap:12px;height:58px;flex-shrink:0;}
+        .back-btn{background:none;border:none;cursor:pointer;color:var(--brown);font-size:18px;padding:6px 8px;border-radius:8px;text-decoration:none;display:flex;align-items:center;transition:background var(--ease);}
+        .back-btn:hover{background:rgba(58,46,37,.06);}
+        .doc-info{flex:1;min-width:0;}
+        .doc-title{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:var(--brown);letter-spacing:-.1px;}
+        .doc-sub{font-size:.72rem;color:var(--brown);}
+        .topbar-actions{display:flex;align-items:center;gap:8px;margin-left:auto;}
+        .tb-btn{padding:7px 14px;border-radius:8px;border:none;font-family:'DM Sans',sans-serif;font-size:.82rem;cursor:pointer;font-weight:600;transition:all var(--ease);display:flex;align-items:center;gap:5px;}
+        .tb-btn-save{background:var(--white);color:var(--brown);border:1.5px solid var(--brown);}
+        .tb-btn-save:hover{background:var(--brown);color:var(--white);}
+        .tb-btn-save:disabled{opacity:.5;cursor:not-allowed;}
+        .tb-btn-outline{background:var(--white);color:var(--brown);border:1.5px solid rgba(58,46,37,.35);}
+        .tb-btn-outline:hover{border-color:var(--brown);background:rgba(58,46,37,.05);}
+        .logout-link{font-size:.82rem;color:var(--brown);cursor:pointer;padding:6px 10px;border-radius:8px;font-weight:500;transition:all var(--ease);}
+        .logout-link:hover{background:rgba(58,46,37,.05);}
 
-        .topbar { background:var(--white); border-bottom:1.5px solid var(--brown); padding:0 16px; display:flex; align-items:center; gap:12px; height:58px; flex-shrink:0; }
-        .back-btn { background:none; border:none; cursor:pointer; color:var(--brown); font-size:18px; padding:6px 8px; border-radius:8px; text-decoration:none; display:flex; align-items:center; transition:background var(--ease),color var(--ease); }
-        .back-btn:hover { background:var(--white); color:var(--brown); }
-        .doc-info { flex:1; min-width:0; }
-        .doc-title { font-family:'Playfair Display',serif; font-size:.95rem; font-weight:700; color:var(--brown); letter-spacing:-.1px; }
-        .doc-sub { font-size:.72rem; color:var(--brown); }
-        .topbar-actions { display:flex; align-items:center; gap:8px; margin-left:auto; }
-        .tb-btn { padding:7px 14px; border-radius:8px; border:none; font-family:'DM Sans',sans-serif; font-size:.82rem; cursor:pointer; font-weight:600; transition:all var(--ease); display:flex; align-items:center; gap:5px; }
-        .tb-btn-save { background:var(--white); color:var(--brown); border:1.5px solid var(--brown); }
-        .tb-btn-save:hover { background:var(--brown); color:var(--white); box-shadow:0 3px 10px rgba(58,46,37,.2); }
-        .tb-btn-save:disabled { opacity:.5; cursor:not-allowed; box-shadow:none; }
-        .tb-btn-outline { background:var(--white); color:var(--brown); border:1.5px solid rgba(58,46,37,.35); }
-        .tb-btn-outline:hover { border-color:var(--brown); background:rgba(58,46,37,.05); }
-        .logout-link { font-size:.82rem; color:var(--brown); cursor:pointer; padding:6px 10px; border-radius:8px; font-weight:500; transition:all var(--ease); }
-        .logout-link:hover { color:var(--brown); background:rgba(58,46,37,.05); }
+        /* MENUBAR */
+        .menubar{background:var(--white);border-bottom:1.5px solid var(--brown);padding:0 52px;display:flex;align-items:center;gap:2px;height:32px;flex-shrink:0;}
+        .menu-item{padding:3px 11px;font-size:.78rem;color:var(--brown);cursor:pointer;border-radius:5px;font-weight:500;transition:all var(--ease);}
+        .menu-item:hover{background:rgba(58,46,37,.06);}
 
-        .menubar { background:var(--white); border-bottom:1.5px solid var(--brown); padding:0 52px; display:flex; align-items:center; gap:2px; height:32px; flex-shrink:0; }
-        .menu-item { padding:3px 11px; font-size:.78rem; color:var(--brown); cursor:pointer; border-radius:5px; font-weight:500; transition:all var(--ease); }
-        .menu-item:hover { background:var(--white); color:var(--brown); }
+        /* FORMULA BAR */
+        .formula-bar{background:var(--white);border-bottom:1px solid rgba(58,46,37,.15);padding:0 8px;display:flex;align-items:center;gap:8px;height:30px;flex-shrink:0;}
+        .cell-ref{width:68px;border:1.5px solid rgba(58,46,37,.3);border-radius:5px;padding:2px 6px;font-size:.75rem;font-family:'DM Sans',sans-serif;color:var(--brown);text-align:center;background:var(--c1);}
+        .formula-divider{width:1px;height:16px;background:rgba(58,46,37,.15);}
+        .formula-input{flex:1;border:none;outline:none;font-size:.78rem;font-family:'DM Sans',sans-serif;color:var(--brown);background:transparent;}
 
-        .formula-bar { background:var(--white); border-bottom:1px solid rgba(58,46,37,.15); padding:0 8px; display:flex; align-items:center; gap:8px; height:30px; flex-shrink:0; }
-        .cell-ref { width:68px; border:1.5px solid rgba(58,46,37,.3); border-radius:5px; padding:2px 6px; font-size:.75rem; font-family:'DM Sans',sans-serif; color:var(--brown); text-align:center; background:var(--c1); }
-        .formula-divider { width:1px; height:16px; background:var(--white); }
-        .formula-input { flex:1; border:none; outline:none; font-size:.78rem; font-family:'DM Sans',sans-serif; color:var(--brown); background:transparent; }
-
-        .sheet-area { flex:1; overflow:auto; background:var(--white); order:2; }
-        .grid-wrapper { min-width:max-content; }
-        table.grid { border-collapse:collapse; table-layout:fixed; }
-
-        .grid th.row-num,.grid td.row-num { width:42px; min-width:42px; background:var(--white); border-right:1px solid rgba(58,46,37,.12); border-bottom:1px solid rgba(58,46,37,.1); text-align:center; font-size:.72rem; color:var(--brown); font-weight:500; padding:0; user-select:none; position:sticky; left:0; z-index:2; }
-        .grid thead th { background:var(--white); border-right:1px solid rgba(58,46,37,.12); border-bottom:1.5px solid var(--brown); font-size:.72rem; font-weight:700; color:var(--brown); padding:7px 8px; text-align:left; white-space:nowrap; user-select:none; position:sticky; top:0; z-index:1; text-transform:uppercase; letter-spacing:.4px; }
-        .grid thead th.required-col::after { content:' *'; color:var(--brown); }
-        .grid td { border-right:1px solid rgba(58,46,37,.08); border-bottom:1px solid rgba(58,46,37,.07); padding:0; height:26px; vertical-align:middle; }
-        .grid td.selected { background:rgba(58,46,37,.06); outline:2px solid var(--brown); outline-offset:-2px; }
-        .grid td input,.grid td select { width:100%; height:100%; border:none; outline:none; font-family:'DM Sans',sans-serif; font-size:.8rem; padding:0 6px; background:transparent; color:var(--brown); }
-        .grid td select { cursor:pointer; background:var(--white); }
-        .grid td:hover { background:rgba(58,46,37,.03); }
-        .grid td input:focus,.grid td select:focus { background:rgba(58,46,37,.04); outline:2px solid var(--brown); outline-offset:-2px; }
-        .grid tbody tr:nth-child(even) td:not(.row-num) { background:rgba(58,46,37,.03); }
-        .grid tbody tr:nth-child(even) td input { background:transparent; }
-        .grid tbody tr:nth-child(even) td:hover { background:rgba(58,46,37,.05); }
-
+        /* GRID */
+        .sheet-area{flex:1;overflow:auto;background:var(--white);order:2;}
+        .grid-wrapper{min-width:max-content;}
+        table.grid{border-collapse:collapse;table-layout:fixed;}
+        .grid th.row-num,.grid td.row-num{width:42px;min-width:42px;background:var(--white);border-right:1px solid rgba(58,46,37,.12);border-bottom:1px solid rgba(58,46,37,.1);text-align:center;font-size:.72rem;color:var(--brown);font-weight:500;padding:0;user-select:none;position:sticky;left:0;z-index:2;}
+        .grid thead th{background:var(--white);border-right:1px solid rgba(58,46,37,.12);border-bottom:1.5px solid var(--brown);font-size:.72rem;font-weight:700;color:var(--brown);padding:7px 8px;text-align:left;white-space:nowrap;user-select:none;position:sticky;top:0;z-index:1;text-transform:uppercase;letter-spacing:.4px;}
+        .grid thead th.required-col::after{content:' *';color:var(--brown);}
+        .grid td{border-right:1px solid rgba(58,46,37,.08);border-bottom:1px solid rgba(58,46,37,.07);padding:0;height:26px;vertical-align:middle;}
+        .grid td.selected{background:rgba(58,46,37,.06);outline:2px solid var(--brown);outline-offset:-2px;}
+        .grid td input,.grid td select{width:100%;height:100%;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:.8rem;padding:0 6px;background:transparent;color:var(--brown);}
+        .grid td select{cursor:pointer;background:var(--white);}
+        .grid td:hover{background:rgba(58,46,37,.03);}
+        .grid td input:focus,.grid td select:focus{background:rgba(58,46,37,.04);outline:2px solid var(--brown);outline-offset:-2px;}
+        .grid tbody tr:nth-child(even) td:not(.row-num){background:rgba(58,46,37,.03);}
+        .grid tbody tr:nth-child(even) td input{background:transparent;}
+        .grid tbody tr:nth-child(even) td:hover{background:rgba(58,46,37,.05);}
         .col-srno{width:60px;min-width:60px;} .col-fname{width:140px;min-width:120px;} .col-mname{width:130px;min-width:100px;} .col-lname{width:140px;min-width:120px;} .col-full{width:220px;min-width:180px;} .col-gender{width:90px;min-width:80px;} .col-mother{width:130px;min-width:100px;} .col-father{width:130px;min-width:100px;} .col-dob{width:130px;min-width:110px;}
 
-        
-        
-        
-        
-        
-        
-        
+        /* STATUS BAR */
+        .status-bar{background:var(--white);border-top:1px solid rgba(58,46,37,.12);padding:3px 12px;font-size:.72rem;color:var(--brown);display:flex;gap:16px;align-items:center;flex-shrink:0;order:4;}
+        .status-saved{color:#1E6B36;font-weight:600;}
+        .status-unsaved{color:var(--brown);font-weight:600;}
 
-        .status-bar { background:var(--white); border-top:1px solid rgba(58,46,37,.12); padding:3px 12px; font-size:.72rem; color:var(--brown); display:flex; gap:16px; align-items:center; flex-shrink:0; order:4; }
-        .status-saved { color:#1E6B36; font-weight:600; }
-        .status-unsaved { color:var(--brown); font-weight:600; }
+        /* TOAST */
+        .toast{position:fixed;bottom:52px;left:50%;transform:translateX(-50%) translateY(14px);background:var(--brown);color:var(--white);padding:9px 20px;border-radius:8px;font-size:.82rem;font-weight:500;opacity:0;transition:all 220ms ease;z-index:100;pointer-events:none;}
+        .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+        .toast.success{background:#1E6B36;}
+        .toast.error{background:#8B2020;}
 
-        .toast { position:fixed; bottom:52px; left:50%; transform:translateX(-50%) translateY(14px); background:var(--brown); color:var(--white); padding:9px 20px; border-radius:8px; font-size:.82rem; font-weight:500; opacity:0; transition:all 220ms ease; z-index:100; pointer-events:none; }
-        .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
-        .toast.success { background:#1E6B36; }
-        .toast.error { background:#8B2020; }
-
-        .loading-overlay { position:fixed; inset:0; background:rgba(255,255,255,.9); display:none; align-items:center; justify-content:center; z-index:200; }
-        .loading-overlay.show { display:flex; }
-        .spinner { width:28px; height:28px; border:3px solid rgba(58,46,37,.2); border-top-color:var(--brown); border-radius:50%; animation:spin .8s linear infinite; }
+        /* LOADING */
+        .loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,.9);display:none;align-items:center;justify-content:center;z-index:200;}
+        .loading-overlay.show{display:flex;}
+        .spinner{width:28px;height:28px;border:3px solid rgba(58,46,37,.2);border-top-color:var(--brown);border-radius:50%;animation:spin .8s linear infinite;}
         @keyframes spin{to{transform:rotate(360deg);}}
 
-        @media(max-width:768px) {
-            .topbar { height:auto; flex-wrap:wrap; padding:8px 12px; gap:8px; }
-            .topbar-actions { flex-wrap:wrap; gap:6px; width:100%; }
-            .tb-btn { font-size:.75rem; padding:6px 10px; }
-            .logout-link { font-size:.75rem; }
-            .menubar { padding:0 12px; overflow-x:auto; flex-wrap:nowrap; }
-            .menu-item { white-space:nowrap; flex-shrink:0; font-size:.72rem; }
-            .grade-picker-box { padding:28px 20px; }
+        /* GRADE / SCHOOL PICKER */
+        .grade-picker{position:fixed;inset:0;background:var(--white);display:flex;align-items:center;justify-content:center;z-index:300;flex-direction:column;}
+        .grade-picker.hidden{display:none;}
+        .grade-picker-box{border:1.5px solid var(--brown);border-radius:16px;padding:40px 48px;text-align:center;max-width:440px;width:90%;}
+        .grade-picker-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--brown);margin-bottom:6px;}
+        .grade-picker-sub{font-size:.84rem;color:var(--brown);margin-bottom:28px;opacity:.6;}
+        .grade-picker-btns{display:flex;flex-direction:column;gap:10px;}
+        .grade-pick-btn{padding:13px 24px;border:1.5px solid var(--brown);border-radius:8px;background:var(--white);color:var(--brown);font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;transition:all 200ms ease;width:100%;text-align:left;}
+        .grade-pick-btn:hover{background:var(--brown);color:var(--white);}
 
-            /* Show desktop notice */
-            .mobile-notice {
-                display:flex; position:fixed; inset:0;
-                background:var(--white); z-index:400;
-                align-items:center; justify-content:center;
-                flex-direction:column; padding:32px; text-align:center;
-            }
-            .mobile-notice h2 { font-family:'Playfair Display',serif; font-size:1.4rem; color:var(--brown); margin-bottom:12px; }
-            .mobile-notice p { font-size:.88rem; color:var(--brown); opacity:.7; margin-bottom:24px; line-height:1.6; }
-            .mobile-notice button { padding:12px 28px; border:1.5px solid var(--brown); border-radius:8px; background:var(--white); color:var(--brown); font-family:'DM Sans',sans-serif; font-size:.9rem; font-weight:600; cursor:pointer; }
+        /* MOBILE */
+        @media(max-width:768px){
+            .topbar{height:auto;flex-wrap:wrap;padding:8px 12px;gap:8px;}
+            .topbar-actions{flex-wrap:wrap;gap:6px;width:100%;}
+            .tb-btn{font-size:.75rem;padding:6px 10px;}
+            .menubar{padding:0 12px;overflow-x:auto;flex-wrap:nowrap;}
+            .menu-item{white-space:nowrap;flex-shrink:0;font-size:.72rem;}
+            .grade-picker-box{padding:28px 20px;}
+            .mobile-notice{display:flex;position:fixed;inset:0;background:var(--white);z-index:400;align-items:center;justify-content:center;flex-direction:column;padding:32px;text-align:center;}
+            .mobile-notice h2{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--brown);margin-bottom:12px;}
+            .mobile-notice p{font-size:.88rem;color:var(--brown);opacity:.7;margin-bottom:24px;line-height:1.6;}
+            .mobile-notice button{padding:12px 28px;border:1.5px solid var(--brown);border-radius:8px;background:var(--white);color:var(--brown);font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;}
         }
-        @media(min-width:769px) { .mobile-notice { display:none !important; } }
-
-        /* Grade Picker */
-        .grade-picker {
-            position: fixed; inset: 0;
-            background: var(--white);
-            display: flex; align-items: center; justify-content: center;
-            z-index: 300;
-            flex-direction: column;
-        }
-        .grade-picker.hidden { display: none; }
-        .grade-picker-box {
-            border: 1.5px solid var(--brown);
-            border-radius: 16px;
-            padding: 40px 48px;
-            text-align: center;
-            max-width: 420px;
-            width: 90%;
-        }
-        .grade-picker-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.4rem; font-weight: 700;
-            color: var(--brown); margin-bottom: 6px;
-        }
-        .grade-picker-sub {
-            font-size: .84rem; color: var(--brown);
-            margin-bottom: 28px; opacity: .6;
-        }
-        .grade-picker-btns {
-            display: flex; flex-direction: column; gap: 10px;
-        }
-        .grade-pick-btn {
-            padding: 13px 24px;
-            border: 1.5px solid var(--brown);
-            border-radius: 8px;
-            background: var(--white);
-            color: var(--brown);
-            font-family: 'DM Sans', sans-serif;
-            font-size: .95rem; font-weight: 600;
-            cursor: pointer;
-            transition: all 200ms ease;
-            width: 100%;
-            text-align: left;
-        }
-        .grade-pick-btn:hover {
-            background: var(--brown);
-            color: var(--white);
-        }
+        @media(min-width:769px){.mobile-notice{display:none !important;}}
     </style>
 </head>
 <body>
 
-<!-- LOADING -->
-<div class="loading-overlay" id="loadingOverlay">
-    <div class="spinner"></div>
-</div>
+<div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
 
-<!-- MOBILE NOTICE -->
 <div class="mobile-notice" id="mobileNotice">
     <h2>Best on Desktop</h2>
     <p>Student Registration works best on a laptop or desktop computer for easy data entry.</p>
     <button onclick="document.getElementById('mobileNotice').style.display='none'">Continue Anyway</button>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<!-- GRADE PICKER -->
+<!-- PICKER (school + grade) -->
 <div class="grade-picker" id="gradePicker">
     <div class="grade-picker-box">
-        <div id="schoolPickerDiv" style="display:none;"></div>
-        <div class="grade-picker-title" id="pickerSchoolName">Select a Class</div>
-        <div class="grade-picker-sub" id="pickerSubtitle">Choose the class you want to update</div>
-        <div class="grade-picker-btns" id="pickerBtns">
-            <!-- buttons injected by JS -->
-        </div>
+        <div class="grade-picker-title" id="pickerTitle">Select a Class</div>
+        <div class="grade-picker-sub"   id="pickerSubtitle">Choose the class you want to update</div>
+        <div class="grade-picker-btns"  id="pickerBtns"></div>
     </div>
 </div>
 
@@ -198,7 +136,7 @@
     <a href="teacher-space.html" class="back-btn" title="Back">←</a>
     <div class="doc-info">
         <div class="doc-title" id="docTitle">Student Registration</div>
-        <div class="doc-sub" id="docSub">Loading...</div>
+        <div class="doc-sub"   id="docSub">Loading...</div>
     </div>
     <div class="topbar-actions">
         <div style="display:flex;gap:8px;align-items:center;margin-right:4px;">
@@ -215,10 +153,10 @@
                 <strong id="sumFemale" style="font-size:.82rem;color:var(--brown);">0</strong>
             </div>
         </div>
-        <button class="tb-btn tb-btn-outline" onclick="showGradePicker()" id="gradePickerBtn">Grade 6</button>
+        <button class="tb-btn tb-btn-outline" onclick="showGradePicker()" id="gradePickerBtn">Select Grade</button>
         <button class="tb-btn tb-btn-outline" onclick="addRow()">+ Add Row</button>
         <button class="tb-btn tb-btn-outline" onclick="deleteSelectedRow()">Delete Row</button>
-        <button class="tb-btn tb-btn-save" id="saveBtn" onclick="saveSheet()">Save</button>
+        <button class="tb-btn tb-btn-save"    id="saveBtn" onclick="saveSheet()">Save</button>
         <span class="logout-link" onclick="logout()">Logout</span>
     </div>
 </div>
@@ -240,425 +178,296 @@
 <div class="sheet-area" id="sheetArea">
     <div class="grid-wrapper">
         <table class="grid" id="mainGrid">
-            <thead>
-                <tr>
-                    <th class="row-num">⠿</th>
-                    <th class="col-srno">Sr No</th>
-                    <th class="col-fname required-col">First Name</th>
-                    <th class="col-mname">Middle Name</th>
-                    <th class="col-lname required-col">Last Name</th>
-                    <th class="col-full">Full Name</th>
-                    <th class="col-gender">Gender</th>
-                    <th class="col-mother">Mother Name</th>
-                    <th class="col-father">Father Name</th>
-                    <th class="col-dob">Date of Birth</th>
-                </tr>
-            </thead>
+            <thead><tr>
+                <th class="row-num">⠿</th>
+                <th class="col-srno">Sr No</th>
+                <th class="col-fname required-col">First Name</th>
+                <th class="col-mname">Middle Name</th>
+                <th class="col-lname required-col">Last Name</th>
+                <th class="col-full">Full Name</th>
+                <th class="col-gender">Gender</th>
+                <th class="col-mother">Mother Name</th>
+                <th class="col-father">Father Name</th>
+                <th class="col-dob">Date of Birth</th>
+            </tr></thead>
             <tbody id="gridBody"></tbody>
         </table>
     </div>
 </div>
 
 <!-- STATUS BAR -->
-<div class="status-bar">
-    <span id="statusText">Ready</span>
+<div class="status-bar" id="statusBar">
+    <span id="statusText" style="font-weight:600;">Ready</span>
     <span id="rowCountText"></span>
-    <span id="saveStatus"></span>
+    <span style="margin-left:auto;" id="saveStatus"></span>
 </div>
 
 <script>
-    // ─────────────────────────────
-    // SUPABASE
-    // ─────────────────────────────
+    // ── SUPABASE ──────────────────────────────────────────────────────────────
     const SUPABASE_URL      = 'https://soesdipnikhtnuuemstm.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNvZXNkaXBuaWtodG51dWVtc3RtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNTM4NDMsImV4cCI6MjA5NDkyOTg0M30._o831V46iMi9y7d_FRZ_ZfZ8nDOuFflLJLiUdpZKzko';
     const { createClient } = window.supabase;
     const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // ─────────────────────────────
-    // AUTH
-    // ─────────────────────────────
+    // ── AUTH ──────────────────────────────────────────────────────────────────
     if (sessionStorage.getItem('loggedIn') !== 'true') window.location.href = 'login.html';
     const USERNAME    = sessionStorage.getItem('username')   || '';
     const SCHOOL_NAME = sessionStorage.getItem('schoolName') || '';
+    const hasKaushalBodh = sessionStorage.getItem('hasKaushalBodh') === 'true';
+    const spokeSchools   = JSON.parse(sessionStorage.getItem('spokeSchools') || '[]');
+    const isHub          = spokeSchools.length > 0;
+
+    // Selected school — set after picker
+    let selectedUDISE      = USERNAME;
+    let selectedSchoolName = SCHOOL_NAME;
+    let dataLoaded         = false;
 
     document.getElementById('docTitle').textContent = SCHOOL_NAME || 'Student Registration';
-    const hasKaushalBodh = sessionStorage.getItem('hasKaushalBodh') === 'true';
-    const spokeSchoolsRaw = sessionStorage.getItem('spokeSchools') || '[]';
-    const spokeSchools = JSON.parse(spokeSchoolsRaw);
-    const isHub = spokeSchools.length > 0;
+    document.getElementById('docSub').textContent   = 'UDISE: ' + USERNAME;
 
-    // Selected school (defaults to own school, changes if hub picks spoke)
-    let selectedUDISE = USERNAME;
-    let selectedSchoolName = SCHOOL_NAME;
+    // ── STATE ─────────────────────────────────────────────────────────────────
+    let currentGrade = hasKaushalBodh ? 6 : 9;
+    let gradeData    = { 6:[], 7:[], 8:[], 9:[], 10:[] };
+    let selectedRow  = null;
+    let unsaved      = false;
 
-    document.getElementById('docSub').textContent = 'UDISE: ' + USERNAME;
+    const COLS = ['sr_no','first_name','middle_name','last_name','full_name','gender','mother_name','father_name','date_of_birth'];
+    const DEFAULT_ROWS = 30;
 
-    // Show/hide grade tabs based on Kaushal Bodh
-    if (!hasKaushalBodh) {
-        document.getElementById('tab6').style.display = 'none';
-        document.getElementById('tab7').style.display = 'none';
-        document.getElementById('tab8').style.display = 'none';
-    }
-
-    // Build pickers
-    const pickerBtns  = document.getElementById('pickerBtns');
-    const schoolPickerDiv = document.getElementById('schoolPickerDiv');
-    const gradePicker = document.getElementById('gradePicker');
+    // ── PICKER LOGIC ──────────────────────────────────────────────────────────
+    const pickerBtns = document.getElementById('pickerBtns');
 
     function buildGradePicker() {
         pickerBtns.innerHTML = '';
-        document.getElementById('pickerSchoolName').textContent = selectedSchoolName || 'Select a Class';
+        document.getElementById('pickerTitle').textContent    = selectedSchoolName || 'Select a Class';
         document.getElementById('pickerSubtitle').textContent = 'Choose the class to update';
-        const grades = hasKaushalBodh ? [6, 7, 8, 9, 10] : [9, 10];
+        const grades = hasKaushalBodh ? [6,7,8,9,10] : [9,10];
         grades.forEach(g => {
             const btn = document.createElement('button');
-            btn.className = 'grade-pick-btn';
+            btn.className   = 'grade-pick-btn';
             btn.textContent = 'Grade ' + g;
-            btn.onclick = () => {
+            btn.onclick = async () => {
                 document.getElementById('gradePicker').classList.add('hidden');
+                document.getElementById('gradePickerBtn').textContent = 'Grade ' + g;
+                document.getElementById('docTitle').textContent = selectedSchoolName;
+                document.getElementById('docSub').textContent   = 'UDISE: ' + selectedUDISE;
+                // Load data for this school if not yet loaded
+                if (!dataLoaded) await loadSchoolData();
                 switchGrade(g);
-                document.getElementById('docTitle').textContent = selectedSchoolName || SCHOOL_NAME;
-                document.getElementById('docSub').textContent = 'UDISE: ' + selectedUDISE;
             };
             pickerBtns.appendChild(btn);
         });
     }
 
-    if (isHub) {
-        // Show school picker first
-        schoolPickerDiv.style.display = 'block';
-        document.getElementById('pickerSchoolName').textContent = SCHOOL_NAME || 'Select a School';
+    function buildSchoolPicker() {
+        pickerBtns.innerHTML = '';
+        document.getElementById('pickerTitle').textContent    = SCHOOL_NAME || 'Select a School';
         document.getElementById('pickerSubtitle').textContent = 'Choose which school to register students for';
-
-        // Build school buttons
         const allSchools = [{ udise: USERNAME, name: SCHOOL_NAME }, ...spokeSchools];
         allSchools.forEach(school => {
             const btn = document.createElement('button');
             btn.className = 'grade-pick-btn';
             btn.innerHTML = '<span style="font-weight:700;">' + school.name + '</span><br><span style="font-size:.75rem;opacity:.7;">' + school.udise + '</span>';
-            btn.style.textAlign = 'left';
-            btn.style.lineHeight = '1.4';
+            btn.style.lineHeight = '1.5';
             btn.onclick = () => {
                 selectedUDISE      = school.udise;
                 selectedSchoolName = school.name;
-                schoolPickerDiv.style.display = 'none';
+                dataLoaded = false; // reset so data loads fresh for this school
+                gradeData  = { 6:[], 7:[], 8:[], 9:[], 10:[] }; // clear previous
                 buildGradePicker();
             };
             pickerBtns.appendChild(btn);
         });
+    }
+
+    // Init picker
+    if (isHub) {
+        buildSchoolPicker();
     } else {
         buildGradePicker();
     }
 
-    // ─────────────────────────────
-    // STATE
-    // ─────────────────────────────
-    let currentGrade  = 6;
-    let gradeData     = { 6: [], 7: [], 8: [], 9: [], 10: [] };  // rows per grade
-    let selectedRow   = null;
-    let unsaved       = false;
-
-    const COLS = ['sr_no','first_name','middle_name','last_name','full_name','gender','mother_name','father_name','date_of_birth'];
-    const DEFAULT_ROWS = 30;
-
-    // ─────────────────────────────
-    // INIT
-    // ─────────────────────────────
-    (async function init() {
+    // ── LOAD SCHOOL DATA ──────────────────────────────────────────────────────
+    async function loadSchoolData() {
         showLoading(true);
         try {
-            // For hub teachers, load for currently selected school
             const { data, error } = await sb
-                .from('students')
-                .select('*')
+                .from('students').select('*')
                 .eq('udise_code', selectedUDISE)
                 .order('grade').order('sr_no');
-
             if (error) throw error;
-
-            // Distribute into grade buckets
-            [6, 7, 8, 9, 10].forEach(g => {
-                gradeData[g] = (data || [])
+            gradeData = { 6:[], 7:[], 8:[], 9:[], 10:[] };
+            [6,7,8,9,10].forEach(g => {
+                gradeData[g] = (data||[])
                     .filter(r => String(r.grade) === String(g))
                     .map(r => ({
-                        id:            r.id,
-                        sr_no:         r.sr_no || '',
-                        first_name:    r.first_name || '',
-                        middle_name:   r.middle_name || '',
-                        last_name:     r.last_name || '',
-                        full_name:     r.full_name || '',
-                        gender:        r.gender || '',
-                        mother_name:   r.mother_name || '',
-                        father_name:   r.father_name || '',
-                        date_of_birth: r.date_of_birth || ''
+                        id:r.id, sr_no:r.sr_no||'', first_name:r.first_name||'',
+                        middle_name:r.middle_name||'', last_name:r.last_name||'',
+                        full_name:r.full_name||'', gender:r.gender||'',
+                        mother_name:r.mother_name||'', father_name:r.father_name||'',
+                        date_of_birth:r.date_of_birth||''
                     }));
             });
-
-            renderGrid(currentGrade);
-        } catch (e) {
+            dataLoaded = true;
+        } catch(e) {
             toast('Could not load data: ' + e.message, 'error');
         } finally {
             showLoading(false);
         }
-    })();
+    }
 
-    // ─────────────────────────────
-    // RENDER GRID
-    // ─────────────────────────────
+    // ── RENDER GRID ───────────────────────────────────────────────────────────
     function renderGrid(grade) {
-        const rows = gradeData[grade];
-        // Pad to at least DEFAULT_ROWS
+        const rows  = gradeData[grade];
         const total = Math.max(rows.length + 5, DEFAULT_ROWS);
         const body  = document.getElementById('gridBody');
         body.innerHTML = '';
-
-        for (let i = 0; i < total; i++) {
-            const r = rows[i] || {};
-            body.appendChild(makeRow(i, r));
-        }
-
+        for (let i = 0; i < total; i++) body.appendChild(makeRow(i, rows[i] || {}));
         updateStatus();
         setSaveStatus(false);
     }
 
-    // ─────────────────────────────
-    // MAKE A GRID ROW
-    // ─────────────────────────────
     function makeRow(idx, data) {
         const tr = document.createElement('tr');
         tr.dataset.idx = idx;
-
-        // Row number
         const num = document.createElement('td');
-        num.className = 'row-num';
+        num.className   = 'row-num';
         num.textContent = idx + 1;
         num.onclick = () => selectRow(idx);
         tr.appendChild(num);
-
-        // Sr No
-        tr.appendChild(makeCell(idx, 'sr_no', data.sr_no || (idx + 1), 'number'));
-
-        // First Name
-        tr.appendChild(makeCell(idx, 'first_name', data.first_name || '', 'text'));
-
-        // Middle Name
-        tr.appendChild(makeCell(idx, 'middle_name', data.middle_name || '', 'text'));
-
-        // Last Name
-        tr.appendChild(makeCell(idx, 'last_name', data.last_name || '', 'text'));
-
-        // Full Name (auto-filled)
-        tr.appendChild(makeCell(idx, 'full_name', data.full_name || '', 'text'));
-
-        // Gender (dropdown)
-        tr.appendChild(makeGenderCell(idx, data.gender || ''));
-
-        // Mother Name
-        tr.appendChild(makeCell(idx, 'mother_name', data.mother_name || '', 'text'));
-
-        // Father Name
-        tr.appendChild(makeCell(idx, 'father_name', data.father_name || '', 'text'));
-
-        // Date of Birth
-        tr.appendChild(makeCell(idx, 'date_of_birth', data.date_of_birth || '', 'text', 'DD/MM/YYYY'));
-
+        tr.appendChild(makeCell(idx,'sr_no',      data.sr_no||(idx+1)));
+        tr.appendChild(makeCell(idx,'first_name',  data.first_name||''));
+        tr.appendChild(makeCell(idx,'middle_name', data.middle_name||''));
+        tr.appendChild(makeCell(idx,'last_name',   data.last_name||''));
+        tr.appendChild(makeCell(idx,'full_name',   data.full_name||''));
+        tr.appendChild(makeGenderCell(idx,         data.gender||''));
+        tr.appendChild(makeCell(idx,'mother_name', data.mother_name||''));
+        tr.appendChild(makeCell(idx,'father_name', data.father_name||''));
+        tr.appendChild(makeCell(idx,'date_of_birth',data.date_of_birth||'','DD/MM/YYYY'));
         return tr;
     }
 
-    function makeCell(idx, field, value, type, placeholder) {
+    function makeCell(idx, field, value, placeholder) {
         const td  = document.createElement('td');
         const inp = document.createElement('input');
-        inp.type        = 'text';
-        inp.value       = value;
-        inp.placeholder = placeholder || '';
+        inp.type          = 'text';
+        inp.value         = value;
+        inp.placeholder   = placeholder || '';
         inp.dataset.field = field;
         inp.dataset.idx   = idx;
-
         inp.onfocus = () => {
             selectRow(idx);
-            document.getElementById('cellRef').value    = colLetter(field) + (idx + 1);
+            document.getElementById('cellRef').value    = colLetter(field) + (idx+1);
             document.getElementById('formulaBar').value = inp.value;
         };
-
         inp.oninput = () => {
-            if (field === 'date_of_birth') {
-                // Only auto-format if value looks like digits (not text month)
-                if (!/[a-zA-Z]/.test(inp.value)) {
-                    const formatted = formatDOB(inp.value);
-                    inp.value = formatted;
-                }
+            if (field === 'date_of_birth' && !/[a-zA-Z]/.test(inp.value)) {
+                inp.value = formatDOB(inp.value);
             }
             setCell(idx, field, inp.value);
             document.getElementById('formulaBar').value = inp.value;
-            if (['first_name','middle_name','last_name'].includes(field)) {
-                autoFillFullName(idx);
-            }
+            if (['first_name','middle_name','last_name'].includes(field)) autoFillFullName(idx);
             markUnsaved();
         };
-
-        // Support paste from Excel (Tab-separated)
         inp.onpaste = (e) => {
-            const text = (e.clipboardData || window.clipboardData).getData('text');
-            if (text.includes('\t') || text.includes('\n')) {
-                e.preventDefault();
-                handleGridPaste(idx, field, text);
-            }
+            const text = (e.clipboardData||window.clipboardData).getData('text');
+            if (text.includes('\t') || text.includes('\n')) { e.preventDefault(); handleGridPaste(idx, field, text); }
         };
-
         inp.onkeydown = (e) => handleKeyNav(e, idx, field);
-
-        // On blur, normalize DOB
         if (field === 'date_of_birth') {
-            inp.onblur = () => {
-                const parsed = parseDOB(inp.value);
-                if (parsed !== inp.value) {
-                    inp.value = parsed;
-                    setCell(idx, field, parsed);
-                }
-            };
+            inp.onblur = () => { const p = parseDOB(inp.value); if (p !== inp.value) { inp.value = p; setCell(idx,field,p); } };
         }
-
         td.appendChild(inp);
         return td;
     }
 
     function makeGenderCell(idx, value) {
-        const td  = document.createElement('td');
+        const td = document.createElement('td');
         const sel = document.createElement('select');
         sel.dataset.field = 'gender';
         sel.dataset.idx   = idx;
-
         ['','Male','Female','Other'].forEach(opt => {
             const o = document.createElement('option');
             o.value = opt; o.textContent = opt || 'select';
             if (opt === value) o.selected = true;
             sel.appendChild(o);
         });
-
-        sel.onchange = () => { setCell(idx, 'gender', sel.value); markUnsaved(); updateSummary(); };
+        sel.onchange = () => { setCell(idx,'gender',sel.value); markUnsaved(); updateSummary(); };
         sel.onfocus  = () => selectRow(idx);
         td.appendChild(sel);
         return td;
     }
 
-    // ─────────────────────────────
-    // AUTO-FILL FULL NAME
-    // ─────────────────────────────
+    // ── HELPERS ───────────────────────────────────────────────────────────────
     function autoFillFullName(idx) {
         const row = gradeData[currentGrade][idx];
         if (!row) return;
-        const full = [row.first_name, row.middle_name, row.last_name].filter(Boolean).join(' ').toUpperCase();
-        setCell(idx, 'full_name', full);
-        // Update the DOM input
-        const inp = document.querySelector(`input[data-idx="${idx}"][data-field="full_name"]`);
+        const full = [row.first_name,row.middle_name,row.last_name].filter(Boolean).join(' ').toUpperCase();
+        setCell(idx,'full_name',full);
+        const inp = document.querySelector('input[data-idx="'+idx+'"][data-field="full_name"]');
         if (inp) inp.value = full;
     }
 
-    // ─────────────────────────────
-    // SET CELL VALUE IN STATE
-    // ─────────────────────────────
     function setCell(idx, field, value) {
-        if (!gradeData[currentGrade][idx]) {
-            gradeData[currentGrade][idx] = {};
-        }
+        if (!gradeData[currentGrade][idx]) gradeData[currentGrade][idx] = {};
         gradeData[currentGrade][idx][field] = value;
     }
 
-    // ─────────────────────────────
-    // PASTE FROM EXCEL (multi-cell)
-    // ─────────────────────────────
     function handleGridPaste(startRow, startField, text) {
-        const lines     = text.trim().split('\n');
+        const lines      = text.trim().split('\n');
         const fieldOrder = COLS;
         const startCol   = fieldOrder.indexOf(startField);
-
         lines.forEach((line, rowOffset) => {
-            const cells = line.split('\t');
-            cells.forEach((val, colOffset) => {
+            line.split('\t').forEach((val, colOffset) => {
                 const colIdx = startCol + colOffset;
                 const rowIdx = startRow + rowOffset;
                 if (colIdx >= fieldOrder.length) return;
                 const field = fieldOrder[colIdx];
                 setCell(rowIdx, field, val.trim());
-
-                // Update DOM
-                const inp = document.querySelector(`input[data-idx="${rowIdx}"][data-field="${field}"]`);
+                const inp = document.querySelector('input[data-idx="'+rowIdx+'"][data-field="'+field+'"]');
                 if (inp) inp.value = val.trim();
-                const sel = document.querySelector(`select[data-idx="${rowIdx}"][data-field="${field}"]`);
+                const sel = document.querySelector('select[data-idx="'+rowIdx+'"][data-field="'+field+'"]');
                 if (sel) sel.value = val.trim();
-
-                // Auto-fill full name if name columns pasted
-                if (['first_name','middle_name','last_name'].includes(field)) {
-                    autoFillFullName(rowIdx);
-                }
+                if (['first_name','middle_name','last_name'].includes(field)) autoFillFullName(rowIdx);
             });
         });
-
-        // Add more rows if needed
-        const lastRowNeeded = startRow + lines.length;
-        ensureRows(lastRowNeeded + 5);
+        ensureRows(startRow + lines.length + 5);
         markUnsaved();
-        toast(`Pasted ${lines.length} row(s)`, 'success');
+        toast('Pasted ' + lines.length + ' row(s)', 'success');
     }
 
     function ensureRows(count) {
         const body = document.getElementById('gridBody');
-        while (body.rows.length < count) {
-            const idx = body.rows.length;
-            body.appendChild(makeRow(idx, {}));
-        }
+        while (body.rows.length < count) { const idx = body.rows.length; body.appendChild(makeRow(idx,{})); }
     }
 
-    // ─────────────────────────────
-    // KEYBOARD NAVIGATION
-    // ─────────────────────────────
     function handleKeyNav(e, idx, field) {
         const fieldOrder = COLS;
-        const colIdx     = fieldOrder.indexOf(field);
-
+        const colIdx = fieldOrder.indexOf(field);
         if (e.key === 'Tab') {
             e.preventDefault();
-            const nextCol = e.shiftKey ? colIdx - 1 : colIdx + 1;
-            if (nextCol >= 0 && nextCol < fieldOrder.length) {
-                focusCell(idx, fieldOrder[nextCol]);
-            } else if (!e.shiftKey && colIdx === fieldOrder.length - 1) {
-                ensureRows(idx + 2);
-                focusCell(idx + 1, fieldOrder[0]);
-            }
-        } else if (e.key === 'Enter') {
-            e.preventDefault();
-            ensureRows(idx + 2);
-            focusCell(idx + 1, field);
-        } else if (e.key === 'ArrowDown') {
-            ensureRows(idx + 2);
-            focusCell(idx + 1, field);
-        } else if (e.key === 'ArrowUp' && idx > 0) {
-            focusCell(idx - 1, field);
-        }
+            const next = e.shiftKey ? colIdx-1 : colIdx+1;
+            if (next >= 0 && next < fieldOrder.length) focusCell(idx, fieldOrder[next]);
+            else if (!e.shiftKey && colIdx === fieldOrder.length-1) { ensureRows(idx+2); focusCell(idx+1, fieldOrder[0]); }
+        } else if (e.key === 'Enter') { e.preventDefault(); ensureRows(idx+2); focusCell(idx+1, field); }
+        else if (e.key === 'ArrowDown') { ensureRows(idx+2); focusCell(idx+1, field); }
+        else if (e.key === 'ArrowUp' && idx > 0) focusCell(idx-1, field);
     }
 
     function focusCell(idx, field) {
-        const inp = document.querySelector(`input[data-idx="${idx}"][data-field="${field}"]`);
+        const inp = document.querySelector('input[data-idx="'+idx+'"][data-field="'+field+'"]');
         if (inp) { inp.focus(); inp.select(); }
-        const sel = document.querySelector(`select[data-idx="${idx}"][data-field="${field}"]`);
+        const sel = document.querySelector('select[data-idx="'+idx+'"][data-field="'+field+'"]');
         if (sel) sel.focus();
     }
 
-    // ─────────────────────────────
-    // ROW SELECTION
-    // ─────────────────────────────
     function selectRow(idx) {
         selectedRow = idx;
         document.querySelectorAll('.grid tbody tr').forEach((tr, i) => {
-            tr.querySelector('.row-num').style.background =
-                i === idx ? '#E8F0FE' : '';
+            tr.querySelector('.row-num').style.background = i === idx ? 'rgba(58,46,37,.1)' : '';
         });
     }
 
-    // ─────────────────────────────
-    // ADD / DELETE ROWS
-    // ─────────────────────────────
     function addRow() {
         const body = document.getElementById('gridBody');
         const idx  = body.rows.length;
@@ -669,8 +478,7 @@
 
     function deleteSelectedRow() {
         if (selectedRow === null) { toast('Click on a row number to select it first'); return; }
-        const idx = selectedRow;
-        gradeData[currentGrade].splice(idx, 1);
+        gradeData[currentGrade].splice(selectedRow, 1);
         renderGrid(currentGrade);
         markUnsaved();
         toast('Row deleted');
@@ -678,81 +486,55 @@
     }
 
     function clearSheet() {
-        if (!confirm(`Clear ALL students in Grade ${currentGrade}? This cannot be undone.`)) return;
+        if (!confirm('Clear ALL students in Grade ' + currentGrade + '? This cannot be undone.')) return;
         gradeData[currentGrade] = [];
         renderGrid(currentGrade);
         markUnsaved();
     }
 
-    // ─────────────────────────────
-    // SWITCH GRADE TAB
-    // ─────────────────────────────
     async function switchGrade(grade) {
-        if (unsaved) {
-            if (!confirm('You have unsaved changes. Save before switching?')) {
-                // Switch without saving
-            } else {
-                await saveSheet();
-            }
-        }
+        if (unsaved && !confirm('Unsaved changes. Save before switching?')) { /* continue */ } else if (unsaved) { await saveSheet(); }
         currentGrade = grade;
-        const btn = document.getElementById('gradePickerBtn');
-        if (btn) btn.textContent = 'Grade ' + grade;
+        document.getElementById('gradePickerBtn').textContent = 'Grade ' + grade;
         renderGrid(grade);
     }
 
-    // ─────────────────────────────
-    // SAVE
-    // ─────────────────────────────
+    function showGradePicker() {
+        if (isHub) buildSchoolPicker();
+        else buildGradePicker();
+        document.getElementById('gradePicker').classList.remove('hidden');
+    }
+
+    // ── SAVE ──────────────────────────────────────────────────────────────────
     async function saveSheet() {
         showLoading(true);
         document.getElementById('saveBtn').disabled = true;
-
         try {
-            // Collect non-empty rows from current grade
             const rows = collectRows();
-
-            if (rows.length === 0) {
-                toast('Nothing to save add some students first!');
-                return;
-            }
-
-            // Delete existing records for this grade+UDISE
-            const { error: delErr } = await sb
-                .from('students')
-                .delete()
-                .eq('udise_code', selectedUDISE)
-                .eq('grade', String(currentGrade));
-
+            if (rows.length === 0) { toast('Nothing to save — add some students first!'); return; }
+            const { error: delErr } = await sb.from('students').delete().eq('udise_code', selectedUDISE).eq('grade', String(currentGrade));
             if (delErr) throw delErr;
-
-            // Insert new records
-            const toInsert = rows.map((r, i) => ({
+            const toInsert = rows.map((r,i) => ({
                 udise_code:    selectedUDISE,
                 school_name:   selectedSchoolName,
                 grade:         String(currentGrade),
-                sr_no:         parseInt(r.sr_no) || (i + 1),
-                first_name:    r.first_name || '',
-                middle_name:   r.middle_name || '',
-                last_name:     r.last_name || '',
-                full_name:     r.full_name || [r.first_name, r.middle_name, r.last_name].filter(Boolean).join(' '),
-                gender:        r.gender || '',
-                mother_name:   r.mother_name || '',
-                father_name:   r.father_name || '',
-                date_of_birth: r.date_of_birth || ''
+                sr_no:         parseInt(r.sr_no)||(i+1),
+                first_name:    r.first_name||'',
+                middle_name:   r.middle_name||'',
+                last_name:     r.last_name||'',
+                full_name:     r.full_name||[r.first_name,r.middle_name,r.last_name].filter(Boolean).join(' '),
+                gender:        r.gender||'',
+                mother_name:   r.mother_name||'',
+                father_name:   r.father_name||'',
+                date_of_birth: r.date_of_birth||''
             }));
-
             const { error: insErr } = await sb.from('students').insert(toInsert);
             if (insErr) throw insErr;
-
-            // Update local state
             gradeData[currentGrade] = rows;
-
             setSaveStatus(true);
             markUnsaved(false);
-            toast(`✅ Saved ${rows.length} students for Grade ${currentGrade}`, 'success');
-
-        } catch (e) {
+            toast('Saved ' + rows.length + ' students for Grade ' + currentGrade, 'success');
+        } catch(e) {
             toast('Save failed: ' + e.message, 'error');
         } finally {
             showLoading(false);
@@ -760,205 +542,88 @@
         }
     }
 
-    // Collect non-empty rows from the DOM
     function collectRows() {
         const body = document.getElementById('gridBody');
         const rows = [];
-
-        Array.from(body.rows).forEach((tr, idx) => {
+        Array.from(body.rows).forEach(tr => {
             const row = {};
             COLS.forEach(field => {
-                const inp = tr.querySelector(`input[data-field="${field}"]`);
-                const sel = tr.querySelector(`select[data-field="${field}"]`);
+                const inp = tr.querySelector('input[data-field="'+field+'"]');
+                const sel = tr.querySelector('select[data-field="'+field+'"]');
                 row[field] = (inp ? inp.value : sel ? sel.value : '').trim();
             });
-            // Only save if at least a first name exists
             if (row.first_name || row.full_name) rows.push(row);
         });
-
         return rows;
     }
 
-    // ─────────────────────────────
-    // EXPORT CSV
-    // ─────────────────────────────
-    function exportCSV() {
-        const rows = collectRows();
-        if (rows.length === 0) { toast('No data to export'); return; }
-
-        const headers = ['Sr No','First Name','Middle Name','Last Name','Full Name','Gender','Mother Name','Father Name','Date of Birth','Grade','School','UDISE'];
-        const csvRows = rows.map(r => [
-            r.sr_no, r.first_name, r.middle_name, r.last_name,
-            r.full_name, r.gender, r.mother_name, r.father_name,
-            r.date_of_birth, currentGrade, SCHOOL_NAME, USERNAME
-        ].map(v => `"${(v||'').replace(/"/g,'""')}"`));
-
-        const csv  = [headers, ...csvRows].map(r => r.join(',')).join('\n');
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const url  = URL.createObjectURL(blob);
-        const a    = document.createElement('a');
-        a.href     = url;
-        a.download = `${SCHOOL_NAME}_Grade${currentGrade}_students.csv`;
-        a.click();
-        toast('CSV downloaded!', 'success');
-    }
-
-    // ─────────────────────────────
-    // PASTE HELP
-    // ─────────────────────────────
-    function pasteHelp() {
-        alert('📋 How to paste from Excel:\n\n1. Open your Excel file (Grade_6, Grade_7, Grade_8 sheet)\n2. Select the data rows (from Sr No column to Date of Birth column)\n3. Press Ctrl+C to copy\n4. Click on the first cell (Sr No column, Row 1) in the grid\n5. Press Ctrl+V to paste\n\nData will fill in automatically!');
-    }
-
-    // ─────────────────────────────
-    // HELPERS
-    // ─────────────────────────────
-    // Auto-format DOB as DD/MM/YYYY while typing (digits only)
+    // ── DOB FORMATTING ────────────────────────────────────────────────────────
     function formatDOB(value) {
-        const digits = value.replace(/\D/g, '').slice(0, 8);
-        if (digits.length <= 2) return digits;
-        if (digits.length <= 4) return digits.slice(0,2) + '/' + digits.slice(2);
-        return digits.slice(0,2) + '/' + digits.slice(2,4) + '/' + digits.slice(4);
+        const d = value.replace(/\D/g,'').slice(0,8);
+        if (d.length <= 2) return d;
+        if (d.length <= 4) return d.slice(0,2)+'/'+d.slice(2);
+        return d.slice(0,2)+'/'+d.slice(2,4)+'/'+d.slice(4);
     }
 
-    // Smart parser for any date format on blur
-    const MONTHS = {
-        jan:1,feb:2,mar:3,apr:4,may:5,jun:6,
-        jul:7,aug:8,sep:9,oct:10,nov:11,dec:12,
-        january:1,february:2,march:3,april:4,june:6,
-        july:7,august:8,september:9,october:10,november:11,december:12
-    };
-
+    const MONTHS = {jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12,january:1,february:2,march:3,april:4,june:6,july:7,august:8,september:9,october:10,november:11,december:12};
     function pad(n) { return String(n).padStart(2,'0'); }
 
     function parseDOB(value) {
         const v = value.trim().toLowerCase();
         if (!v) return value;
-
-        // Already DD/MM/YYYY
         if (/^\d{2}\/\d{2}\/\d{4}$/.test(v)) return value;
-
-        // "10 oct 2003" or "10 october 2003"
-        const textMatch = v.match(/^(\d{1,2})\s+([a-z]+)\s+(\d{4})$/);
-        if (textMatch) {
-            const d = parseInt(textMatch[1]);
-            const m = MONTHS[textMatch[2]];
-            const y = textMatch[3];
-            if (m) return pad(d) + '/' + pad(m) + '/' + y;
-        }
-
-        // "oct 10 2003" or "october 10, 2003"
-        const textMatch2 = v.match(/^([a-z]+)\s+(\d{1,2})[,\s]+(\d{4})$/);
-        if (textMatch2) {
-            const m = MONTHS[textMatch2[1]];
-            const d = parseInt(textMatch2[2]);
-            const y = textMatch2[3];
-            if (m) return pad(d) + '/' + pad(m) + '/' + y;
-        }
-
-        // YYYY-MM-DD (ISO)
-        const isoMatch = v.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-        if (isoMatch) return isoMatch[3] + '/' + isoMatch[2] + '/' + isoMatch[1];
-
-        // DD-MM-YYYY or DD.MM.YYYY
-        const dashMatch = v.match(/^(\d{1,2})[.\-](\d{1,2})[.\-](\d{4})$/);
-        if (dashMatch) return pad(dashMatch[1]) + '/' + pad(dashMatch[2]) + '/' + dashMatch[3];
-
-        // All digits DDMMYYYY
-        const digitsOnly = v.replace(/\D/g,'');
-        if (digitsOnly.length === 8) {
-            return digitsOnly.slice(0,2) + '/' + digitsOnly.slice(2,4) + '/' + digitsOnly.slice(4);
-        }
-
-        return value; // return as-is if can't parse
+        const m1 = v.match(/^(\d{1,2})\s+([a-z]+)\s+(\d{4})$/);
+        if (m1 && MONTHS[m1[2]]) return pad(m1[1])+'/'+pad(MONTHS[m1[2]])+'/'+m1[3];
+        const m2 = v.match(/^([a-z]+)\s+(\d{1,2})[,\s]+(\d{4})$/);
+        if (m2 && MONTHS[m2[1]]) return pad(m2[2])+'/'+pad(MONTHS[m2[1]])+'/'+m2[3];
+        const iso = v.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (iso) return iso[3]+'/'+iso[2]+'/'+iso[1];
+        const dash = v.match(/^(\d{1,2})[.\-](\d{1,2})[.\-](\d{4})$/);
+        if (dash) return pad(dash[1])+'/'+pad(dash[2])+'/'+dash[3];
+        const digits = v.replace(/\D/g,'');
+        if (digits.length === 8) return digits.slice(0,2)+'/'+digits.slice(2,4)+'/'+digits.slice(4);
+        return value;
     }
 
     function colLetter(field) {
-        const map = { sr_no:'A', first_name:'B', middle_name:'C', last_name:'D', full_name:'E', gender:'F', mother_name:'G', father_name:'H', date_of_birth:'I' };
-        return map[field] || 'A';
+        const map = {sr_no:'A',first_name:'B',middle_name:'C',last_name:'D',full_name:'E',gender:'F',mother_name:'G',father_name:'H',date_of_birth:'I'};
+        return map[field]||'A';
     }
 
-    function markUnsaved(state = true) {
-        unsaved = state;
-        setSaveStatus(!state);
-    }
+    function markUnsaved(state=true) { unsaved=state; setSaveStatus(!state); }
 
     function setSaveStatus(saved) {
         const el = document.getElementById('saveStatus');
-        if (saved) {
-            el.className = 'status-saved';
-            el.textContent = '✓ All changes saved';
-        } else if (unsaved) {
-            el.className = 'status-unsaved';
-            el.textContent = '● Unsaved changes';
-        } else {
-            el.textContent = '';
-        }
+        if (saved) { el.className='status-saved'; el.textContent='All changes saved'; }
+        else if (unsaved) { el.className='status-unsaved'; el.textContent='Unsaved changes'; }
+        else el.textContent='';
     }
 
     function updateStatus() {
         const rows = collectRows();
-        document.getElementById('statusText').textContent = `Grade ${currentGrade}`;
-        document.getElementById('rowCountText').textContent = `${rows.length} students`;
+        document.getElementById('statusText').textContent    = 'Grade ' + currentGrade;
+        document.getElementById('rowCountText').textContent  = rows.length + ' students';
         updateSummary();
-    }
-
-    function showLoading(show) {
-        document.getElementById('loadingOverlay').classList.toggle('show', show);
-    }
-
-    function toast(msg, type = '') {
-        const el = document.getElementById('toast');
-        el.textContent = msg;
-        el.className   = 'toast show ' + type;
-        setTimeout(() => { el.className = 'toast'; }, 3000);
-    }
-
-    function logout() {
-        if (confirm('Logout?')) { sessionStorage.clear(); window.location.href = 'login.html'; }
-    }
-
-    // Update summary counts
-    function showGradePicker() {
-        if (isHub) {
-            // Reset to school picker
-            document.getElementById('schoolPickerDiv').style.display = 'block';
-            pickerBtns.innerHTML = '';
-            document.getElementById('pickerSchoolName').textContent = SCHOOL_NAME || 'Select a School';
-            document.getElementById('pickerSubtitle').textContent = 'Choose which school to register students for';
-            const allSchools = [{ udise: USERNAME, name: SCHOOL_NAME }, ...spokeSchools];
-            allSchools.forEach(school => {
-                const btn = document.createElement('button');
-                btn.className = 'grade-pick-btn';
-                btn.innerHTML = '<span style="font-weight:700;">' + school.name + '</span><br><span style="font-size:.75rem;opacity:.7;">' + school.udise + '</span>';
-                btn.style.textAlign = 'left';
-                btn.style.lineHeight = '1.4';
-                btn.onclick = () => {
-                    selectedUDISE      = school.udise;
-                    selectedSchoolName = school.name;
-                    document.getElementById('schoolPickerDiv').style.display = 'none';
-                    buildGradePicker();
-                };
-                pickerBtns.appendChild(btn);
-            });
-        }
-        document.getElementById('gradePicker').classList.remove('hidden');
     }
 
     function updateSummary() {
         const rows = collectRows();
-        const total  = rows.length;
-        const male   = rows.filter(r => (r.gender||'').toLowerCase() === 'male').length;
-        const female = rows.filter(r => (r.gender||'').toLowerCase() === 'female').length;
-        document.getElementById('sumTotal').textContent  = total;
-        document.getElementById('sumMale').textContent   = male;
-        document.getElementById('sumFemale').textContent = female;
+        document.getElementById('sumTotal').textContent  = rows.length;
+        document.getElementById('sumMale').textContent   = rows.filter(r=>(r.gender||'').toLowerCase()==='male').length;
+        document.getElementById('sumFemale').textContent = rows.filter(r=>(r.gender||'').toLowerCase()==='female').length;
     }
 
-    // Warn before leaving with unsaved changes
-    window.onbeforeunload = (e) => {
-        if (unsaved) { e.preventDefault(); e.returnValue = ''; }
-    };
+    function showLoading(show) { document.getElementById('loadingOverlay').classList.toggle('show',show); }
+
+    function toast(msg, type='') {
+        const el = document.getElementById('toast');
+        el.textContent = msg; el.className = 'toast show '+type;
+        setTimeout(()=>{ el.className='toast'; }, 3000);
+    }
+
+    function logout() { if(confirm('Logout?')){ sessionStorage.clear(); window.location.href='login.html'; } }
+
+    window.onbeforeunload = (e) => { if(unsaved){ e.preventDefault(); e.returnValue=''; } };
 </script>
 </body>
 </html>
