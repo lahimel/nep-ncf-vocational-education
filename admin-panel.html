@@ -384,41 +384,34 @@
         // =============================================
         function displayUsers(users) {
             const tbody = document.getElementById('usersTableBody');
-            
             if (users.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No users found</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No users found</td></tr>';
                 return;
             }
-            
-            tbody.innerHTML = users.map(user => `
-                <tr>
-                    <td><strong>${user.username}</strong></td>
-                    <td>${user.full_name}</td>
-                    <td>
-                        <span class="badge badge-${user.role === 'admin' ? 'admin' : user.role === 'teacher' ? 'teacher' : 'officer'}">
-                            ${user.role.replace('_', ' ').toUpperCase()}
-                        </span>
-                    </td>
-                    <td>${user.udise_code || '-'}</td>
-                    <td>
-                        <span class="badge ${user.is_active ? 'badge-active' : 'badge-inactive'}">
-                            ${user.is_active ? 'Active' : 'Inactive'}
-                        </span>
-                    </td>
-                    <td>${user.last_login ? new Date(user.last_login).toLocaleDateString() : 'Never'}</td>
-                    <td>
-                        ${user.role !== 'admin' ? `
-                            <button class="action-btn ${user.is_active ? 'action-btn-disable' : 'action-btn-enable'}" 
-                                    onclick="toggleUserStatus('${user.id}', ${!user.is_active})">
-                                ${user.is_active ? 'Disable' : 'Enable'}
-                            </button>
-                            <button class="action-btn action-btn-reset" onclick="resetPassword('${user.id}', '${user.username}')">
-                                Reset
-                            </button>
-                        ` : ''}
-                    </td>
-                </tr>
-            `).join('');
+            const rows = users.map(user => {
+                const spokes   = (user.spoke_schools || []).length;
+                const kb       = user.has_kaushal_bodh ? ' · KB' : '';
+                const hubTag   = spokes > 0 ? ' · Hub (' + spokes + ')' : '';
+                const school   = user.school_name ? (user.school_name + kb + hubTag) : '-';
+                const lastLogin = user.last_login
+                    ? new Date(user.last_login).toLocaleString('en-IN', {day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})
+                    : 'Never';
+                const roleBadge = '<span class="badge badge-' + (user.role==='admin'?'admin':user.role==='teacher'?'teacher':'officer') + '">' + user.role.replace('_',' ').toUpperCase() + '</span>';
+                const statusBadge = '<span class="badge ' + (user.is_active?'badge-active':'badge-inactive') + '">' + (user.is_active?'Active':'Inactive') + '</span>';
+                const actions = user.role !== 'admin'
+                    ? '<button class="action-btn ' + (user.is_active?'action-btn-disable':'action-btn-enable') + '" onclick="toggleUserStatus(\'' + user.id + '\', ' + (!user.is_active) + ')">' + (user.is_active?'Disable':'Enable') + '</button> <button class="action-btn action-btn-reset" onclick="resetPassword(\'' + user.id + '\', \'' + user.username + '\')">Reset</button>'
+                    : '';
+                return '<tr>'
+                    + '<td><strong>' + user.username + '</strong></td>'
+                    + '<td>' + user.full_name + '</td>'
+                    + '<td>' + roleBadge + '</td>'
+                    + '<td>' + school + '</td>'
+                    + '<td>' + statusBadge + '</td>'
+                    + '<td>' + lastLogin + '</td>'
+                    + '<td>' + actions + '</td>'
+                    + '</tr>';
+            });
+            tbody.innerHTML = rows.join('');
         }
         
         // =============================================
@@ -478,23 +471,30 @@
             const school = document.getElementById('newSchool').value.trim();
             const password = document.getElementById('newPassword').value;
             
+            const hasKaushalBodh2 = document.getElementById('newKaushalBodh').checked;
+            const spokeRows2 = document.querySelectorAll('#spokeRows .spoke-row');
+            const spokeSchools2 = Array.from(spokeRows2).map(row => ({
+                udise: row.querySelector('.spoke-udise').value.trim(),
+                name:  row.querySelector('.spoke-name').value.trim()
+            })).filter(s => s.udise && s.name);
+
             try {
                 const { data, error } = await supabaseClient.rpc('create_user_admin', {
-                    p_username: username,
-                    p_email: email || null,
-                    p_password: password,
-                    p_role: role,
-                    p_full_name: fullName,
-                    p_udise_code: udise || null,
-                    p_school_name: school || null,
-                    p_created_by: currentUserId,
-                    p_has_kaushal_bodh: hasKaushalBodh,
-                    p_spoke_schools: spokeSchools
+                    p_username:         username,
+                    p_email:            email || null,
+                    p_password:         password,
+                    p_role:             role,
+                    p_full_name:        fullName,
+                    p_udise_code:       udise || null,
+                    p_school_name:      school || null,
+                    p_created_by:       currentUserId,
+                    p_has_kaushal_bodh: hasKaushalBodh2,
+                    p_spoke_schools:    spokeSchools2
                 });
-                
+
                 if (error) throw error;
-                
-                showSuccess(`User ${username} created successfully!`);
+
+                showSuccess('User ' + username + ' created successfully!');
                 closeAddUserModal();
                 loadUsers();
             } catch (error) {
