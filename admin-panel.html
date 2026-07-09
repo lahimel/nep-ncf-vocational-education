@@ -112,6 +112,14 @@
         .import-area { width:100%; min-height:160px; padding:14px; border:1.5px solid var(--brown); border-radius:12px; font-family:'DM Sans',sans-serif; font-size:13px; color:var(--brown); resize:vertical; background:var(--white); }
         .import-area::placeholder { color:rgba(58,46,37,.35); }
         .import-area:focus { outline:none; }
+        /* Spoke schools */
+        .spoke-row { display:flex; gap:8px; margin-bottom:8px; align-items:center; }
+        .spoke-row input { flex:1; }
+        .spoke-remove { background:none; border:1.5px solid var(--brown); color:var(--brown); width:30px; height:30px; border-radius:6px; cursor:pointer; font-size:14px; flex-shrink:0; transition:all 200ms; }
+        .spoke-remove:hover { background:var(--brown); color:white; }
+        .add-spoke-btn { background:none; border:1.5px dashed rgba(58,46,37,.4); color:var(--brown); padding:7px 14px; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:.8rem; cursor:pointer; width:100%; margin-top:4px; transition:all 200ms; }
+        .add-spoke-btn:hover { border-color:var(--brown); background:rgba(58,46,37,.04); }
+
         .import-hint { font-size:.78rem; color:var(--brown); opacity:.6; margin-top:8px; line-height:1.6; }
         .preview-table-wrap { overflow-x:auto; margin-top:16px; }
 
@@ -312,6 +320,12 @@
                     </label>
                 </div>
 
+                <div class="form-group" id="spokeGroup" style="display:none;">
+                    <label>Spoke Schools <span style="font-size:.75rem;opacity:.6;font-weight:400;">(leave empty if not a hub)</span></label>
+                    <div id="spokeRows"></div>
+                    <button type="button" class="add-spoke-btn" onclick="addSpokeRow()">+ Add Spoke School</button>
+                </div>
+
                 <div class="form-group">
                     <label>Temporary Password <span class="required">*</span></label>
                     <input type="text" id="newPassword" required />
@@ -439,11 +453,13 @@
                 udiseGroup.style.display = 'block';
                 schoolGroup.style.display = 'block';
                 document.getElementById('kaushalGroup').style.display = 'block';
+                document.getElementById('spokeGroup').style.display = 'block';
                 document.getElementById('newUdise').required = true;
             } else {
                 udiseGroup.style.display = 'none';
                 schoolGroup.style.display = 'none';
                 document.getElementById('kaushalGroup').style.display = 'none';
+                document.getElementById('spokeGroup').style.display = 'none';
                 document.getElementById('newUdise').required = false;
             }
         });
@@ -472,7 +488,8 @@
                     p_udise_code: udise || null,
                     p_school_name: school || null,
                     p_created_by: currentUserId,
-                    p_has_kaushal_bodh: hasKaushalBodh
+                    p_has_kaushal_bodh: hasKaushalBodh,
+                    p_spoke_schools: spokeSchools
                 });
                 
                 if (error) throw error;
@@ -683,6 +700,26 @@
             document.getElementById('importPreview').innerHTML = '';
             document.getElementById('importConfirmRow').style.display = 'none';
             importRows = [];
+        }
+
+        function addSpokeRow() {
+            const container = document.getElementById('spokeRows');
+            const row = document.createElement('div');
+            row.className = 'spoke-row';
+            row.innerHTML = `
+                <input type="text" class="spoke-udise" placeholder="UDISE Code" style="max-width:160px;">
+                <input type="text" class="spoke-name" placeholder="School Name">
+                <button type="button" class="spoke-remove" onclick="this.parentElement.remove()">×</button>`;
+            container.appendChild(row);
+        }
+
+        // Reset spoke rows when modal closes
+        const origClose = window.closeAddUserModal;
+        function closeAddUserModal() {
+            document.getElementById('spokeRows').innerHTML = '';
+            document.getElementById('spokeGroup').style.display = 'none';
+            document.getElementById('addUserForm').reset();
+            document.getElementById('addUserModal').classList.remove('show');
         }
 
         function downloadTemplate() {
