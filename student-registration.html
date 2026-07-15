@@ -34,8 +34,8 @@
         .tb-btn-save:disabled{opacity:.5;cursor:not-allowed;}
         .tb-btn-outline{background:var(--white);color:var(--brown);border:1.5px solid rgba(58,46,37,.35);}
         .tb-btn-outline:hover{border-color:var(--brown);background:rgba(58,46,37,.05);}
-        .tb-btn-grade{background:rgba(58,46,37,.08);color:var(--brown);border:1.5px solid var(--brown);font-weight:700;}
-        .tb-btn-grade:hover{background:var(--brown);color:var(--white);}
+        .tb-btn-grade{background:var(--brown);color:var(--white);border:1.5px solid var(--brown);font-weight:700;}
+        .tb-btn-grade:hover{background:#6A5445;color:var(--white);}
         .logout-link{font-size:.82rem;color:var(--brown);cursor:pointer;padding:6px 10px;border-radius:8px;font-weight:500;transition:all var(--ease);}
         .logout-link:hover{background:rgba(58,46,37,.05);}
 
@@ -99,9 +99,9 @@
         .grade-pick-btn:hover{background:var(--brown);color:var(--white);}
         .grade-pick-btn:hover .grade-count{color:rgba(255,255,255,.7);}
         .grade-count{
-            font-size:.75rem;font-weight:500;
-            color:var(--brown);opacity:.55;
-            background:rgba(58,46,37,.07);
+            font-size:.75rem;font-weight:600;
+            color:var(--brown);opacity:.85;
+            background:rgba(58,46,37,.1);
             padding:2px 10px;border-radius:20px;
         }
 
@@ -146,8 +146,8 @@
         <div class="doc-title" id="docTitle">Student Registration</div>
         <div class="doc-sub"   id="docSub">Loading...</div>
     </div>
+    <button class="tb-btn tb-btn-grade" onclick="showGradePicker()" id="gradePickerBtn">Select Grade</button>
     <div class="topbar-actions">
-        <button class="tb-btn tb-btn-grade" onclick="showGradePicker()" id="gradePickerBtn">Select Grade</button>
         <div style="display:flex;gap:6px;align-items:center;">
             <div style="display:inline-flex;flex-direction:column;align-items:center;background:rgba(58,46,37,.06);border:1.5px solid var(--brown);border-radius:10px;padding:4px 14px;min-width:54px;">
                 <strong id="sumTotal" style="font-size:.95rem;color:var(--brown);line-height:1.2;">0</strong>
