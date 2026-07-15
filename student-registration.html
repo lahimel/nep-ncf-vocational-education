@@ -544,7 +544,7 @@
         document.getElementById('saveBtn').disabled = true;
         try {
             const rows = collectRows();
-            if (rows.length === 0) { toast('Nothing to save — add some students first!'); return; }
+            if (rows.length === 0) { toast('Nothing to save. Add some students first!'); return; }
             const { error: delErr } = await sb.from('students').delete().eq('udise_code', selectedUDISE).eq('grade', String(currentGrade));
             if (delErr) throw delErr;
             const toInsert = rows.map((r,i) => ({
