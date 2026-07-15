@@ -6,6 +6,7 @@
     <title>School Reporting - Lend A Hand India</title>
     <link rel="icon" type="image/png" href="favicon-96x96.png"/>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --c1: #FFEDDB;
@@ -85,6 +86,15 @@
         .card-body { padding:18px 22px 22px; }
         .card-description { font-size:.9rem; color:var(--brown); line-height:1.7; margin-bottom:18px; }
 
+        .last-submitted {
+            font-size:.72rem; color:var(--brown-light);
+            margin-bottom:12px; display:flex; align-items:center; gap:5px;
+        }
+        .last-submitted .dot {
+            width:6px; height:6px; border-radius:50%;
+            background:var(--c4); flex-shrink:0;
+        }
+        .last-submitted.fresh .dot { background:#1E6B36; }
         .card-button { display:inline-flex; align-items:center; gap:6px; background:var(--white); color:var(--brown); border:1.5px solid var(--brown); padding:9px 20px; border-radius:8px; font-size:.88rem; font-weight:600; font-family:'DM Sans',sans-serif; cursor:pointer; transition:all var(--ease); text-decoration:none; }
         .card-button:hover { background:var(--brown); color:var(--white); transform:translateY(-1px); }
 
@@ -157,6 +167,7 @@
                     <div class="card-header"><h3>Kaushal Bodh Reporting</h3></div>
                     <div class="card-body">
                         <p class="card-description">Records project-wise progress for Kaushal Bodh programme across Grades 6, 7, and 8.</p>
+                        <div class="last-submitted" id="last-kb_reporting"><span class="dot"></span><span>Checking...</span></div>
                         <button class="card-button" onclick="openForm('https://ee-eu.kobotoolbox.org/x/ucYmJ8ac')">Open Form →</button>
                     </div>
                 </div>
@@ -165,6 +176,7 @@
                     <div class="card-header"><h3>Guest Lecture / Field Visit</h3></div>
                     <div class="card-body">
                         <p class="card-description">Captures Grade 6 to 8 student visits to industries and guest lecture details.</p>
+                        <div class="last-submitted" id="last-kb_guest_lecture"><span class="dot"></span><span>Checking...</span></div>
                         <button class="card-button" onclick="openForm('https://ee-eu.kobotoolbox.org/x/EVZEtUTW')">Open Form →</button>
                     </div>
                 </div>
@@ -188,6 +200,7 @@
                     <div class="card-header"><h3>Unit Reporting</h3></div>
                     <div class="card-body">
                         <p class="card-description">Records Unit-wise teaching progress for Grade 9 and 10 vocational subjects. Submit as Unit is completed.</p>
+                        <div class="last-submitted" id="last-unit_reporting"><span class="dot"></span><span>Checking...</span></div>
                         <button class="card-button" onclick="openForm('https://ee-eu.kobotoolbox.org/x/Aitkuf2N')">Open Form →</button>
                     </div>
                 </div>
@@ -196,6 +209,7 @@
                     <div class="card-header"><h3>Guest Lecture / Field Visit</h3></div>
                     <div class="card-body">
                         <p class="card-description">Captures details of student visits to industries and guest lecture sessions including location and guest details.</p>
+                        <div class="last-submitted" id="last-guest_lecture_9_10"><span class="dot"></span><span>Checking...</span></div>
                         <button class="card-button" onclick="openForm('https://ee-eu.kobotoolbox.org/x/EVZEtUTW')">Open Form →</button>
                     </div>
                 </div>
@@ -238,12 +252,53 @@
     </div>
 
     <script>
+        // ── SUPABASE ──────────────────────────────────────────────────────────────
+        const SUPABASE_URL      = 'https://soesdipnikhtnuuemstm.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNvZXNkaXBuaWtodG51dWVtc3RtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNTM4NDMsImV4cCI6MjA5NDkyOTg0M30._o831V46iMi9y7d_FRZ_ZfZ8nDOuFflLJLiUdpZKzko';
+        const { createClient } = window.supabase;
+        const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
         if (sessionStorage.getItem('hasKaushalBodh') === 'true') {
             document.getElementById('kaushalBodhSection').style.display = 'block';
         }
 
         const schoolName = sessionStorage.getItem('schoolName') || sessionStorage.getItem('userName') || '';
         document.getElementById('pageGreeting').textContent = 'Hi, ' + (schoolName || 'Teacher');
+
+        // ── LOAD LAST SUBMISSIONS ─────────────────────────────────────────────────
+        (async function loadSubmissions() {
+            const udise = sessionStorage.getItem('udiseCode') || '';
+            if (!udise) return;
+            try {
+                const { data } = await sb
+                    .from('submissions')
+                    .select('form_type, submitted_at')
+                    .eq('udise_code', udise)
+                    .order('submitted_at', { ascending: false });
+
+                // Get latest per form type
+                const latest = {};
+                (data || []).forEach(row => {
+                    if (!latest[row.form_type]) latest[row.form_type] = row.submitted_at;
+                });
+
+                ['kb_reporting','kb_guest_lecture','unit_reporting','guest_lecture_9_10'].forEach(type => {
+                    const el = document.getElementById('last-' + type);
+                    if (!el) return;
+                    if (latest[type]) {
+                        const date = new Date(latest[type]);
+                        const days = Math.floor((Date.now() - date) / 86400000);
+                        const label = days === 0 ? 'Today' : days === 1 ? 'Yesterday' : days + ' days ago';
+                        el.querySelector('span:last-child').textContent = 'Last submitted: ' + label;
+                        if (days <= 7) el.classList.add('fresh');
+                    } else {
+                        el.querySelector('span:last-child').textContent = 'Not yet submitted';
+                    }
+                });
+            } catch(e) {
+                document.querySelectorAll('.last-submitted').forEach(el => el.style.display = 'none');
+            }
+        })();
 
         if (sessionStorage.getItem('loggedIn') !== 'true') {
             window.location.href = 'index.html';
