@@ -141,18 +141,18 @@
     <script>
         // Check if logged in and is field officer
         if (sessionStorage.getItem('loggedIn') !== 'true') {
-            window.location.href = 'login.html';
+            window.location.href = 'index.html';
         }
         
         if (sessionStorage.getItem('userRole') !== 'field_officer') {
             alert('Access denied. This page is for field officers only.');
-            window.location.href = 'login.html';
+            window.location.href = 'index.html';
         }
 
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
                 sessionStorage.clear();
-                window.location.href = 'login.html';
+                window.location.href = 'index.html';
             }
         }
 
