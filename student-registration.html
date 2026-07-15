@@ -21,7 +21,6 @@
         ::-webkit-scrollbar-thumb{background:var(--c3);border-radius:3px;}
         ::-webkit-scrollbar-corner{background:var(--c1);}
 
-        /* TOPBAR */
         .topbar{background:var(--white);border-bottom:1.5px solid var(--brown);padding:0 16px;display:flex;align-items:center;gap:12px;height:58px;flex-shrink:0;}
         .back-btn{background:none;border:none;cursor:pointer;color:var(--brown);font-size:18px;padding:6px 8px;border-radius:8px;text-decoration:none;display:flex;align-items:center;transition:background var(--ease);}
         .back-btn:hover{background:rgba(58,46,37,.06);}
@@ -35,21 +34,20 @@
         .tb-btn-save:disabled{opacity:.5;cursor:not-allowed;}
         .tb-btn-outline{background:var(--white);color:var(--brown);border:1.5px solid rgba(58,46,37,.35);}
         .tb-btn-outline:hover{border-color:var(--brown);background:rgba(58,46,37,.05);}
+        .tb-btn-grade{background:rgba(58,46,37,.08);color:var(--brown);border:1.5px solid var(--brown);font-weight:700;}
+        .tb-btn-grade:hover{background:var(--brown);color:var(--white);}
         .logout-link{font-size:.82rem;color:var(--brown);cursor:pointer;padding:6px 10px;border-radius:8px;font-weight:500;transition:all var(--ease);}
         .logout-link:hover{background:rgba(58,46,37,.05);}
 
-        /* MENUBAR */
         .menubar{background:var(--white);border-bottom:1.5px solid var(--brown);padding:0 52px;display:flex;align-items:center;gap:2px;height:32px;flex-shrink:0;}
         .menu-item{padding:3px 11px;font-size:.78rem;color:var(--brown);cursor:pointer;border-radius:5px;font-weight:500;transition:all var(--ease);}
         .menu-item:hover{background:rgba(58,46,37,.06);}
 
-        /* FORMULA BAR */
         .formula-bar{background:var(--white);border-bottom:1px solid rgba(58,46,37,.15);padding:0 8px;display:flex;align-items:center;gap:8px;height:30px;flex-shrink:0;}
         .cell-ref{width:68px;border:1.5px solid rgba(58,46,37,.3);border-radius:5px;padding:2px 6px;font-size:.75rem;font-family:'DM Sans',sans-serif;color:var(--brown);text-align:center;background:var(--c1);}
         .formula-divider{width:1px;height:16px;background:rgba(58,46,37,.15);}
         .formula-input{flex:1;border:none;outline:none;font-size:.78rem;font-family:'DM Sans',sans-serif;color:var(--brown);background:transparent;}
 
-        /* GRID */
         .sheet-area{flex:1;overflow:auto;background:var(--white);order:2;}
         .grid-wrapper{min-width:max-content;}
         table.grid{border-collapse:collapse;table-layout:fixed;}
@@ -67,34 +65,46 @@
         .grid tbody tr:nth-child(even) td:hover{background:rgba(58,46,37,.05);}
         .col-srno{width:60px;min-width:60px;} .col-fname{width:140px;min-width:120px;} .col-mname{width:130px;min-width:100px;} .col-lname{width:140px;min-width:120px;} .col-full{width:220px;min-width:180px;} .col-gender{width:90px;min-width:80px;} .col-mother{width:130px;min-width:100px;} .col-father{width:130px;min-width:100px;} .col-dob{width:130px;min-width:110px;}
 
-        /* STATUS BAR */
         .status-bar{background:var(--white);border-top:1px solid rgba(58,46,37,.12);padding:3px 12px;font-size:.72rem;color:var(--brown);display:flex;gap:16px;align-items:center;flex-shrink:0;order:4;}
         .status-saved{color:#1E6B36;font-weight:600;}
         .status-unsaved{color:var(--brown);font-weight:600;}
 
-        /* TOAST */
         .toast{position:fixed;bottom:52px;left:50%;transform:translateX(-50%) translateY(14px);background:var(--brown);color:var(--white);padding:9px 20px;border-radius:8px;font-size:.82rem;font-weight:500;opacity:0;transition:all 220ms ease;z-index:100;pointer-events:none;}
         .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
         .toast.success{background:#1E6B36;}
         .toast.error{background:#8B2020;}
 
-        /* LOADING */
         .loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,.9);display:none;align-items:center;justify-content:center;z-index:200;}
         .loading-overlay.show{display:flex;}
         .spinner{width:28px;height:28px;border:3px solid rgba(58,46,37,.2);border-top-color:var(--brown);border-radius:50%;animation:spin .8s linear infinite;}
         @keyframes spin{to{transform:rotate(360deg);}}
 
-        /* GRADE / SCHOOL PICKER */
         .grade-picker{position:fixed;inset:0;background:var(--white);display:flex;align-items:center;justify-content:center;z-index:300;flex-direction:column;}
         .grade-picker.hidden{display:none;}
         .grade-picker-box{border:1.5px solid var(--brown);border-radius:16px;padding:40px 48px;text-align:center;max-width:440px;width:90%;}
         .grade-picker-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--brown);margin-bottom:6px;}
         .grade-picker-sub{font-size:.84rem;color:var(--brown);margin-bottom:28px;opacity:.6;}
         .grade-picker-btns{display:flex;flex-direction:column;gap:10px;}
-        .grade-pick-btn{padding:13px 24px;border:1.5px solid var(--brown);border-radius:8px;background:var(--white);color:var(--brown);font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;transition:all 200ms ease;width:100%;text-align:left;}
-        .grade-pick-btn:hover{background:var(--brown);color:var(--white);}
 
-        /* MOBILE */
+        /* Grade button with count */
+        .grade-pick-btn{
+            padding:13px 20px;
+            border:1.5px solid var(--brown);border-radius:8px;
+            background:var(--white);color:var(--brown);
+            font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:600;
+            cursor:pointer;transition:all 200ms ease;
+            width:100%;
+            display:flex;align-items:center;justify-content:space-between;
+        }
+        .grade-pick-btn:hover{background:var(--brown);color:var(--white);}
+        .grade-pick-btn:hover .grade-count{color:rgba(255,255,255,.7);}
+        .grade-count{
+            font-size:.75rem;font-weight:500;
+            color:var(--brown);opacity:.55;
+            background:rgba(58,46,37,.07);
+            padding:2px 10px;border-radius:20px;
+        }
+
         @media(max-width:768px){
             .topbar{height:auto;flex-wrap:wrap;padding:8px 12px;gap:8px;}
             .topbar-actions{flex-wrap:wrap;gap:6px;width:100%;}
@@ -122,7 +132,6 @@
 
 <div class="toast" id="toast"></div>
 
-<!-- PICKER (school + grade) -->
 <div class="grade-picker" id="gradePicker">
     <div class="grade-picker-box">
         <div class="grade-picker-title" id="pickerTitle">Select a Class</div>
@@ -131,7 +140,6 @@
     </div>
 </div>
 
-<!-- TOP BAR -->
 <div class="topbar">
     <a href="teacher-space.html" class="back-btn" title="Back">←</a>
     <div class="doc-info">
@@ -139,21 +147,21 @@
         <div class="doc-sub"   id="docSub">Loading...</div>
     </div>
     <div class="topbar-actions">
-        <div style="display:flex;gap:8px;align-items:center;margin-right:4px;">
-            <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(58,46,37,.06);border:1.5px solid var(--brown);border-radius:20px;padding:5px 14px;">
-                <span style="font-size:.72rem;font-weight:600;color:var(--brown);">Total</span>
-                <strong id="sumTotal" style="font-size:.82rem;color:var(--brown);">0</strong>
+        <button class="tb-btn tb-btn-grade" onclick="showGradePicker()" id="gradePickerBtn">Select Grade</button>
+        <div style="display:flex;gap:6px;align-items:center;">
+            <div style="display:inline-flex;flex-direction:column;align-items:center;background:rgba(58,46,37,.06);border:1.5px solid var(--brown);border-radius:10px;padding:4px 14px;min-width:54px;">
+                <strong id="sumTotal" style="font-size:.95rem;color:var(--brown);line-height:1.2;">0</strong>
+                <span style="font-size:.65rem;font-weight:600;color:var(--brown);opacity:.6;text-transform:uppercase;letter-spacing:.5px;">Total</span>
             </div>
-            <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(58,46,37,.06);border:1.5px solid var(--brown);border-radius:20px;padding:5px 14px;">
-                <span style="font-size:.72rem;font-weight:600;color:var(--brown);">Male</span>
-                <strong id="sumMale" style="font-size:.82rem;color:var(--brown);">0</strong>
+            <div style="display:inline-flex;flex-direction:column;align-items:center;background:rgba(58,46,37,.06);border:1.5px solid var(--brown);border-radius:10px;padding:4px 14px;min-width:54px;">
+                <strong id="sumMale" style="font-size:.95rem;color:var(--brown);line-height:1.2;">0</strong>
+                <span style="font-size:.65rem;font-weight:600;color:var(--brown);opacity:.6;text-transform:uppercase;letter-spacing:.5px;">Male</span>
             </div>
-            <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(58,46,37,.06);border:1.5px solid var(--brown);border-radius:20px;padding:5px 14px;">
-                <span style="font-size:.72rem;font-weight:600;color:var(--brown);">Female</span>
-                <strong id="sumFemale" style="font-size:.82rem;color:var(--brown);">0</strong>
+            <div style="display:inline-flex;flex-direction:column;align-items:center;background:rgba(58,46,37,.06);border:1.5px solid var(--brown);border-radius:10px;padding:4px 14px;min-width:54px;">
+                <strong id="sumFemale" style="font-size:.95rem;color:var(--brown);line-height:1.2;">0</strong>
+                <span style="font-size:.65rem;font-weight:600;color:var(--brown);opacity:.6;text-transform:uppercase;letter-spacing:.5px;">Female</span>
             </div>
         </div>
-        <button class="tb-btn tb-btn-outline" onclick="showGradePicker()" id="gradePickerBtn">Select Grade</button>
         <button class="tb-btn tb-btn-outline" onclick="addRow()">+ Add Row</button>
         <button class="tb-btn tb-btn-outline" onclick="deleteSelectedRow()">Delete Row</button>
         <button class="tb-btn tb-btn-save"    id="saveBtn" onclick="saveSheet()">Save</button>
@@ -161,20 +169,17 @@
     </div>
 </div>
 
-<!-- MENU BAR -->
 <div class="menubar">
     <span class="menu-item" onclick="addRow()">Insert Row</span>
     <span class="menu-item" onclick="clearSheet()">Clear Sheet</span>
 </div>
 
-<!-- FORMULA BAR -->
 <div class="formula-bar">
     <input class="cell-ref" id="cellRef" value="A1" readonly>
     <div class="formula-divider"></div>
     <input class="formula-input" id="formulaBar" placeholder="Click a cell to edit..." readonly>
 </div>
 
-<!-- SPREADSHEET -->
 <div class="sheet-area" id="sheetArea">
     <div class="grid-wrapper">
         <table class="grid" id="mainGrid">
@@ -195,7 +200,6 @@
     </div>
 </div>
 
-<!-- STATUS BAR -->
 <div class="status-bar" id="statusBar">
     <span id="statusText" style="font-weight:600;">Ready</span>
     <span id="rowCountText"></span>
@@ -203,22 +207,19 @@
 </div>
 
 <script>
-    // ── SUPABASE ──────────────────────────────────────────────────────────────
     const SUPABASE_URL      = 'https://soesdipnikhtnuuemstm.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNvZXNkaXBuaWtodG51dWVtc3RtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNTM4NDMsImV4cCI6MjA5NDkyOTg0M30._o831V46iMi9y7d_FRZ_ZfZ8nDOuFflLJLiUdpZKzko';
     const { createClient } = window.supabase;
     const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // ── AUTH ──────────────────────────────────────────────────────────────────
-    if (sessionStorage.getItem('loggedIn') !== 'true') window.location.href = 'login.html';
+    if (sessionStorage.getItem('loggedIn') !== 'true') window.location.href = 'index.html';
     const USERNAME    = sessionStorage.getItem('username')   || '';
     const SCHOOL_NAME = sessionStorage.getItem('schoolName') || '';
     const hasKaushalBodh = sessionStorage.getItem('hasKaushalBodh') === 'true';
     let spokeSchools = [];
     try { spokeSchools = JSON.parse(sessionStorage.getItem('spokeSchools') || '[]'); } catch(e) { spokeSchools = []; }
-    const isHub          = spokeSchools.length > 0;
+    const isHub = spokeSchools.length > 0;
 
-    // Selected school — set after picker
     let selectedUDISE      = USERNAME;
     let selectedSchoolName = SCHOOL_NAME;
     let dataLoaded         = false;
@@ -226,16 +227,14 @@
     document.getElementById('docTitle').textContent = SCHOOL_NAME || 'Student Registration';
     document.getElementById('docSub').textContent   = 'UDISE: ' + USERNAME;
 
-    // ── STATE ─────────────────────────────────────────────────────────────────
     let currentGrade = hasKaushalBodh ? 6 : 9;
     let gradeData    = { 6:[], 7:[], 8:[], 9:[], 10:[] };
     let selectedRow  = null;
     let unsaved      = false;
 
     const COLS = ['sr_no','first_name','middle_name','last_name','full_name','gender','mother_name','father_name','date_of_birth'];
-    const DEFAULT_ROWS = 30;
+    const DEFAULT_ROWS = 70;
 
-    // ── PICKER LOGIC ──────────────────────────────────────────────────────────
     const pickerBtns = document.getElementById('pickerBtns');
 
     function setPickerText(title, subtitle) {
@@ -245,15 +244,39 @@
         if (s) s.textContent = subtitle;
     }
 
-    function buildGradePicker() {
+    // Fetch enrollment counts per grade for the selected UDISE
+    async function fetchGradeCounts(udise) {
         try {
-            pickerBtns.innerHTML = '';
+            const { data } = await sb
+                .from('students')
+                .select('grade')
+                .eq('udise_code', udise);
+            const counts = { 6:0, 7:0, 8:0, 9:0, 10:0 };
+            (data || []).forEach(r => {
+                const g = parseInt(r.grade);
+                if (counts[g] !== undefined) counts[g]++;
+            });
+            return counts;
+        } catch(e) {
+            return { 6:0, 7:0, 8:0, 9:0, 10:0 };
+        }
+    }
+
+    async function buildGradePicker() {
+        try {
+            pickerBtns.innerHTML = '<div style="text-align:center;padding:12px;font-size:.82rem;color:rgba(58,46,37,.5);">Loading...</div>';
             setPickerText(selectedSchoolName || SCHOOL_NAME || 'Select a Class', 'Choose the class to update');
+
+            const counts = await fetchGradeCounts(selectedUDISE);
+
+            pickerBtns.innerHTML = '';
             const grades = hasKaushalBodh ? [6,7,8,9,10] : [9,10];
             grades.forEach(g => {
                 const btn = document.createElement('button');
-                btn.className   = 'grade-pick-btn';
-                btn.textContent = 'Grade ' + g;
+                btn.className = 'grade-pick-btn';
+                const count = counts[g] || 0;
+                btn.innerHTML = '<span>Grade ' + g + '</span>'
+                              + '<span class="grade-count">' + count + ' enrolled</span>';
                 btn.onclick = async () => {
                     document.getElementById('gradePicker').classList.add('hidden');
                     const gb = document.getElementById('gradePickerBtn');
@@ -274,13 +297,12 @@
         try {
             pickerBtns.innerHTML = '';
             setPickerText(SCHOOL_NAME || 'Select a School', 'Choose which school to register students for');
-            const allSchools = spokeSchools; // hub fills for spokes only
-            allSchools.forEach(school => {
+            spokeSchools.forEach(school => {
                 const btn = document.createElement('button');
                 btn.className = 'grade-pick-btn';
-                btn.innerHTML = '<span style="font-weight:700;">' + (school.name || school.udise) + '</span><br>'
-                              + '<span style="font-size:.75rem;opacity:.6;">' + school.udise + '</span>';
-                btn.style.lineHeight = '1.5';
+                btn.innerHTML = '<span><strong>' + (school.name || school.udise) + '</strong><br>'
+                              + '<span style="font-size:.75rem;opacity:.6;">' + school.udise + '</span></span>';
+                btn.style.textAlign = 'left';
                 btn.onclick = () => {
                     selectedUDISE      = school.udise;
                     selectedSchoolName = school.name || school.udise;
@@ -295,14 +317,12 @@
         }
     }
 
-    // Init picker
     if (isHub) {
         buildSchoolPicker();
     } else {
         buildGradePicker();
     }
 
-    // ── LOAD SCHOOL DATA ──────────────────────────────────────────────────────
     async function loadSchoolData() {
         showLoading(true);
         try {
@@ -331,7 +351,6 @@
         }
     }
 
-    // ── RENDER GRID ───────────────────────────────────────────────────────────
     function renderGrid(grade) {
         const rows  = gradeData[grade];
         const total = Math.max(rows.length + 5, DEFAULT_ROWS);
@@ -350,14 +369,14 @@
         num.textContent = idx + 1;
         num.onclick = () => selectRow(idx);
         tr.appendChild(num);
-        tr.appendChild(makeCell(idx,'sr_no',      data.sr_no||(idx+1)));
-        tr.appendChild(makeCell(idx,'first_name',  data.first_name||''));
-        tr.appendChild(makeCell(idx,'middle_name', data.middle_name||''));
-        tr.appendChild(makeCell(idx,'last_name',   data.last_name||''));
-        tr.appendChild(makeCell(idx,'full_name',   data.full_name||''));
-        tr.appendChild(makeGenderCell(idx,         data.gender||''));
-        tr.appendChild(makeCell(idx,'mother_name', data.mother_name||''));
-        tr.appendChild(makeCell(idx,'father_name', data.father_name||''));
+        tr.appendChild(makeCell(idx,'sr_no',       data.sr_no||(idx+1)));
+        tr.appendChild(makeCell(idx,'first_name',   data.first_name||''));
+        tr.appendChild(makeCell(idx,'middle_name',  data.middle_name||''));
+        tr.appendChild(makeCell(idx,'last_name',    data.last_name||''));
+        tr.appendChild(makeCell(idx,'full_name',    data.full_name||''));
+        tr.appendChild(makeGenderCell(idx,          data.gender||''));
+        tr.appendChild(makeCell(idx,'mother_name',  data.mother_name||''));
+        tr.appendChild(makeCell(idx,'father_name',  data.father_name||''));
         tr.appendChild(makeCell(idx,'date_of_birth',data.date_of_birth||'','DD/MM/YYYY'));
         return tr;
     }
@@ -413,7 +432,6 @@
         return td;
     }
 
-    // ── HELPERS ───────────────────────────────────────────────────────────────
     function autoFillFullName(idx) {
         const row = gradeData[currentGrade][idx];
         if (!row) return;
@@ -508,7 +526,7 @@
     }
 
     async function switchGrade(grade) {
-        if (unsaved && !confirm('Unsaved changes. Save before switching?')) { /* continue */ } else if (unsaved) { await saveSheet(); }
+        if (unsaved && !confirm('Unsaved changes. Save before switching?')) { } else if (unsaved) { await saveSheet(); }
         currentGrade = grade;
         document.getElementById('gradePickerBtn').textContent = 'Grade ' + grade;
         renderGrid(grade);
@@ -520,7 +538,6 @@
         document.getElementById('gradePicker').classList.remove('hidden');
     }
 
-    // ── SAVE ──────────────────────────────────────────────────────────────────
     async function saveSheet() {
         showLoading(true);
         document.getElementById('saveBtn').disabled = true;
@@ -572,7 +589,6 @@
         return rows;
     }
 
-    // ── DOB FORMATTING ────────────────────────────────────────────────────────
     function formatDOB(value) {
         const d = value.replace(/\D/g,'').slice(0,8);
         if (d.length <= 2) return d;
@@ -616,8 +632,8 @@
 
     function updateStatus() {
         const rows = collectRows();
-        document.getElementById('statusText').textContent    = 'Grade ' + currentGrade;
-        document.getElementById('rowCountText').textContent  = rows.length + ' students';
+        document.getElementById('statusText').textContent   = 'Grade ' + currentGrade;
+        document.getElementById('rowCountText').textContent = rows.length + ' students';
         updateSummary();
     }
 
@@ -636,7 +652,7 @@
         setTimeout(()=>{ el.className='toast'; }, 3000);
     }
 
-    function logout() { if(confirm('Logout?')){ sessionStorage.clear(); window.location.href='login.html'; } }
+    function logout() { if(confirm('Logout?')){ sessionStorage.clear(); window.location.href='index.html'; } }
 
     window.onbeforeunload = (e) => { if(unsaved){ e.preventDefault(); e.returnValue=''; } };
 </script>
