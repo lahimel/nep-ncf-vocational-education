@@ -53,35 +53,23 @@
 
         .section { margin-bottom:48px; }
 
-        /* Section heading with left accent bar */
         .section-heading {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            margin-bottom: 20px;
+            display: flex; align-items: center;
+            gap: 14px; margin-bottom: 20px;
         }
         .section-accent {
-            width: 4px;
-            border-radius: 4px;
-            flex-shrink: 0;
-            align-self: stretch;
-            min-height: 36px;
+            width: 4px; border-radius: 4px;
+            flex-shrink: 0; align-self: stretch; min-height: 36px;
         }
-        .section-heading-text { }
         .section-label {
-            font-size: .78rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--brown-light);
-            margin-bottom: 4px;
+            font-size: .78rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1.5px;
+            color: var(--brown-light); margin-bottom: 4px;
         }
         .section-title {
             font-family: 'Playfair Display', serif;
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--brown);
-            letter-spacing: -.3px;
+            font-size: 1.4rem; font-weight: 700;
+            color: var(--brown); letter-spacing: -.3px;
         }
 
         .cards-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:18px; }
@@ -98,16 +86,13 @@
         .card-button { display:inline-flex; align-items:center; gap:6px; background:var(--white); color:var(--brown); border:1.5px solid var(--brown); padding:9px 20px; border-radius:8px; font-size:.88rem; font-weight:600; font-family:'DM Sans',sans-serif; cursor:pointer; transition:all var(--ease); text-decoration:none; }
         .card-button:hover { background:var(--brown); color:var(--white); transform:translateY(-1px); }
 
-        /* Grade 9 card — dark filled header */
         .card-grade9 .card-header { background:#6A5445; border-bottom:1.5px solid #6A5445; }
         .card-grade9 .card-header h3 { color:var(--white); }
 
-        /* Kaushal Bodh card — sand filled header */
         .card-kb .card-header { background:var(--c3); border-bottom:1.5px solid var(--c3); }
         .card-kb .card-header h3 { color:var(--brown); }
         .card-kb { border-color:var(--c3); }
 
-        /* One-time card — dashed border */
         .card-onetime { border-style:dashed; border-color:var(--brown); opacity:.85; }
         .card-onetime:hover { opacity:1; }
 
@@ -123,26 +108,18 @@
             .nav-inner { padding:10px 16px; height:auto; flex-wrap:wrap; gap:8px; }
             .nav-right a { display:none; }
             .logout-btn { padding:6px 12px; font-size:.82rem; }
-
             .container { padding:20px 16px 48px; }
-
-            /* Page title — allow wrapping, not clipped */
             .page-title { font-size:1.6rem; white-space:normal; line-height:1.2; margin-bottom:32px; }
-
-            /* Section headings — tighter on mobile */
             .section-heading { gap:10px; margin-bottom:14px; }
             .section-accent { min-height:28px; width:3px; }
             .section-label { font-size:.7rem; }
             .section-title { font-size:1.1rem; }
-
-            /* Cards */
             .cards-grid { grid-template-columns:1fr; gap:14px; }
             .card-header { padding:13px 16px; }
             .card-header h3 { font-size:.95rem; }
             .card-body { padding:14px 16px 18px; }
             .card-description { font-size:.86rem; }
             .card-button { font-size:.84rem; padding:8px 16px; }
-
             .section { margin-bottom:36px; }
         }
     </style>
@@ -268,18 +245,18 @@
         document.getElementById('pageGreeting').textContent = 'Hi, ' + (schoolName || 'Teacher');
 
         if (sessionStorage.getItem('loggedIn') !== 'true') {
-            window.location.href = 'login.html';
+            window.location.href = 'index.html';
         }
 
         if (sessionStorage.getItem('userRole') !== 'teacher') {
             alert('Access denied. This page is for teachers only.');
-            window.location.href = 'login.html';
+            window.location.href = 'index.html';
         }
 
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
                 sessionStorage.clear();
-                window.location.href = 'login.html';
+                window.location.href = 'index.html';
             }
         }
 
