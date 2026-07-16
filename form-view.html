@@ -6,55 +6,113 @@
     <title>Form - Lend A Hand India</title>
     <link rel="icon" type="image/png" href="favicon-96x96.png"/>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
-            --c1: #FFEDDB;
-            --c2: #EDCDBB;
-            --c3: #E3B7A0;
-            --c4: #BF9270;
-            --brown: #3A2E25;
-            --brown-mid: #6A5445;
-            --white: #FFFFFF;
-            --ease: 200ms cubic-bezier(.4,0,.2,1);
+            --c1:#FFEDDB;--c2:#EDCDBB;--c3:#E3B7A0;--c4:#BF9270;
+            --brown:#3A2E25;--brown-mid:#6A5445;--white:#FFFFFF;
+            --ease:200ms cubic-bezier(.4,0,.2,1);
         }
-        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family:'DM Sans',sans-serif; background:var(--white); height:100vh; display:flex; flex-direction:column; overflow:hidden; }
-        .header {
-            background: rgba(255,237,219,.96);
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'DM Sans',sans-serif;background:var(--white);height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+
+        .header{
+            background:rgba(255,237,219,.96);
             backdrop-filter:blur(12px);
             border-bottom:1px solid rgba(58,46,37,.15);
-            padding:0 5%; height:60px;
-            display:flex; align-items:center; justify-content:space-between;
+            padding:0 5%;height:60px;
+            display:flex;align-items:center;justify-content:space-between;
             flex-shrink:0;
         }
-        .logo-section { cursor:pointer; display:flex; align-items:center; }
-        .logo-img img { height:36px; }
-        .nav { display:flex; align-items:center; gap:10px; }
-        .back-btn { background:none; border:1.5px solid rgba(58,46,37,.3); color:var(--brown); padding:6px 16px; border-radius:8px; font-size:.82rem; font-weight:500; font-family:'DM Sans',sans-serif; cursor:pointer; text-decoration:none; transition:all var(--ease); }
-        .back-btn:hover { border-color:var(--brown); }
-        .logout-btn { background:none; border:1.5px solid rgba(58,46,37,.3); color:var(--brown); padding:6px 16px; border-radius:8px; font-size:.82rem; font-weight:500; font-family:'DM Sans',sans-serif; cursor:pointer; transition:all var(--ease); }
-        .logout-btn:hover { border-color:var(--brown); }
-        .form-container { flex:1; overflow:hidden; }
-        .form-iframe { width:100%; height:100%; border:none; }
-        @media(max-width:768px) { .header { padding:0 16px; } }
+        .logo-section{cursor:pointer;display:flex;align-items:center;}
+        .logo-img img{height:36px;}
+        .nav{display:flex;align-items:center;gap:10px;}
+        .back-btn{background:none;border:1.5px solid rgba(58,46,37,.3);color:var(--brown);padding:6px 16px;border-radius:8px;font-size:.82rem;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;text-decoration:none;transition:all var(--ease);}
+        .back-btn:hover{border-color:var(--brown);}
+        .logout-btn{background:none;border:1.5px solid rgba(58,46,37,.3);color:var(--brown);padding:6px 16px;border-radius:8px;font-size:.82rem;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all var(--ease);}
+        .logout-btn:hover{border-color:var(--brown);}
+
+        .form-container{flex:1;overflow:hidden;}
+        .form-iframe{width:100%;height:100%;border:none;}
+
+        /* SUCCESS POPUP */
+        .popup-overlay{
+            position:fixed;inset:0;
+            background:rgba(58,46,37,.5);
+            backdrop-filter:blur(6px);
+            display:none;align-items:center;justify-content:center;
+            z-index:500;
+        }
+        .popup-overlay.show{display:flex;}
+        .popup{
+            background:var(--white);
+            border:1.5px solid var(--brown);
+            border-radius:20px;
+            padding:48px 44px;
+            max-width:420px;width:90%;
+            text-align:center;
+        }
+        .popup-icon{
+            width:64px;height:64px;
+            background:#E8F5EA;border-radius:50%;
+            display:flex;align-items:center;justify-content:center;
+            margin:0 auto 20px;font-size:2rem;
+        }
+        .popup-title{
+            font-family:'Playfair Display',serif;
+            font-size:1.5rem;font-weight:700;
+            color:var(--brown);margin-bottom:10px;
+        }
+        .popup-sub{
+            font-size:.9rem;color:var(--brown-mid);
+            line-height:1.7;margin-bottom:28px;
+        }
+        .popup-btn{
+            display:inline-block;
+            padding:12px 32px;
+            background:var(--brown);color:var(--white);
+            border:none;border-radius:10px;
+            font-size:.92rem;font-weight:600;
+            font-family:'DM Sans',sans-serif;
+            cursor:pointer;transition:all var(--ease);
+            text-decoration:none;
+        }
+        .popup-btn:hover{background:var(--brown-mid);}
+
+        @media(max-width:768px){.header{padding:0 16px;}}
     </style>
 </head>
 <body>
     <div class="header">
         <div class="logo-section" onclick="goBack()">
-            <div class="logo-img">
-                <img src="logo.png" alt="Logo">
-            </div>
+            <div class="logo-img"><img src="logo.png" alt="Logo"></div>
         </div>
         <div class="nav">
             <a href="#" onclick="goBack()" class="back-btn">← Back to Forms</a>
             <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
     </div>
+
     <div class="form-container">
         <iframe id="formIframe" class="form-iframe" src=""></iframe>
     </div>
+
+    <!-- SUCCESS POPUP -->
+    <div class="popup-overlay" id="popupOverlay">
+        <div class="popup">
+            <div class="popup-icon">✅</div>
+            <div class="popup-title">Form Submitted!</div>
+            <p class="popup-sub">Your form has been submitted successfully. Thank you for reporting.</p>
+            <button class="popup-btn" onclick="goBack()">Back to Forms</button>
+        </div>
+    </div>
+
     <script>
+        const SUPABASE_URL      = 'https://soesdipnikhtnuuemstm.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNvZXNkaXBuaWtodG51dWVtc3RtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNTM4NDMsImV4cCI6MjA5NDkyOTg0M30._o831V46iMi9y7d_FRZ_ZfZ8nDOuFflLJLiUdpZKzko';
+        const { createClient } = window.supabase;
+        const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
         if (sessionStorage.getItem('loggedIn') !== 'true') {
             window.location.href = 'index.html';
         }
@@ -69,17 +127,51 @@
             goBack();
         }
 
-        function goBack() {
-            const role = sessionStorage.getItem('userRole');
-            if (role === 'teacher') {
-                window.location.href = 'teacher-space.html';
-            } else {
-                window.location.href = 'field-officer-space.html';
+        // ── POLLING FOR SUBMISSION ────────────────────────────────────────────
+        const udise     = sessionStorage.getItem('udiseCode') || '';
+        const openedAt  = new Date().toISOString(); // timestamp when page loaded
+        let   pollTimer = null;
+        let   submitted = false;
+
+        async function checkForSubmission() {
+            if (submitted || !udise) return;
+            try {
+                const { data } = await sb
+                    .from('submissions')
+                    .select('id, submitted_at')
+                    .eq('udise_code', udise)
+                    .gt('created_at', openedAt)  // only rows created after page loaded
+                    .limit(1);
+
+                if (data && data.length > 0) {
+                    submitted = true;
+                    clearInterval(pollTimer);
+                    document.getElementById('popupOverlay').classList.add('show');
+                }
+            } catch(e) {
+                // silently ignore polling errors
             }
+        }
+
+        // Start polling every 5 seconds after 15 second delay
+        // (gives teacher time to fill the form before we start checking)
+        setTimeout(() => {
+            pollTimer = setInterval(checkForSubmission, 5000);
+
+            // Stop polling after 60 minutes regardless
+            setTimeout(() => clearInterval(pollTimer), 60 * 60 * 1000);
+        }, 15000);
+
+        // ── NAV ───────────────────────────────────────────────────────────────
+        function goBack() {
+            clearInterval(pollTimer);
+            const role = sessionStorage.getItem('userRole');
+            window.location.href = role === 'teacher' ? 'teacher-space.html' : 'field-officer-space.html';
         }
 
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
+                clearInterval(pollTimer);
                 sessionStorage.clear();
                 window.location.href = 'index.html';
             }
