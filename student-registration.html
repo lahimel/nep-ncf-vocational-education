@@ -85,25 +85,10 @@
         .grade-picker-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--brown);margin-bottom:6px;}
         .grade-picker-sub{font-size:.84rem;color:var(--brown);margin-bottom:28px;opacity:.6;}
         .grade-picker-btns{display:flex;flex-direction:column;gap:10px;}
-
-        /* Grade button with count */
-        .grade-pick-btn{
-            padding:13px 20px;
-            border:1.5px solid var(--brown);border-radius:8px;
-            background:var(--white);color:var(--brown);
-            font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:600;
-            cursor:pointer;transition:all 200ms ease;
-            width:100%;
-            display:flex;align-items:center;justify-content:space-between;
-        }
+        .grade-pick-btn{padding:13px 20px;border:1.5px solid var(--brown);border-radius:8px;background:var(--white);color:var(--brown);font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;transition:all 200ms ease;width:100%;display:flex;align-items:center;justify-content:space-between;}
         .grade-pick-btn:hover{background:var(--brown);color:var(--white);}
         .grade-pick-btn:hover .grade-count{color:rgba(255,255,255,.7);}
-        .grade-count{
-            font-size:.75rem;font-weight:600;
-            color:var(--brown);opacity:1;
-            background:rgba(58,46,37,.12);
-            padding:2px 10px;border-radius:20px;
-        }
+        .grade-count{font-size:.75rem;font-weight:600;color:var(--brown);opacity:1;background:rgba(58,46,37,.12);padding:2px 10px;border-radius:20px;}
 
         @media(max-width:768px){
             .topbar{height:auto;flex-wrap:wrap;padding:8px 12px;gap:8px;}
@@ -245,31 +230,23 @@
         if (s) s.textContent = subtitle;
     }
 
-    // Fetch enrollment counts per grade for the selected UDISE
     async function fetchGradeCounts(udise) {
         try {
-            const { data } = await sb
-                .from('students')
-                .select('grade')
-                .eq('udise_code', udise);
+            const { data } = await sb.from('students').select('grade').eq('udise_code', udise);
             const counts = { 6:0, 7:0, 8:0, 9:0, 10:0 };
             (data || []).forEach(r => {
                 const g = parseInt(r.grade);
                 if (counts[g] !== undefined) counts[g]++;
             });
             return counts;
-        } catch(e) {
-            return { 6:0, 7:0, 8:0, 9:0, 10:0 };
-        }
+        } catch(e) { return { 6:0, 7:0, 8:0, 9:0, 10:0 }; }
     }
 
     async function buildGradePicker() {
         try {
             pickerBtns.innerHTML = '<div style="text-align:center;padding:12px;font-size:.82rem;color:rgba(58,46,37,.5);">Loading...</div>';
             setPickerText(selectedSchoolName || SCHOOL_NAME || 'Select a Class', 'Choose the class to update');
-
             const counts = await fetchGradeCounts(selectedUDISE);
-
             pickerBtns.innerHTML = '';
             const grades = hasKaushalBodh ? [6,7,8,9,10] : [9,10];
             grades.forEach(g => {
@@ -289,9 +266,7 @@
                 };
                 pickerBtns.appendChild(btn);
             });
-        } catch(err) {
-            console.error('buildGradePicker error:', err);
-        }
+        } catch(err) { console.error('buildGradePicker error:', err); }
     }
 
     function buildSchoolPicker() {
@@ -313,24 +288,16 @@
                 };
                 pickerBtns.appendChild(btn);
             });
-        } catch(err) {
-            console.error('buildSchoolPicker error:', err);
-        }
+        } catch(err) { console.error('buildSchoolPicker error:', err); }
     }
 
-    if (isHub) {
-        buildSchoolPicker();
-    } else {
-        buildGradePicker();
-    }
+    if (isHub) { buildSchoolPicker(); } else { buildGradePicker(); }
 
     async function loadSchoolData() {
         showLoading(true);
         try {
-            const { data, error } = await sb
-                .from('students').select('*')
-                .eq('udise_code', selectedUDISE)
-                .order('grade').order('sr_no');
+            const { data, error } = await sb.from('students').select('*')
+                .eq('udise_code', selectedUDISE).order('grade').order('sr_no');
             if (error) throw error;
             gradeData = { 6:[], 7:[], 8:[], 9:[], 10:[] };
             [6,7,8,9,10].forEach(g => {
@@ -347,9 +314,7 @@
             dataLoaded = true;
         } catch(e) {
             toast('Could not load data: ' + e.message, 'error');
-        } finally {
-            showLoading(false);
-        }
+        } finally { showLoading(false); }
     }
 
     function renderGrid(grade) {
@@ -539,17 +504,29 @@
         document.getElementById('gradePicker').classList.remove('hidden');
     }
 
+    // ── DISTRICT LOOKUP ───────────────────────────────────────────────────────
+    async function getDistrict(udise) {
+        try {
+            const { data } = await sb.from('schools').select('district').eq('udise_code', udise).single();
+            return data?.district || '';
+        } catch(e) { return ''; }
+    }
+
+    // ── SAVE ──────────────────────────────────────────────────────────────────
     async function saveSheet() {
         showLoading(true);
         document.getElementById('saveBtn').disabled = true;
         try {
             const rows = collectRows();
             if (rows.length === 0) { toast('Nothing to save. Add some students first!'); return; }
-            const { error: delErr } = await sb.from('students').delete().eq('udise_code', selectedUDISE).eq('grade', String(currentGrade));
+            const { error: delErr } = await sb.from('students').delete()
+                .eq('udise_code', selectedUDISE).eq('grade', String(currentGrade));
             if (delErr) throw delErr;
+            const district = await getDistrict(selectedUDISE);
             const toInsert = rows.map((r,i) => ({
                 udise_code:    selectedUDISE,
                 school_name:   selectedSchoolName,
+                district:      district,
                 grade:         String(currentGrade),
                 sr_no:         parseInt(r.sr_no)||(i+1),
                 first_name:    r.first_name||'',
