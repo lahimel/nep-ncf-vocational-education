@@ -507,8 +507,8 @@
     // ── DISTRICT LOOKUP ───────────────────────────────────────────────────────
     async function getDistrict(udise) {
         try {
-            const { data } = await sb.from('schools').select('district').eq('udise_code', udise).single();
-            return data?.district || '';
+            const { data } = await sb.from('schools').select('district').eq('udise_code', udise).limit(1);
+            return data?.[0]?.district || '';
         } catch(e) { return ''; }
     }
 
