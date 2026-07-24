@@ -1,295 +1,353 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Lend A Hand India</title>
-    <link rel="icon" type="image/png" href="favicon-96x96.png"/>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        :root {
-            --c1: #FFEDDB;
-            --c2: #EDCDBB;
-            --c3: #E3B7A0;
-            --c4: #BF9270;
-            --c4d: #a87c60;
-            --brown: #3A2E25;
-            --brown-mid: #6A5445;
-            --brown-light: #9A8070;
-            --white: #FFFFFF;
-            --sh: 0 2px 12px rgba(58,46,37,.08);
-            --sh-md: 0 6px 24px rgba(58,46,37,.12);
-            --r: 12px;
-            --ease: 200ms cubic-bezier(.4,0,.2,1);
-        }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NEP Vocational Education — Lend A Hand India</title>
+<link rel="icon" type="image/png" href="favicon-96x96.png"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --c1:#FFEDDB; --c2:#EDCDBB; --c3:#E3B7A0; --c4:#BF9270;
+  --brown:#3A2E25; --brown-mid:#6A5445; --white:#FFFFFF;
+  --ease:200ms cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{font-family:'DM Sans',sans-serif;background:var(--c1);color:var(--brown);display:flex;flex-direction:column;}
 
-        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-        body {
-            font-family:'DM Sans',sans-serif;
-            background: var(--white);
-            min-height: 100vh;
-            display: flex; align-items: center; justify-content: center;
-            padding: 24px;
-        }
-        .login-container {
-            background: var(--white);
-            border-radius: 20px;
-            box-shadow: var(--sh-md);
-            width: 100%; max-width: 440px;
-            overflow: hidden;
-            border: 1.5px solid var(--brown);
-        }
-        .login-header {
-            background: var(--white);
-            padding: 40px 36px 32px;
-            text-align: center;
-            border-bottom: 1.5px solid var(--brown);
-        }
-        .logo { width: 72px; height: auto; margin-bottom: 16px; }
-        .login-header h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.6rem; font-weight: 700;
-            color: var(--brown); margin-bottom: 4px; letter-spacing: -.3px;
-        }
-        .login-header p { font-size: .85rem; color: var(--brown); font-weight: 400; }
+/* NAV */
+nav {
+  background:rgba(255,237,219,.96);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(58,46,37,.15);
+  padding:0 5%;
+  height:66px;
+  display:flex; align-items:center; gap:16px;
+  flex-shrink:0;
+}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;}
+.nav-logo img{height:40px;}
+.nav-divider{width:1px;height:22px;background:rgba(58,46,37,.2);flex-shrink:0;}
+.nav-title{
+  font-family:'Playfair Display',serif;
+  font-size:1.1rem;font-weight:600;
+  color:var(--brown);letter-spacing:-.1px;
+}
 
-        .login-body { padding: 32px 36px; }
-        .form-group { margin-bottom: 18px; }
-        label { display:block; margin-bottom:6px; font-size:.82rem; font-weight:600; color:var(--brown); letter-spacing:.1px; }
-        input {
-            width: 100%; padding: 11px 14px;
-            border: 1.5px solid rgba(58,46,37,.3);
-            border-radius: var(--r);
-            font-size: .9rem; font-family: 'DM Sans', sans-serif;
-            background: var(--c1); color: var(--brown);
-            transition: border-color var(--ease), box-shadow var(--ease);
-        }
-        input:focus { outline:none; border-color:var(--brown); box-shadow:0 0 0 3px rgba(191,146,112,.15); background: var(--white); }
+/* LAYOUT */
+.main{
+  flex:1;
+  display:grid;
+  grid-template-columns:1fr 400px;
+  min-height:calc(100vh - 66px);
+}
 
-        .btn { width:100%; padding:12px; border:none; border-radius:var(--r); font-size:.92rem; font-weight:600; font-family:'DM Sans',sans-serif; cursor:pointer; transition:all var(--ease); }
-        .btn-primary { background:var(--white); color:var(--brown); border:1.5px solid var(--brown); }
-        .btn-primary:hover { background:var(--brown); color:var(--white); transform:translateY(-1px); box-shadow:0 6px 18px rgba(191,146,112,.3); }
-        .btn-primary:disabled { opacity:.5; cursor:not-allowed; transform:none; box-shadow:none; }
+/* LEFT */
+.left{
+  padding:0 8%;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  background:var(--white);
+}
+.hero-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2.2rem,3.5vw,3.2rem);
+  font-weight:700;line-height:1.15;
+  color:var(--brown);letter-spacing:-.4px;
+  margin-bottom:20px;
+}
+.hero-title em{font-style:italic;color:var(--brown-mid);}
+.hero-sub{
+  font-size:1rem;color:var(--brown-mid);
+  line-height:1.82;font-weight:300;
+  max-width:480px;margin-bottom:36px;
+}
+.btn-learn{
+  display:inline-block;
+  padding:12px 28px;
+  border:1.5px solid var(--brown);
+  border-radius:8px;
+  background:var(--white);
+  color:var(--brown);
+  font-family:'DM Sans',sans-serif;
+  font-size:.9rem;font-weight:600;
+  text-decoration:none;
+  transition:all var(--ease);
+  width:fit-content;
+}
+.btn-learn:hover{background:var(--brown);color:var(--white);transform:translateY(-1px);}
 
-        .error-message { background:rgba(139,32,32,.07); color:#7A1A1A; border:1px solid rgba(139,32,32,.12); padding:10px 14px; border-radius:var(--r); margin-bottom:16px; font-size:.82rem; display:none; }
-        .error-message.show { display:block; }
+/* RIGHT — LOGIN */
+.right{
+  background:var(--white);
+  border-left:1.5px solid var(--brown);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:48px 44px;
+}
+.login-title{
+  font-family:'Playfair Display',serif;
+  font-size:1.4rem;font-weight:700;
+  color:var(--brown);margin-bottom:6px;
+  text-align:center;
+}
+.login-sub{font-size:.82rem;color:var(--brown-mid);text-align:center;margin-bottom:28px;}
 
-        .home-link { text-align:center; margin-top:18px; }
-        .home-link a { color:var(--brown); text-decoration:none; font-size:.82rem; font-weight:500; }
-        .home-link a:hover { text-decoration:underline; }
+.form-group{margin-bottom:18px;}
+label{display:block;margin-bottom:6px;font-size:.82rem;font-weight:600;color:var(--brown);}
+input[type="text"],input[type="password"]{
+  width:100%;padding:11px 14px;
+  border:1.5px solid rgba(58,46,37,.3);
+  border-radius:10px;
+  font-size:.9rem;font-family:'DM Sans',sans-serif;
+  background:var(--c1);color:var(--brown);
+  transition:border-color var(--ease),box-shadow var(--ease);
+}
+input:focus{outline:none;border-color:var(--brown);box-shadow:0 0 0 3px rgba(58,46,37,.1);background:var(--white);}
 
-        .change-password-form { display:none; }
-        .change-password-form.show { display:block; }
-        .password-hint { font-size:.78rem; color:var(--brown); margin-top:4px; }
+.btn-login{
+  width:100%;padding:12px;
+  background:var(--white);color:var(--brown);
+  border:1.5px solid var(--brown);
+  border-radius:10px;
+  font-size:.92rem;font-weight:600;
+  font-family:'DM Sans',sans-serif;
+  cursor:pointer;
+  transition:all var(--ease);
+}
+.btn-login:hover{background:var(--brown);color:var(--white);transform:translateY(-1px);}
+.btn-login:disabled{opacity:.5;cursor:not-allowed;transform:none;}
 
-        @media(max-width:480px) {
-            .login-header { padding:28px 22px 24px; }
-            .login-body { padding:24px 22px; }
-        }
-    </style>
+.error-msg{
+  background:rgba(139,32,32,.07);color:#7A1A1A;
+  border:1px solid rgba(139,32,32,.12);
+  padding:10px 14px;border-radius:8px;
+  margin-bottom:16px;font-size:.82rem;display:none;
+}
+.error-msg.show{display:block;}
+
+.change-pw{display:none;}
+.change-pw.show{display:block;}
+.pw-hint{font-size:.75rem;color:var(--brown-mid);margin-top:4px;}
+.first-login-notice{
+  background:var(--c1);border-left:3px solid var(--c4);
+  padding:12px 14px;border-radius:8px;
+  font-size:.82rem;color:var(--brown);
+  margin-bottom:20px;line-height:1.5;
+}
+
+/* CONTENT SECTION */
+.content {
+  padding: 80px 8%;
+  background: var(--c1);
+  border-top: 1px solid rgba(58,46,37,.1);
+}
+.content-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; flex-direction: row;
+  align-items: center; gap: 64px;
+}
+.content-img { width:420px; min-width:420px; flex-shrink:0; }
+.content-img img {
+  width:100%; height:auto; border-radius:16px;
+  border:1px solid rgba(191,146,112,.2);
+  box-shadow:0 8px 32px rgba(58,46,37,.1); display:block;
+}
+.content-text { flex:1; min-width:0; }
+.content-tag {
+  font-size:.7rem; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase;
+  color:var(--brown); margin-bottom:12px;
+}
+.content-heading {
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.7rem,3vw,2.4rem);
+  font-weight:700; line-height:1.2;
+  color:var(--brown); margin-bottom:16px;
+}
+.content-heading em { font-style:italic; }
+.content-para {
+  font-size:.95rem; color:var(--brown-mid);
+  line-height:1.82; font-weight:300;
+}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .main{grid-template-columns:1fr;min-height:auto;}
+  .left{padding:56px 6%;border-bottom:1.5px solid var(--brown);}
+  .right{border-left:none;padding:48px 6%;}
+  .content{padding:48px 6%;}
+  .content-inner{flex-direction:column;gap:36px;}
+  .content-img{width:100%;min-width:0;}
+}
+@media(max-width:480px){
+  nav{padding:0 20px;}
+  .nav-title{font-size:.78rem;}
+}
+</style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-header">
-            <img src="logo.png" alt="Logo" class="logo">
-            <h1>NEP Vocational Education</h1>
-            <p>Lend A Hand India</p>
-        </div>
 
-        <div class="login-body">
-            <!-- Login Form -->
-            <form id="loginForm" class="login-form">
-                <div class="error-message" id="errorMessage"></div>
-                
-                <div class="form-group">
-                    <label for="username">Username (UDISE Code)</label>
-                    <input type="text" id="username" name="username" required autocomplete="username" />
-                </div>
-                
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required autocomplete="current-password" />
-                </div>
-                
-                <button type="submit" class="btn btn-primary" id="loginBtn">Login</button>
-            </form>
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <img src="logo.png" alt="Lend A Hand India"/>
+  </a>
+  <div class="nav-divider"></div>
+  <span class="nav-title">Fostering School-Based Vocational Education</span>
+</nav>
 
-            <!-- Change Password Form (shown on first login) -->
-            <form id="changePasswordForm" class="change-password-form">
-                <div class="error-message" id="changePasswordError"></div>
-                
-                <div style="background:var(--c1);padding:16px;border-radius:8px;margin-bottom:24px;border-left:4px solid var(--brown);">
-                    <strong>First Login:</strong> You must change your password to continue.
-                </div>
-                
-                <div class="form-group">
-                    <label for="currentPassword">Current Password</label>
-                    <input type="password" id="currentPassword" required />
-                </div>
-                
-                <div class="form-group">
-                    <label for="newPassword">New Password</label>
-                    <input type="password" id="newPassword" required minlength="8" />
-                    <p class="password-hint">Minimum 8 characters</p>
-                </div>
-                
-                <div class="form-group">
-                    <label for="confirmPassword">Confirm New Password</label>
-                    <input type="password" id="confirmPassword" required minlength="8" />
-                </div>
-                
-                <button type="submit" class="btn btn-primary" id="changePasswordBtn">Change Password &amp; Continue</button>
-            </form>
+<div class="main">
 
-            <div class="home-link">
-                <a href="index.html">← Back to Home</a>
-            </div>
-        </div>
+  <!-- LEFT -->
+  <div class="left">
+    <h1 class="hero-title">Fostering <em>School-Based</em><br/>Vocational Education</h1>
+    <p class="hero-sub">In alignment with NEP 2020, empowering students through hands-on learning, practical skills, and real-world exposure for holistic development and career readiness.</p>
+    <a href="#about" class="btn-learn">Learn More →</a>
+  </div>
+
+  <!-- RIGHT — LOGIN -->
+  <div class="right">
+    <p class="login-title">Portal Login</p>
+    <p class="login-sub">Enter your UDISE code and password</p>
+
+    <form id="loginForm">
+      <div class="error-msg" id="errorMsg"></div>
+      <div class="form-group">
+        <label>Username (UDISE Code)</label>
+        <input type="text" id="username" autocomplete="username" required/>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="password" autocomplete="current-password" required/>
+      </div>
+      <button type="submit" class="btn-login" id="loginBtn">Login</button>
+    </form>
+
+    <div class="change-pw" id="changePwForm">
+      <div class="first-login-notice"><strong>First login:</strong> Please set a new password to continue.</div>
+      <div class="error-msg" id="changePwError"></div>
+      <div class="form-group">
+        <label>Current Password</label>
+        <input type="password" id="currentPw"/>
+      </div>
+      <div class="form-group">
+        <label>New Password</label>
+        <input type="password" id="newPw" minlength="8"/>
+        <p class="pw-hint">Minimum 8 characters</p>
+      </div>
+      <div class="form-group">
+        <label>Confirm New Password</label>
+        <input type="password" id="confirmPw" minlength="8"/>
+      </div>
+      <button class="btn-login" id="changePwBtn" onclick="submitChangePw()">Change Password &amp; Continue</button>
     </div>
+  </div>
 
-    <script>
-        const SUPABASE_URL      = 'https://soesdipnikhtnuuemstm.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNvZXNkaXBuaWtodG51dWVtc3RtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNTM4NDMsImV4cCI6MjA5NDkyOTg0M30._o831V46iMi9y7d_FRZ_ZfZ8nDOuFflLJLiUdpZKzko';
-        
-        const { createClient } = window.supabase;
-        const supabaseClient   = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        
-        const loginForm          = document.getElementById('loginForm');
-        const changePasswordForm = document.getElementById('changePasswordForm');
-        const errorMessage       = document.getElementById('errorMessage');
-        const changePasswordError= document.getElementById('changePasswordError');
-        const loginBtn           = document.getElementById('loginBtn');
-        const changePasswordBtn  = document.getElementById('changePasswordBtn');
-        
-        let currentUser = null;
-        
-        // ── LOGIN ──────────────────────────────────────────────────────────────
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value;
-            
-            if (!username || !password) { showError('Please enter both username and password'); return; }
-            
-            loginBtn.disabled    = true;
-            loginBtn.textContent = 'Logging in...';
-            
-            try {
-                const { data, error } = await supabaseClient.rpc('authenticate_user', {
-                    p_username: username,
-                    p_password: password
-                });
-                
-                if (error) throw error;
-                
-                if (data && data.length > 0) {
-                    const user = data[0];
-                    currentUser = user;
-                    
-                    await supabaseClient.rpc('log_login', {
-                        p_user_id: user.user_id,
-                        p_username: username,
-                        p_success: true
-                    });
-                    
-                    sessionStorage.setItem('loggedIn',       'true');
-                    sessionStorage.setItem('userId',          user.user_id);
-                    sessionStorage.setItem('username',        user.username);
-                    sessionStorage.setItem('userRole',        user.role);
-                    sessionStorage.setItem('userName',        user.full_name);
-                    sessionStorage.setItem('udiseCode',       user.udise_code   || '');
-                    sessionStorage.setItem('schoolName',      user.school_name  || '');
-                    sessionStorage.setItem('hasKaushalBodh',  user.has_kaushal_bodh ? 'true' : 'false');
-                    sessionStorage.setItem('spokeSchools',    JSON.stringify(user.spoke_schools || []));
-                    
-                    if (user.must_change_password) {
-                        showChangePasswordForm();
-                    } else {
-                        redirectToDashboard(user.role);
-                    }
-                } else {
-                    showError('Invalid username or password');
-                    loginBtn.disabled    = false;
-                    loginBtn.textContent = 'Login';
-                }
-            } catch (error) {
-                console.error('Login error:', error);
-                showError('Login failed. Please try again.');
-                loginBtn.disabled    = false;
-                loginBtn.textContent = 'Login';
-            }
-        });
-        
-        // ── CHANGE PASSWORD ────────────────────────────────────────────────────
-        changePasswordForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const currentPassword = document.getElementById('currentPassword').value;
-            const newPassword     = document.getElementById('newPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            
-            if (newPassword.length < 8)         { showChangePasswordError('Password must be at least 8 characters'); return; }
-            if (newPassword !== confirmPassword)  { showChangePasswordError('New passwords do not match'); return; }
-            if (currentPassword === newPassword)  { showChangePasswordError('New password must be different from current password'); return; }
-            
-            changePasswordBtn.disabled    = true;
-            changePasswordBtn.textContent = 'Changing Password...';
-            
-            try {
-                const { data, error } = await supabaseClient.rpc('change_password', {
-                    p_user_id:     currentUser.user_id,
-                    p_old_password: currentPassword,
-                    p_new_password: newPassword
-                });
-                
-                if (error) throw error;
-                
-                if (data === true) {
-                    alert('Password changed successfully!');
-                    redirectToDashboard(currentUser.role);
-                } else {
-                    showChangePasswordError('Current password is incorrect');
-                    changePasswordBtn.disabled    = false;
-                    changePasswordBtn.textContent = 'Change Password & Continue';
-                }
-            } catch (error) {
-                console.error('Change password error:', error);
-                showChangePasswordError('Failed to change password. Please try again.');
-                changePasswordBtn.disabled    = false;
-                changePasswordBtn.textContent = 'Change Password & Continue';
-            }
-        });
-        
-        // ── HELPERS ────────────────────────────────────────────────────────────
-        function showError(msg) {
-            errorMessage.textContent = msg;
-            errorMessage.classList.add('show');
-            setTimeout(() => errorMessage.classList.remove('show'), 5000);
-        }
-        
-        function showChangePasswordError(msg) {
-            changePasswordError.textContent = msg;
-            changePasswordError.classList.add('show');
-            setTimeout(() => changePasswordError.classList.remove('show'), 5000);
-        }
-        
-        function showChangePasswordForm() {
-            loginForm.style.display = 'none';
-            changePasswordForm.classList.add('show');
-            document.getElementById('currentPassword').value = document.getElementById('password').value;
-        }
-        
-        function redirectToDashboard(role) {
-            if      (role === 'admin')        window.location.href = 'admin-panel.html';
-            else if (role === 'teacher')      window.location.href = 'teacher-space.html';
-            else if (role === 'field_officer')window.location.href = 'field-officer-space.html';
-            else                              window.location.href = 'index.html';
-        }
-        
-        // Redirect if already logged in
-        if (sessionStorage.getItem('loggedIn') === 'true') {
-            redirectToDashboard(sessionStorage.getItem('userRole'));
-        }
-    </script>
+</div>
+
+<!-- CONTENT -->
+<section class="content" id="about">
+  <div class="content-inner">
+    <div class="content-img">
+      <img src="NEP 6 Modules.png" alt="NEP 6 Modules"/>
+    </div>
+    <div class="content-text">
+      <div class="content-tag">Our Approach</div>
+      <h2 class="content-heading">NEP – NCF Aligned<br/><em>Vocational Education</em></h2>
+      <p class="content-para">In line with the National Education Policy 2020, National Curriculum Framework 2023, and the State Curriculum Framework 2024, our programme implements vocational education to support holistic development. The programme emphasises hands-on learning, practical skills, and real-world exposure, enabling students to link academic learning with career readiness and future opportunities.</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  const SUPABASE_URL      = 'https://soesdipnikhtnuuemstm.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNvZXNkaXBuaWtodG51dWVtc3RtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNTM4NDMsImV4cCI6MjA5NDkyOTg0M30._o831V46iMi9y7d_FRZ_ZfZ8nDOuFflLJLiUdpZKzko';
+  const { createClient } = window.supabase;
+  const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  let currentUser = null;
+
+  if (sessionStorage.getItem('loggedIn') === 'true') redirectTo(sessionStorage.getItem('userRole'));
+
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value;
+    const btn = document.getElementById('loginBtn');
+    btn.disabled = true; btn.textContent = 'Logging in...';
+    try {
+      const { data, error } = await sb.rpc('authenticate_user', { p_username: username, p_password: password });
+      if (error) throw error;
+      if (data && data.length > 0) {
+        const user = data[0];
+        currentUser = user;
+        await sb.rpc('log_login', { p_user_id: user.user_id, p_username: username, p_success: true });
+        sessionStorage.setItem('loggedIn',      'true');
+        sessionStorage.setItem('userId',         user.user_id);
+        sessionStorage.setItem('username',       user.username);
+        sessionStorage.setItem('userRole',       user.role);
+        sessionStorage.setItem('userName',       user.full_name);
+        sessionStorage.setItem('udiseCode',      user.udise_code   || '');
+        sessionStorage.setItem('schoolName',     user.school_name  || '');
+        sessionStorage.setItem('hasKaushalBodh', user.has_kaushal_bodh ? 'true' : 'false');
+        sessionStorage.setItem('hasClass9',      user.has_class_9 !== false ? 'true' : 'false');
+        sessionStorage.setItem('spokeSchools',   JSON.stringify(user.spoke_schools || []));
+        if (user.must_change_password) {
+          document.getElementById('loginForm').style.display = 'none';
+          document.getElementById('changePwForm').classList.add('show');
+          document.getElementById('currentPw').value = password;
+        } else { redirectTo(user.role); }
+      } else {
+        showError('Invalid username or password');
+        btn.disabled = false; btn.textContent = 'Login';
+      }
+    } catch(err) {
+      showError('Login failed. Please try again.');
+      btn.disabled = false; btn.textContent = 'Login';
+    }
+  });
+
+  async function submitChangePw() {
+    const currentPw = document.getElementById('currentPw').value;
+    const newPw     = document.getElementById('newPw').value;
+    const confirmPw = document.getElementById('confirmPw').value;
+    const btn       = document.getElementById('changePwBtn');
+    if (newPw.length < 8)    { showChangePwError('Minimum 8 characters'); return; }
+    if (newPw !== confirmPw) { showChangePwError('Passwords do not match'); return; }
+    if (currentPw === newPw) { showChangePwError('New password must be different'); return; }
+    btn.disabled = true; btn.textContent = 'Saving...';
+    try {
+      const { data, error } = await sb.rpc('change_password', {
+        p_user_id: currentUser.user_id, p_old_password: currentPw, p_new_password: newPw
+      });
+      if (error) throw error;
+      if (data === true) redirectTo(currentUser.role);
+      else { showChangePwError('Current password is incorrect'); btn.disabled = false; btn.textContent = 'Change Password & Continue'; }
+    } catch(err) {
+      showChangePwError('Failed: ' + err.message);
+      btn.disabled = false; btn.textContent = 'Change Password & Continue';
+    }
+  }
+
+  function redirectTo(role) {
+    if      (role === 'admin')         window.location.href = 'admin-panel.html';
+    else if (role === 'teacher')       window.location.href = 'teacher-space.html';
+    else if (role === 'field_officer') window.location.href = 'field-officer-space.html';
+  }
+  function showError(msg) {
+    const el = document.getElementById('errorMsg');
+    el.textContent = msg; el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 5000);
+  }
+  function showChangePwError(msg) {
+    const el = document.getElementById('changePwError');
+    el.textContent = msg; el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 5000);
+  }
+</script>
 </body>
 </html>
