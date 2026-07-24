@@ -688,7 +688,7 @@
         async function deleteUser(userId, username) {
             if (!confirm(`Delete user "${username}" permanently? This cannot be undone.`)) return;
             try {
-                const { error } = await supabaseClient.from('users').delete().eq('id', userId);
+                const { error } = await supabaseClient.rpc('delete_user_admin', { p_user_id: userId });
                 if (error) throw error;
                 showSuccess(`User ${username} deleted.`);
                 loadUsers();
