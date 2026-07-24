@@ -208,6 +208,7 @@
 
     let selectedUDISE      = USERNAME;
     let selectedSchoolName = SCHOOL_NAME;
+    let selectedSpokeUdise = null; // set only when hub teacher picks a spoke school
     let dataLoaded         = false;
 
     document.getElementById('docTitle').textContent = SCHOOL_NAME || 'Student Registration';
@@ -280,8 +281,9 @@
                               + '<span style="font-size:.75rem;opacity:.6;">' + school.udise + '</span></span>';
                 btn.style.textAlign = 'left';
                 btn.onclick = () => {
-                    selectedUDISE      = school.udise;
+                    selectedSpokeUdise = school.udise;      // real school UDISE
                     selectedSchoolName = school.name || school.udise;
+                    // selectedUDISE stays as the HUB's own UDISE (USERNAME)
                     dataLoaded = false;
                     gradeData  = { 6:[], 7:[], 8:[], 9:[], 10:[] };
                     buildGradePicker();
@@ -296,8 +298,13 @@
     async function loadSchoolData() {
         showLoading(true);
         try {
-            const { data, error } = await sb.from('students').select('*')
-                .eq('udise_code', selectedUDISE).order('grade').order('sr_no');
+            let query = sb.from('students').select('*').order('grade').order('sr_no');
+            if (selectedSpokeUdise) {
+                query = query.eq('udise_code', selectedUDISE).eq('spoke_udise', selectedSpokeUdise);
+            } else {
+                query = query.eq('udise_code', selectedUDISE).is('spoke_udise', null);
+            }
+            const { data, error } = await query;
             if (error) throw error;
             gradeData = { 6:[], 7:[], 8:[], 9:[], 10:[] };
             [6,7,8,9,10].forEach(g => {
@@ -512,6 +519,12 @@
         } catch(e) { return ''; }
     }
 
+    // Get district for the ACTUAL school (spoke if set, else own school)
+    async function getEffectiveDistrict() {
+        const realUdise = selectedSpokeUdise || selectedUDISE;
+        return await getDistrict(realUdise);
+    }
+
     // ── SAVE ──────────────────────────────────────────────────────────────────
     async function saveSheet() {
         showLoading(true);
@@ -519,15 +532,26 @@
         try {
             const rows = collectRows();
             if (rows.length === 0) { toast('Nothing to save. Add some students first!'); return; }
-            const { error: delErr } = await sb.from('students').delete()
+
+            // Build delete query — match on udise_code + spoke_udise + grade
+            let delQuery = sb.from('students').delete()
                 .eq('udise_code', selectedUDISE).eq('grade', String(currentGrade));
+            if (selectedSpokeUdise) {
+                delQuery = delQuery.eq('spoke_udise', selectedSpokeUdise);
+            } else {
+                delQuery = delQuery.is('spoke_udise', null);
+            }
+            const { error: delErr } = await delQuery;
             if (delErr) throw delErr;
-            const district = await getDistrict(selectedUDISE);
+
+            const district = await getEffectiveDistrict();
             const toInsert = rows.map((r,i) => ({
-                udise_code:    selectedUDISE,
-                school_name:   selectedSchoolName,
-                district:      district,
-                grade:         String(currentGrade),
+                udise_code:        selectedUDISE,
+                school_name:       selectedSpokeUdise ? SCHOOL_NAME : selectedSchoolName,
+                spoke_udise:       selectedSpokeUdise || null,
+                spoke_school_name: selectedSpokeUdise ? selectedSchoolName : null,
+                district:          district,
+                grade:             String(currentGrade),
                 sr_no:         parseInt(r.sr_no)||(i+1),
                 first_name:    r.first_name||'',
                 middle_name:   r.middle_name||'',
