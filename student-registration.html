@@ -202,6 +202,7 @@
     const USERNAME    = sessionStorage.getItem('username')   || '';
     const SCHOOL_NAME = sessionStorage.getItem('schoolName') || '';
     const hasKaushalBodh = sessionStorage.getItem('hasKaushalBodh') === 'true';
+    const hasClass9      = sessionStorage.getItem('hasClass9') !== 'false'; // default true — represents Grade 9 & 10
     let spokeSchools = [];
     try { spokeSchools = JSON.parse(sessionStorage.getItem('spokeSchools') || '[]'); } catch(e) { spokeSchools = []; }
     const isHub = spokeSchools.length > 0;
@@ -249,7 +250,9 @@
             setPickerText(selectedSchoolName || SCHOOL_NAME || 'Select a Class', 'Choose the class to update');
             const counts = await fetchGradeCounts(selectedUDISE);
             pickerBtns.innerHTML = '';
-            const grades = hasKaushalBodh ? [6,7,8,9,10] : [9,10];
+            const grades = [];
+            if (hasKaushalBodh) grades.push(6,7,8);
+            if (hasClass9) grades.push(9,10);
             grades.forEach(g => {
                 const btn = document.createElement('button');
                 btn.className = 'grade-pick-btn';
