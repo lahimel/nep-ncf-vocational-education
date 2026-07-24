@@ -254,7 +254,7 @@
                 <div class="import-hint" style="margin-bottom:16px;">
                     Paste your CSV data below. Each row = one user.<br>
                     <strong>Required columns (in order):</strong>
-                    username, full_name, role, school_name, udise_code, password, has_kaushal_bodh<br>
+                    username, full_name, role, school_name, udise_code, password, has_kaushal_bodh, has_class_9<br>
                     <strong>Example:</strong> 27080408703, Dnyanba Highschool Teacher, teacher, Dnyanba Highschool, 27080408703, Welcome@123, true
                 </div>
                 <div class="success-message" id="importSuccess"></div>
@@ -309,10 +309,17 @@
                 <input type="text" id="editSchool"/>
             </div>
             <div class="form-group">
-                <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
-                    <input type="checkbox" id="editKaushalBodh" style="width:auto;accent-color:var(--brown);">
-                    School has Kaushal Bodh (Grade 6–8)
-                </label>
+                <label style="margin-bottom:8px;display:block;">Classes Offered</label>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:400;">
+                        <input type="checkbox" id="editKaushalBodh" style="width:auto;accent-color:var(--brown);">
+                        Kaushal Bodh (Grade 6–8)
+                    </label>
+                    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:400;">
+                        <input type="checkbox" id="editHasClass9" style="width:auto;accent-color:var(--brown);">
+                        Grade 9 &amp; 10
+                    </label>
+                </div>
             </div>
             <div class="form-group">
                 <label>Spoke Schools <span style="font-size:.75rem;opacity:.6;font-weight:400;">(hub teachers only)</span></label>
@@ -370,10 +377,17 @@
                 </div>
 
                 <div class="form-group" id="kaushalGroup" style="display:none;">
-                    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
-                        <input type="checkbox" id="newKaushalBodh" style="width:auto;accent-color:var(--brown);">
-                        School has Kaushal Bodh (Grade 6–8)
-                    </label>
+                    <label style="margin-bottom:8px;display:block;">Classes Offered</label>
+                    <div style="display:flex;flex-direction:column;gap:8px;">
+                        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:400;">
+                            <input type="checkbox" id="newKaushalBodh" style="width:auto;accent-color:var(--brown);">
+                            Kaushal Bodh (Grade 6–8)
+                        </label>
+                        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:400;">
+                            <input type="checkbox" id="newHasClass9" style="width:auto;accent-color:var(--brown);">
+                            Grade 9 &amp; 10
+                        </label>
+                    </div>
                 </div>
 
                 <div class="form-group" id="spokeGroup" style="display:none;">
@@ -451,7 +465,10 @@
             window._allUsers = users;
             const rows = users.map(user => {
                 const spokes   = (user.spoke_schools || []).length;
-                const kb       = user.has_kaushal_bodh ? ' · KB' : '';
+                const parts = [];
+                if (user.has_kaushal_bodh) parts.push('KB');
+                if (user.has_class_9) parts.push('9-10');
+                const kb = parts.length ? ' · ' + parts.join(',') : '';
                 const hubTag   = spokes > 0 ? ' · Hub (' + spokes + ')' : '';
                 const school   = user.school_name ? (user.school_name + kb + hubTag) : '-';
                 const lastLogin = user.last_login
@@ -534,6 +551,7 @@
             const password = document.getElementById('newPassword').value;
             
             const hasKaushalBodh2 = document.getElementById('newKaushalBodh').checked;
+            const hasClass9_2     = document.getElementById('newHasClass9').checked;
             const spokeRows2 = document.querySelectorAll('#spokeRows .spoke-row');
             const spokeSchools2 = Array.from(spokeRows2).map(row => ({
                 udise: row.querySelector('.spoke-udise').value.trim(),
@@ -551,6 +569,7 @@
                     p_school_name:      school || null,
                     p_created_by:       currentUserId,
                     p_has_kaushal_bodh: hasKaushalBodh2,
+                    p_has_class_9:      hasClass9_2,
                     p_spoke_schools:    spokeSchools2
                 });
 
@@ -804,7 +823,8 @@
                     school_name:      cols[3] || '',
                     udise_code:       cols[4] || '',
                     password:         cols[5] || 'Welcome@123',
-                    has_kaushal_bodh: (cols[6]||'').toLowerCase() === 'true'
+                    has_kaushal_bodh: (cols[6]||'').toLowerCase() === 'true',
+                    has_class_9:      (cols[7]||'true').toLowerCase() === 'true'
                 });
             });
             if (!importRows.length) { showImportMsg('error', 'No valid rows found.'); return; }
@@ -815,7 +835,7 @@
                 <tbody>${importRows.map((r,i) => `<tr>
                     <td>${i+1}</td><td>${r.username}</td><td>${r.full_name}</td>
                     <td>${r.role}</td><td>${r.school_name}</td><td>${r.udise_code}</td>
-                    <td>${r.password}</td><td>${r.has_kaushal_bodh ? 'Yes' : 'No'}</td>
+                    <td>${r.password}</td><td>${r.has_kaushal_bodh?"KB ":""}${r.has_class_9?"9-10":""}</td>
                 </tr>`).join('')}</tbody></table>`;
             document.getElementById('importConfirmRow').style.display = 'block';
         }
@@ -833,7 +853,8 @@
                         p_full_name: r.full_name, p_udise_code: r.udise_code || null,
                         p_school_name: r.school_name || null,
                         p_created_by: currentUserId,
-                        p_has_kaushal_bodh: r.has_kaushal_bodh
+                        p_has_kaushal_bodh: r.has_kaushal_bodh,
+                        p_has_class_9:      r.has_class_9
                     });
                     done++;
                 } catch(e) { failed++; }
@@ -867,6 +888,7 @@
             document.getElementById('editUdise').value    = user.udise_code || '';
             document.getElementById('editSchool').value   = user.school_name || '';
             document.getElementById('editKaushalBodh').checked = !!user.has_kaushal_bodh;
+            document.getElementById('editHasClass9').checked   = user.has_class_9 !== false;
 
             // Populate spoke rows
             const spokeContainer = document.getElementById('editSpokeRows');
@@ -910,6 +932,7 @@
                     p_udise_code:       document.getElementById('editUdise').value.trim()    || null,
                     p_role:             document.getElementById('editRole').value             || null,
                     p_has_kaushal_bodh: document.getElementById('editKaushalBodh').checked,
+                    p_has_class_9:      document.getElementById('editHasClass9').checked,
                     p_spoke_schools:    spokeSchools
                 });
                 if (error) throw error;
@@ -945,7 +968,7 @@
         }
 
         function downloadTemplate() {
-            const headers = 'username,full_name,role,school_name,udise_code,password,has_kaushal_bodh';
+            const headers = 'username,full_name,role,school_name,udise_code,password,has_kaushal_bodh,has_class_9';
             const example = [
                 '27080408703,Teacher Name,teacher,Dnyanba Highschool,27080408703,Welcome@123,true',
                 '27080408704,Teacher Name,teacher,Anglo Hindi School,27080408704,Welcome@123,false',
