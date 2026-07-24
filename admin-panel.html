@@ -80,6 +80,8 @@
         .action-btn-enable:hover{background:#1E6B36;color:white;}
         .action-btn-reset{background:rgba(191,146,112,.12);color:var(--brown);border-color:rgba(191,146,112,.22);}
         .action-btn-edit{background:rgba(58,46,37,.07);color:var(--brown);border-color:rgba(58,46,37,.2);}
+        .action-btn-delete{background:#FAE8E8;color:#8B2020;border-color:rgba(139,32,32,.15);}
+        .action-btn-delete:hover{background:#8B2020;color:white;}
         .action-btn-edit:hover{background:var(--brown);color:white;}
         .action-btn-reset:hover{background:var(--c4);color:white;}
 
@@ -183,6 +185,20 @@
                 <div class="panel-header">
                     <h2 class="panel-title">All Users</h2>
                     <button class="btn btn-primary" onclick="loadUsers()">Refresh</button>
+                </div>
+                <div class="filter-row">
+                    <select id="userRoleFilter" onchange="filterUsers()">
+                        <option value="">All Roles</option>
+                        <option value="teacher">Teacher</option>
+                        <option value="field_officer">Field Officer</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                    <select id="userStatusFilter" onchange="filterUsers()">
+                        <option value="">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                    <input type="text" id="userSearchFilter" placeholder="Search by name, username, or school..." oninput="filterUsers()" style="flex:2;padding:8px 12px;border:1.5px solid var(--brown);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.83rem;color:var(--brown);">
                 </div>
                 <div class="success-message" id="successMessage"></div>
                 <div class="error-message" id="errorMessage"></div>
@@ -457,12 +473,16 @@
         // DISPLAY USERS IN TABLE
         // =============================================
         function displayUsers(users) {
+            window._allUsers = users;
+            renderUsersTable(users);
+        }
+
+        function renderUsersTable(users) {
             const tbody = document.getElementById('usersTableBody');
             if (users.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No users found</td></tr>';
                 return;
             }
-            window._allUsers = users;
             const rows = users.map(user => {
                 const spokes   = (user.spoke_schools || []).length;
                 const parts = [];
@@ -478,7 +498,9 @@
                 const statusBadge = '<span class="badge ' + (user.is_active?'badge-active':'badge-inactive') + '">' + (user.is_active?'Active':'Inactive') + '</span>';
                 const actions = user.role !== 'admin'
                     ? '<button class="action-btn action-btn-edit" onclick="editUser(\'' + user.id + '\')" >Edit</button> '
-                    + '<button class="action-btn ' + (user.is_active?'action-btn-disable':'action-btn-enable') + '" onclick="toggleUserStatus(\'' + user.id + '\', ' + (!user.is_active) + ')">' + (user.is_active?'Disable':'Enable') + '</button> <button class="action-btn action-btn-reset" onclick="resetPassword(\'' + user.id + '\', \'' + user.username + '\')">Reset</button>'
+                    + '<button class="action-btn ' + (user.is_active?'action-btn-disable':'action-btn-enable') + '" onclick="toggleUserStatus(\'' + user.id + '\', ' + (!user.is_active) + ')">' + (user.is_active?'Disable':'Enable') + '</button> '
+                    + '<button class="action-btn action-btn-reset" onclick="resetPassword(\'' + user.id + '\', \'' + user.username + '\')">Reset</button> '
+                    + '<button class="action-btn action-btn-delete" onclick="deleteUser(\'' + user.id + '\', \'' + user.username + '\')">Delete</button>'
                     : '';
                 return '<tr>'
                     + '<td><strong>' + user.username + '</strong></td>'
@@ -496,6 +518,25 @@
         // =============================================
         // UPDATE STATISTICS
         // =============================================
+        // ── FILTER USERS ───────────────────────────────────────────────────────
+        function filterUsers() {
+            const role   = document.getElementById('userRoleFilter').value;
+            const status = document.getElementById('userStatusFilter').value;
+            const search = document.getElementById('userSearchFilter').value.toLowerCase().trim();
+
+            const filtered = (window._allUsers || []).filter(u => {
+                if (role && u.role !== role) return false;
+                if (status === 'active'   && !u.is_active) return false;
+                if (status === 'inactive' &&  u.is_active) return false;
+                if (search) {
+                    const haystack = [u.username, u.full_name, u.school_name].join(' ').toLowerCase();
+                    if (!haystack.includes(search)) return false;
+                }
+                return true;
+            });
+            renderUsersTable(filtered);
+        }
+
         function updateStats(users) {
             document.getElementById('totalUsers').textContent = users.length;
             document.getElementById('totalTeachers').textContent = users.filter(u => u.role === 'teacher').length;
@@ -641,6 +682,22 @@
             }
         }
         
+        // =============================================
+        // DELETE USER
+        // =============================================
+        async function deleteUser(userId, username) {
+            if (!confirm(`Delete user "${username}" permanently? This cannot be undone.`)) return;
+            try {
+                const { error } = await supabaseClient.from('users').delete().eq('id', userId);
+                if (error) throw error;
+                showSuccess(`User ${username} deleted.`);
+                loadUsers();
+            } catch(error) {
+                console.error('Delete error:', error);
+                showError('Failed to delete user: ' + error.message);
+            }
+        }
+
         // =============================================
         // HELPER FUNCTIONS
         // =============================================
@@ -898,6 +955,12 @@
 
             document.getElementById('editSuccess').classList.remove('show');
             document.getElementById('editError').classList.remove('show');
+            // Hide class checkboxes for non-teacher roles
+            const editKbGroup = document.getElementById('editKaushalBodh').closest('.form-group');
+            if (editKbGroup) editKbGroup.style.display = (user.role === 'teacher') ? 'block' : 'none';
+            const editSpokeGroup = document.getElementById('editSpokeRows').closest('.form-group');
+            if (editSpokeGroup) editSpokeGroup.style.display = (user.role === 'teacher') ? 'block' : 'none';
+
             document.getElementById('editUserModal').classList.add('show');
         }
 
