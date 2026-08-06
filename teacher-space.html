@@ -118,6 +118,56 @@
         .units-empty { padding:32px 22px; text-align:center; color:var(--brown-light); font-size:.86rem; }
         .grade-badge { display:inline-block; padding:2px 10px; background:rgba(58,46,37,.08); border-radius:12px; font-size:.76rem; font-weight:600; }
 
+        /* Completion Tracker */
+        .tracker-btn {
+            display:inline-flex; align-items:center; gap:8px;
+            padding:11px 22px; margin-bottom:32px;
+            border:1.5px solid var(--brown); border-radius:10px;
+            background:var(--white); color:var(--brown);
+            font-family:'DM Sans',sans-serif; font-size:.9rem; font-weight:600;
+            cursor:pointer; transition:all var(--ease);
+        }
+        .tracker-btn:hover { background:var(--brown); color:var(--white); }
+
+        .tracker-overlay {
+            position:fixed; inset:0; background:rgba(58,46,37,.55);
+            backdrop-filter:blur(6px);
+            display:none; align-items:center; justify-content:center;
+            z-index:300; padding:24px;
+        }
+        .tracker-overlay.show { display:flex; }
+        .tracker-box {
+            background:var(--white); border:1.5px solid var(--brown); border-radius:20px;
+            max-width:560px; width:100%; max-height:85vh; overflow-y:auto;
+            padding:36px 40px;
+        }
+        .tracker-box-picker { max-width:420px; text-align:center; }
+        .tracker-title { font-family:'Playfair Display',serif; font-size:1.3rem; font-weight:700; color:var(--brown); margin-bottom:6px; }
+        .tracker-sub { font-size:.84rem; color:var(--brown-light); margin-bottom:24px; }
+        .tracker-close { position:absolute; top:24px; right:28px; background:none; border:1.5px solid var(--brown); width:32px; height:32px; border-radius:50%; cursor:pointer; color:var(--brown); font-size:16px; }
+        .tracker-pick-btn {
+            display:block; width:100%; padding:16px 20px; margin-bottom:10px;
+            border:1.5px solid var(--brown); border-radius:10px;
+            background:var(--white); color:var(--brown);
+            font-family:'DM Sans',sans-serif; font-size:.95rem; font-weight:600;
+            cursor:pointer; transition:all var(--ease); text-align:left;
+        }
+        .tracker-pick-btn:hover { background:var(--brown); color:var(--white); }
+
+        .tracker-grade-block { margin-bottom:28px; }
+        .tracker-grade-block:last-child { margin-bottom:0; }
+        .tracker-grade-header { font-family:'Playfair Display',serif; font-size:1.05rem; font-weight:700; color:var(--brown); margin-bottom:2px; }
+        .tracker-sector-label { font-size:.76rem; color:var(--brown-light); text-transform:uppercase; letter-spacing:.5px; font-weight:600; margin-bottom:12px; }
+        .tracker-unit-row { display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid rgba(58,46,37,.08); font-size:.86rem; }
+        .tracker-unit-row:last-child { border-bottom:none; }
+        .tracker-check { width:20px; height:20px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:.72rem; }
+        .tracker-check.done { background:#1E6B36; color:white; }
+        .tracker-check.pending { background:rgba(58,46,37,.08); color:transparent; }
+        .tracker-unit-label.done { color:var(--brown); }
+        .tracker-unit-label.pending { color:var(--brown-light); }
+        .tracker-progress { font-size:.78rem; color:var(--brown-light); font-weight:600; margin-top:10px; text-align:right; }
+        .tracker-empty { text-align:center; padding:32px 0; color:var(--brown-light); font-size:.88rem; }
+
         .card-onetime { border-style:dashed; border-color:var(--brown); opacity:.85; }
         .card-onetime:hover { opacity:1; }
 
@@ -163,6 +213,7 @@
 
     <div class="container">
         <h1 class="page-title" id="pageGreeting"></h1>
+        <button class="tracker-btn" onclick="openTracker()">📊 Completion Tracker</button>
 
         <!-- KAUSHAL BODH -->
         <div id="kaushalBodhSection" style="display:none;">
@@ -190,10 +241,23 @@
                     <div class="card-body">
                         <p class="card-description">Captures Grade 6 to 8 student visits to industries and guest lecture details.</p>
                         <div class="last-submitted" id="last-kb_guest_lecture"><span class="dot"></span><span>Checking...</span></div>
-                        <button class="card-button" onclick="openForm('https://ee-eu.kobotoolbox.org/x/EVZEtUTW')">Open Form →</button>
+                        <button class="card-button" onclick="openForm('https://ee-eu.kobotoolbox.org/x/35cHQ8yT')">Open Form →</button>
                     </div>
                 </div>
 
+            </div>
+
+            <!-- PROJECTS REPORTED TABLE -->
+            <div class="units-table-wrap">
+                <div class="units-table-header">
+                    <span class="units-table-title">Projects Reported</span>
+                    <span class="units-table-count" id="projectsCount"></span>
+                </div>
+                <table class="units-table" id="projectsTable" style="display:none;">
+                    <thead><tr><th>Grade</th><th>Project</th><th>Submitted</th></tr></thead>
+                    <tbody id="projectsTableBody"></tbody>
+                </table>
+                <div class="units-empty" id="projectsEmpty">Loading...</div>
             </div>
         </div>
         </div>
@@ -275,6 +339,13 @@
             </div>
         </div>
 
+    </div>
+
+    <!-- COMPLETION TRACKER OVERLAY -->
+    <div class="tracker-overlay" id="trackerOverlay">
+        <div class="tracker-box" id="trackerBox">
+            <!-- content injected by JS -->
+        </div>
     </div>
 
     <script>
@@ -390,13 +461,11 @@
                     const gradeNorm = String(row.grade || '').trim();
                     const unitNorm  = unitName.trim().toLowerCase();
                     const key = gradeNorm + '||' + unitNorm;
-                    console.log('Row key:', key, '| raw grade:', JSON.stringify(row.grade), '| raw unit:', JSON.stringify(unitName));
                     if (!seen.has(key)) {
                         seen.add(key);
                         deduped.push({ ...row, _unitName: unitName });
                     }
                 });
-                console.log('Total rows:', data.length, '| After dedup:', deduped.length);
 
                 countEl.textContent = deduped.length + ' unit' + (deduped.length !== 1 ? 's' : '');
                 tbody.innerHTML = deduped.map(row => {
@@ -412,6 +481,68 @@
             } catch(e) {
                 console.error('loadReportedUnits error:', e);
                 empty.textContent = 'Could not load reported units.';
+            }
+        })();
+
+        // ── LOAD PROJECTS REPORTED TABLE (Kaushal Bodh) ───────────────────────────
+        (async function loadReportedProjects() {
+            const udise = sessionStorage.getItem('udiseCode') || '';
+            const hasKB  = sessionStorage.getItem('hasKaushalBodh') === 'true';
+            if (!udise || !hasKB) return;
+
+            const tbody   = document.getElementById('projectsTableBody');
+            const table   = document.getElementById('projectsTable');
+            const empty   = document.getElementById('projectsEmpty');
+            const countEl = document.getElementById('projectsCount');
+            if (!tbody) return;
+
+            try {
+                const { data, error } = await sb
+                    .from('submissions')
+                    .select('grade, raw_data, submitted_at')
+                    .eq('form_type', 'kb_reporting')
+                    .eq('udise_code', udise)
+                    .order('submitted_at', { ascending: false });
+
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    empty.textContent = 'No projects reported yet. Submit the Kaushal Bodh Reporting form to see them here.';
+                    return;
+                }
+
+                function extractProject(raw) {
+                    if (!raw) return '';
+                    return raw['cascading_login/project'] || raw['project'] || '';
+                }
+
+                const seen = new Set();
+                const deduped = [];
+                data.forEach(row => {
+                    const projectName = extractProject(row.raw_data) || 'Not specified';
+                    const gradeNorm   = String(row.grade || '').trim();
+                    const projNorm    = projectName.trim().toLowerCase();
+                    const key = gradeNorm + '||' + projNorm;
+                    if (!seen.has(key)) {
+                        seen.add(key);
+                        deduped.push({ ...row, _projectName: projectName });
+                    }
+                });
+
+                countEl.textContent = deduped.length + ' project' + (deduped.length !== 1 ? 's' : '');
+                tbody.innerHTML = deduped.map(row => {
+                    const date = row.submitted_at ? new Date(row.submitted_at).toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'}) : '-';
+                    return '<tr>'
+                        + '<td><span class="grade-badge">Grade ' + (row.grade || '-') + '</span></td>'
+                        + '<td>' + row._projectName + '</td>'
+                        + '<td>' + date + '</td>'
+                        + '</tr>';
+                }).join('');
+                table.style.display = 'table';
+                empty.style.display = 'none';
+            } catch(e) {
+                console.error('loadReportedProjects error:', e);
+                empty.textContent = 'Could not load reported projects.';
             }
         })();
 
@@ -438,6 +569,179 @@
             }
             window.location.href = 'form-view.html?url=' + encodeURIComponent(url);
         }
+
+        // ══════════════════════════════════════════════════════════════════════
+        // COMPLETION TRACKER
+        // ══════════════════════════════════════════════════════════════════════
+        const SECTOR_UNITS = {
+            gardening: [
+                { code:'g_ch1', label:'UNIT 1 - Knowing the Plant and the Place' },
+                { code:'g_ch2', label:'UNIT 2 - Planning and Preparing' },
+                { code:'g_ch3', label:'UNIT 3 - Growing and Tending' },
+                { code:'g_ch4', label:'UNIT 4 - Harvesting and Evaluating' },
+                { code:'g_ch5', label:'UNIT 5 - Reflection and Showcase' },
+            ],
+            protective_agriculture: [
+                { code:'pa_1', label:'UNIT 1 - Introduction to Protective Agriculture' },
+                { code:'pa_2', label:'UNIT 2 - Controlled Environment & Greenhouse Design' },
+                { code:'pa_3', label:'UNIT 3 - Seeds, Seedlings & Plant Propagation' },
+                { code:'pa_4', label:'UNIT 4 - Smart Water & Soil Management' },
+                { code:'pa_5', label:'UNIT 5 - Smart Crop Production and Off Season Farming' },
+                { code:'pa_6', label:'UNIT 6 - Crop Protection, Harvesting & Agri-Business' },
+            ],
+        };
+        const SECTOR_LABELS = {
+            gardening: 'Gardening',
+            protective_agriculture: 'Protective Agriculture',
+        };
+
+        function openTracker() {
+            const hasKB = sessionStorage.getItem('hasKaushalBodh') === 'true';
+            const hasG9 = sessionStorage.getItem('hasClass9') !== 'false';
+
+            const box = document.getElementById('trackerBox');
+            box.className = 'tracker-box tracker-box-picker';
+            box.style.position = 'relative';
+
+            let optionsHtml = '';
+            if (hasG9) optionsHtml += '<button class="tracker-pick-btn" onclick="showGradeTracker()">Grade 9 &amp; 10 &mdash; Unit Completion</button>';
+            if (hasKB) optionsHtml += '<button class="tracker-pick-btn" onclick="showKBTracker()">Kaushal Bodh &mdash; Projects Completed</button>';
+
+            box.innerHTML = `
+                <button class="tracker-close" onclick="closeTracker()">×</button>
+                <div class="tracker-title">Completion Tracker</div>
+                <div class="tracker-sub">Choose what you want to check</div>
+                ${optionsHtml || '<div class="tracker-empty">No tracker available for your school.</div>'}
+            `;
+            document.getElementById('trackerOverlay').classList.add('show');
+        }
+
+        function closeTracker() {
+            document.getElementById('trackerOverlay').classList.remove('show');
+        }
+
+        function extractSector(raw) {
+            if (!raw) return '';
+            return raw['cascading_login/activity_group/sector'] || raw['activity_group/sector'] || '';
+        }
+        function extractUnitCode(raw) {
+            if (!raw) return '';
+            return raw['cascading_login/activity_group/unit_name'] || raw['activity_group/unit_name'] || '';
+        }
+
+        async function showGradeTracker() {
+            const box = document.getElementById('trackerBox');
+            box.className = 'tracker-box';
+            box.innerHTML = '<button class="tracker-close" onclick="closeTracker()">×</button><div class="tracker-title">Grade 9 &amp; 10 Unit Completion</div><div class="tracker-empty">Loading...</div>';
+
+            const udise = sessionStorage.getItem('udiseCode') || '';
+            try {
+                const { data, error } = await sb
+                    .from('submissions')
+                    .select('grade, raw_data')
+                    .eq('form_type', 'unit_reporting')
+                    .eq('udise_code', udise);
+                if (error) throw error;
+
+                // Group: grade -> sector -> Set(unit codes completed)
+                const progress = {};
+                (data || []).forEach(row => {
+                    const grade  = String(row.grade || '').trim();
+                    const sector = extractSector(row.raw_data);
+                    const unit   = extractUnitCode(row.raw_data);
+                    if (!grade || !sector || !unit) return;
+                    progress[grade] = progress[grade] || {};
+                    progress[grade][sector] = progress[grade][sector] || new Set();
+                    progress[grade][sector].add(unit);
+                });
+
+                const grades = Object.keys(progress).sort();
+                if (grades.length === 0) {
+                    box.innerHTML = '<button class="tracker-close" onclick="closeTracker()">×</button><div class="tracker-title">Grade 9 &amp; 10 Unit Completion</div><div class="tracker-empty">No units reported yet.</div>';
+                    return;
+                }
+
+                let html = '<button class="tracker-close" onclick="closeTracker()">×</button><div class="tracker-title">Grade 9 &amp; 10 Unit Completion</div><div class="tracker-sub">Progress by sector, based on what you\'ve reported</div>';
+
+                grades.forEach(grade => {
+                    const sectors = Object.keys(progress[grade]);
+                    sectors.forEach(sectorKey => {
+                        const units = SECTOR_UNITS[sectorKey];
+                        if (!units) return; // unknown sector, skip
+                        const done  = progress[grade][sectorKey];
+                        const doneCount = units.filter(u => done.has(u.code)).length;
+
+                        html += `<div class="tracker-grade-block">
+                            <div class="tracker-grade-header">Grade ${grade}</div>
+                            <div class="tracker-sector-label">${SECTOR_LABELS[sectorKey] || sectorKey}</div>`;
+
+                        units.forEach(u => {
+                            const isDone = done.has(u.code);
+                            html += `<div class="tracker-unit-row">
+                                <span class="tracker-check ${isDone?'done':'pending'}">${isDone?'✓':''}</span>
+                                <span class="tracker-unit-label ${isDone?'done':'pending'}">${u.label}</span>
+                            </div>`;
+                        });
+
+                        html += `<div class="tracker-progress">${doneCount} of ${units.length} completed</div></div>`;
+                    });
+                });
+
+                box.innerHTML = html;
+            } catch(e) {
+                console.error('showGradeTracker error:', e);
+                box.innerHTML = '<button class="tracker-close" onclick="closeTracker()">×</button><div class="tracker-title">Grade 9 &amp; 10 Unit Completion</div><div class="tracker-empty">Could not load data.</div>';
+            }
+        }
+
+        async function showKBTracker() {
+            const box = document.getElementById('trackerBox');
+            box.className = 'tracker-box';
+            box.innerHTML = '<button class="tracker-close" onclick="closeTracker()">×</button><div class="tracker-title">Kaushal Bodh Projects</div><div class="tracker-empty">Loading...</div>';
+
+            const udise = sessionStorage.getItem('udiseCode') || '';
+            try {
+                const { data, error } = await sb
+                    .from('submissions')
+                    .select('grade, raw_data, submitted_at')
+                    .eq('form_type', 'kb_reporting')
+                    .eq('udise_code', udise)
+                    .order('submitted_at', { ascending:false });
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    box.innerHTML = '<button class="tracker-close" onclick="closeTracker()">×</button><div class="tracker-title">Kaushal Bodh Projects</div><div class="tracker-empty">No projects reported yet.</div>';
+                    return;
+                }
+
+                function extractProject(raw) {
+                    if (!raw) return '';
+                    return raw['cascading_login/project'] || raw['project'] || '';
+                }
+
+                const seen = new Set();
+                const rows = [];
+                data.forEach(row => {
+                    const project = extractProject(row.raw_data) || 'Not specified';
+                    const key = String(row.grade||'').trim() + '||' + project.trim().toLowerCase();
+                    if (!seen.has(key)) { seen.add(key); rows.push({ grade: row.grade, project, date: row.submitted_at }); }
+                });
+
+                let html = '<button class="tracker-close" onclick="closeTracker()">×</button><div class="tracker-title">Kaushal Bodh Projects</div><div class="tracker-sub">' + rows.length + ' unique project(s) reported</div>';
+                rows.forEach(r => {
+                    const date = r.date ? new Date(r.date).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '-';
+                    html += `<div class="tracker-unit-row">
+                        <span class="tracker-check done">✓</span>
+                        <span class="tracker-unit-label done">Grade ${r.grade} — ${r.project} <span style="color:var(--brown-light);font-size:.78rem;">(${date})</span></span>
+                    </div>`;
+                });
+                box.innerHTML = html;
+            } catch(e) {
+                console.error('showKBTracker error:', e);
+                box.innerHTML = '<button class="tracker-close" onclick="closeTracker()">×</button><div class="tracker-title">Kaushal Bodh Projects</div><div class="tracker-empty">Could not load data.</div>';
+            }
+        }
+
     </script>
 </body>
 </html>
