@@ -360,9 +360,24 @@
                 }
 
                 // Extract unit name from raw_data JSONB (same keys the Kobo form uses)
+                const UNIT_LABELS = {
+                    'g_ch1': 'UNIT 1 - Knowing the Plant and the Place',
+                    'g_ch2': 'UNIT 2 - Planning and Preparing',
+                    'g_ch3': 'UNIT 3 - Growing and Tending',
+                    'g_ch4': 'UNIT 4 - Harvesting and Evaluating',
+                    'g_ch5': 'UNIT 5 - Reflection and Showcase',
+                    'pa_1':  'UNIT 1 - Introduction to Protective Agriculture',
+                    'pa_2':  'UNIT 2 - Controlled Environment & Greenhouse Design',
+                    'pa_3':  'UNIT 3 - Seeds, Seedlings & Plant Propagation',
+                    'pa_4':  'UNIT 4 - Smart Water & Soil Management',
+                    'pa_5':  'UNIT 5 - Smart Crop Production and Off Season Farming',
+                    'pa_6':  'UNIT 6 - Crop Protection, Harvesting & Agri-Business',
+                };
+
                 function extractUnitName(raw) {
                     if (!raw) return '';
-                    return raw['activity_group/unit_name'] || raw['unit_name'] || '';
+                    const rawUnit = raw['cascading_login/activity_group/unit_name'] || raw['activity_group/unit_name'] || '';
+                    return UNIT_LABELS[rawUnit] || rawUnit || '';
                 }
 
                 countEl.textContent = data.length + ' submitted';
