@@ -386,12 +386,17 @@
                 const deduped = [];
                 data.forEach(row => {
                     const unitName = extractUnitName(row.raw_data) || 'Not specified';
-                    const key = row.grade + '||' + unitName;
+                    // Normalize key — trim whitespace, lowercase, strip trailing zeros in grade
+                    const gradeNorm = String(row.grade || '').trim();
+                    const unitNorm  = unitName.trim().toLowerCase();
+                    const key = gradeNorm + '||' + unitNorm;
+                    console.log('Row key:', key, '| raw grade:', JSON.stringify(row.grade), '| raw unit:', JSON.stringify(unitName));
                     if (!seen.has(key)) {
                         seen.add(key);
                         deduped.push({ ...row, _unitName: unitName });
                     }
                 });
+                console.log('Total rows:', data.length, '| After dedup:', deduped.length);
 
                 countEl.textContent = deduped.length + ' unit' + (deduped.length !== 1 ? 's' : '');
                 tbody.innerHTML = deduped.map(row => {
