@@ -120,11 +120,11 @@
 
         /* Completion Tracker */
         .tracker-btn {
-            display:inline-flex; align-items:center; gap:8px;
-            padding:11px 22px; margin-bottom:32px;
-            border:1.5px solid var(--brown); border-radius:10px;
+            display:inline-flex; align-items:center; gap:6px;
+            padding:7px 16px;
+            border:1.5px solid var(--brown); border-radius:8px;
             background:var(--white); color:var(--brown);
-            font-family:'DM Sans',sans-serif; font-size:.9rem; font-weight:600;
+            font-family:'DM Sans',sans-serif; font-size:.84rem; font-weight:600;
             cursor:pointer; transition:all var(--ease);
         }
         .tracker-btn:hover { background:var(--brown); color:var(--white); }
@@ -206,6 +206,7 @@
                 <img src="logo.png" alt="Lend A Hand India">
             </a>
             <div class="nav-right">
+                <button class="tracker-btn" onclick="openTracker()" style="margin-bottom:0;">📊 Tracker</button>
                 <button class="logout-btn" onclick="logout()">Logout</button>
             </div>
         </div>
@@ -213,7 +214,6 @@
 
     <div class="container">
         <h1 class="page-title" id="pageGreeting"></h1>
-        <button class="tracker-btn" onclick="openTracker()">📊 Completion Tracker</button>
 
         <!-- KAUSHAL BODH -->
         <div id="kaushalBodhSection" style="display:none;">
@@ -247,18 +247,6 @@
 
             </div>
 
-            <!-- PROJECTS REPORTED TABLE -->
-            <div class="units-table-wrap">
-                <div class="units-table-header">
-                    <span class="units-table-title">Projects Reported</span>
-                    <span class="units-table-count" id="projectsCount"></span>
-                </div>
-                <table class="units-table" id="projectsTable" style="display:none;">
-                    <thead><tr><th>Grade</th><th>Project</th><th>Submitted</th></tr></thead>
-                    <tbody id="projectsTableBody"></tbody>
-                </table>
-                <div class="units-empty" id="projectsEmpty">Loading...</div>
-            </div>
         </div>
         </div>
 
@@ -293,18 +281,6 @@
 
             </div>
 
-            <!-- REPORTED UNITS TABLE -->
-            <div class="units-table-wrap">
-                <div class="units-table-header">
-                    <span class="units-table-title">Units Reported</span>
-                    <span class="units-table-count" id="unitsCount"></span>
-                </div>
-                <table class="units-table" id="unitsTable" style="display:none;">
-                    <thead><tr><th>Grade</th><th>Unit / Topic</th><th>Submitted</th></tr></thead>
-                    <tbody id="unitsTableBody"></tbody>
-                </table>
-                <div class="units-empty" id="unitsEmpty">Loading...</div>
-            </div>
         </div>
 
         <!-- ONE-TIME SETUP -->
@@ -394,155 +370,6 @@
                 });
             } catch(e) {
                 document.querySelectorAll('.last-submitted').forEach(el => el.style.display = 'none');
-            }
-        })();
-
-        // ── LOAD REPORTED UNITS TABLE ─────────────────────────────────────────────
-        (async function loadReportedUnits() {
-            const udise = sessionStorage.getItem('udiseCode') || '';
-            if (!udise) return;
-            const tbody   = document.getElementById('unitsTableBody');
-            const table   = document.getElementById('unitsTable');
-            const empty   = document.getElementById('unitsEmpty');
-            const countEl = document.getElementById('unitsCount');
-
-            try {
-                // Handle hub teachers — include all spoke UDISEs too
-                let udiseList = [udise];
-                try {
-                    const { data: spokes } = await sb.from('schools').select('udise_code').eq('hub_udise', udise);
-                    if (spokes && spokes.length) {
-                        udiseList = udiseList.concat(spokes.map(s => s.udise_code));
-                    }
-                } catch(e) { /* not a hub, ignore */ }
-
-                const { data, error } = await sb
-                    .from('submissions')
-                    .select('grade, raw_data, submitted_at, school_name')
-                    .eq('form_type', 'unit_reporting')
-                    .in('udise_code', udiseList)
-                    .order('submitted_at', { ascending: false });
-
-                if (error) throw error;
-
-                if (!data || data.length === 0) {
-                    empty.textContent = 'No units reported yet. Submit the Unit Reporting form to see them here.';
-                    return;
-                }
-
-                // Extract unit name from raw_data JSONB (same keys the Kobo form uses)
-                const UNIT_LABELS = {
-                    'g_ch1': 'UNIT 1 - Knowing the Plant and the Place',
-                    'g_ch2': 'UNIT 2 - Planning and Preparing',
-                    'g_ch3': 'UNIT 3 - Growing and Tending',
-                    'g_ch4': 'UNIT 4 - Harvesting and Evaluating',
-                    'g_ch5': 'UNIT 5 - Reflection and Showcase',
-                    'pa_1':  'UNIT 1 - Introduction to Protective Agriculture',
-                    'pa_2':  'UNIT 2 - Controlled Environment & Greenhouse Design',
-                    'pa_3':  'UNIT 3 - Seeds, Seedlings & Plant Propagation',
-                    'pa_4':  'UNIT 4 - Smart Water & Soil Management',
-                    'pa_5':  'UNIT 5 - Smart Crop Production and Off Season Farming',
-                    'pa_6':  'UNIT 6 - Crop Protection, Harvesting & Agri-Business',
-                };
-
-                function extractUnitName(raw) {
-                    if (!raw) return '';
-                    const rawUnit = raw['cascading_login/activity_group/unit_name'] || raw['activity_group/unit_name'] || '';
-                    return UNIT_LABELS[rawUnit] || rawUnit || '';
-                }
-
-                // Deduplicate — keep only the latest entry per (grade + unit) combo
-                // Data is already sorted submitted_at DESC, so first occurrence = latest
-                const seen = new Set();
-                const deduped = [];
-                data.forEach(row => {
-                    const unitName = extractUnitName(row.raw_data) || 'Not specified';
-                    // Normalize key — trim whitespace, lowercase, strip trailing zeros in grade
-                    const gradeNorm = String(row.grade || '').trim();
-                    const unitNorm  = unitName.trim().toLowerCase();
-                    const key = gradeNorm + '||' + unitNorm;
-                    if (!seen.has(key)) {
-                        seen.add(key);
-                        deduped.push({ ...row, _unitName: unitName });
-                    }
-                });
-
-                countEl.textContent = deduped.length + ' unit' + (deduped.length !== 1 ? 's' : '');
-                tbody.innerHTML = deduped.map(row => {
-                    const date = row.submitted_at ? new Date(row.submitted_at).toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'}) : '-';
-                    return '<tr>'
-                        + '<td><span class="grade-badge">Grade ' + (row.grade || '-') + '</span></td>'
-                        + '<td>' + row._unitName + '</td>'
-                        + '<td>' + date + '</td>'
-                        + '</tr>';
-                }).join('');
-                table.style.display = 'table';
-                empty.style.display = 'none';
-            } catch(e) {
-                console.error('loadReportedUnits error:', e);
-                empty.textContent = 'Could not load reported units.';
-            }
-        })();
-
-        // ── LOAD PROJECTS REPORTED TABLE (Kaushal Bodh) ───────────────────────────
-        (async function loadReportedProjects() {
-            const udise = sessionStorage.getItem('udiseCode') || '';
-            const hasKB  = sessionStorage.getItem('hasKaushalBodh') === 'true';
-            if (!udise || !hasKB) return;
-
-            const tbody   = document.getElementById('projectsTableBody');
-            const table   = document.getElementById('projectsTable');
-            const empty   = document.getElementById('projectsEmpty');
-            const countEl = document.getElementById('projectsCount');
-            if (!tbody) return;
-
-            try {
-                const { data, error } = await sb
-                    .from('submissions')
-                    .select('grade, raw_data, submitted_at')
-                    .eq('form_type', 'kb_reporting')
-                    .eq('udise_code', udise)
-                    .order('submitted_at', { ascending: false });
-
-                if (error) throw error;
-
-                if (!data || data.length === 0) {
-                    empty.textContent = 'No projects reported yet. Submit the Kaushal Bodh Reporting form to see them here.';
-                    return;
-                }
-
-                function extractProject(raw) {
-                    if (!raw) return '';
-                    return raw['cascading_login/project'] || raw['project'] || '';
-                }
-
-                const seen = new Set();
-                const deduped = [];
-                data.forEach(row => {
-                    const projectName = extractProject(row.raw_data) || 'Not specified';
-                    const gradeNorm   = String(row.grade || '').trim();
-                    const projNorm    = projectName.trim().toLowerCase();
-                    const key = gradeNorm + '||' + projNorm;
-                    if (!seen.has(key)) {
-                        seen.add(key);
-                        deduped.push({ ...row, _projectName: projectName });
-                    }
-                });
-
-                countEl.textContent = deduped.length + ' project' + (deduped.length !== 1 ? 's' : '');
-                tbody.innerHTML = deduped.map(row => {
-                    const date = row.submitted_at ? new Date(row.submitted_at).toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'}) : '-';
-                    return '<tr>'
-                        + '<td><span class="grade-badge">Grade ' + (row.grade || '-') + '</span></td>'
-                        + '<td>' + row._projectName + '</td>'
-                        + '<td>' + date + '</td>'
-                        + '</tr>';
-                }).join('');
-                table.style.display = 'table';
-                empty.style.display = 'none';
-            } catch(e) {
-                console.error('loadReportedProjects error:', e);
-                empty.textContent = 'Could not load reported projects.';
             }
         })();
 
