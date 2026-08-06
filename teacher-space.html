@@ -380,13 +380,25 @@
                     return UNIT_LABELS[rawUnit] || rawUnit || '';
                 }
 
-                countEl.textContent = data.length + ' submitted';
-                tbody.innerHTML = data.map(row => {
-                    const date = row.submitted_at ? new Date(row.submitted_at).toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'}) : '-';
+                // Deduplicate — keep only the latest entry per (grade + unit) combo
+                // Data is already sorted submitted_at DESC, so first occurrence = latest
+                const seen = new Set();
+                const deduped = [];
+                data.forEach(row => {
                     const unitName = extractUnitName(row.raw_data) || 'Not specified';
+                    const key = row.grade + '||' + unitName;
+                    if (!seen.has(key)) {
+                        seen.add(key);
+                        deduped.push({ ...row, _unitName: unitName });
+                    }
+                });
+
+                countEl.textContent = deduped.length + ' unit' + (deduped.length !== 1 ? 's' : '');
+                tbody.innerHTML = deduped.map(row => {
+                    const date = row.submitted_at ? new Date(row.submitted_at).toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'}) : '-';
                     return '<tr>'
                         + '<td><span class="grade-badge">Grade ' + (row.grade || '-') + '</span></td>'
-                        + '<td>' + unitName + '</td>'
+                        + '<td>' + row._unitName + '</td>'
                         + '<td>' + date + '</td>'
                         + '</tr>';
                 }).join('');
