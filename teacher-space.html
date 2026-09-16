@@ -275,7 +275,7 @@
                     <div class="card-body">
                         <p class="card-description">Captures details of student visits to industries and guest lecture sessions including location and guest details.</p>
                         <div class="last-submitted" id="last-guest_lecture_9_10"><span class="dot"></span><span>Checking...</span></div>
-                        <button class="card-button" onclick="openForm('https://ee-eu.kobotoolbox.org/x/EVZEtUTW')">Open Form →</button>
+                        <button class="card-button" id="guestLectureBtn" onclick="openForm('https://ee-eu.kobotoolbox.org/x/EVZEtUTW')">Open Form →</button>
                     </div>
                 </div>
 
@@ -343,6 +343,7 @@
             document.getElementById('unitReportingTitle').textContent = 'KV - Unit Reporting';
             document.getElementById('unitReportingDesc').textContent  = 'Records Unit-wise teaching progress for CBSE schools. Submit as Unit is completed.';
             document.getElementById('unitReportingBtn').setAttribute('onclick', "openForm('https://ee-eu.kobotoolbox.org/x/AY2lokxM')");
+            document.getElementById('guestLectureBtn').setAttribute('onclick', "openForm('https://ee-eu.kobotoolbox.org/x/6s5eeGbz')");
         }
 
         // ── LOAD LAST SUBMISSIONS ─────────────────────────────────────────────────
