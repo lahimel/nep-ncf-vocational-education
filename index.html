@@ -294,6 +294,8 @@ input:focus{outline:none;border-color:var(--brown);box-shadow:0 0 0 3px rgba(58,
         sessionStorage.setItem('udiseCode',      user.udise_code   || '');
         sessionStorage.setItem('schoolName',     user.school_name  || '');
         sessionStorage.setItem('hasKaushalBodh', user.has_kaushal_bodh ? 'true' : 'false');
+        sessionStorage.setItem('hasClass9',      user.has_class_9 !== false ? 'true' : 'false');
+        sessionStorage.setItem('schoolType',     user.school_type || '');
         sessionStorage.setItem('spokeSchools',   JSON.stringify(user.spoke_schools || []));
         if (user.must_change_password) {
           document.getElementById('loginForm').style.display = 'none';
