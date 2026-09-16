@@ -262,11 +262,11 @@
             <div class="cards-grid">
 
                 <div class="card card-grade9">
-                    <div class="card-header"><h3>Unit Reporting</h3></div>
+                    <div class="card-header"><h3 id="unitReportingTitle">Unit Reporting</h3></div>
                     <div class="card-body">
-                        <p class="card-description">Records Unit-wise teaching progress for Grade 9 and 10 vocational subjects. Submit as Unit is completed.</p>
+                        <p class="card-description" id="unitReportingDesc">Records Unit-wise teaching progress for Grade 9 and 10 vocational subjects. Submit as Unit is completed.</p>
                         <div class="last-submitted" id="last-unit_reporting"><span class="dot"></span><span>Checking...</span></div>
-                        <button class="card-button" onclick="openForm('https://ee-eu.kobotoolbox.org/x/Aitkuf2N')">Open Form →</button>
+                        <button class="card-button" id="unitReportingBtn" onclick="openForm('https://ee-eu.kobotoolbox.org/x/Aitkuf2N')">Open Form →</button>
                     </div>
                 </div>
 
@@ -337,6 +337,13 @@
 
         const schoolName = sessionStorage.getItem('schoolName') || sessionStorage.getItem('userName') || '';
         document.getElementById('pageGreeting').textContent = 'Hi, ' + (schoolName || 'Teacher');
+
+        // ── CBSE SCHOOLS: swap Unit Reporting form ──────────────────────────────────
+        if (sessionStorage.getItem('schoolType') === 'CBSE') {
+            document.getElementById('unitReportingTitle').textContent = 'KV - Unit Reporting';
+            document.getElementById('unitReportingDesc').textContent  = 'Records Unit-wise teaching progress for CBSE schools. Submit as Unit is completed.';
+            document.getElementById('unitReportingBtn').setAttribute('onclick', "openForm('https://ee-eu.kobotoolbox.org/x/AY2lokxM')");
+        }
 
         // ── LOAD LAST SUBMISSIONS ─────────────────────────────────────────────────
         (async function loadSubmissions() {
